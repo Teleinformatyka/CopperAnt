@@ -1,6 +1,7 @@
 package pl.edu.pk.iti.copperAnt;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,6 +15,8 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.PatternLayout;
 
 
 
@@ -22,6 +25,7 @@ public class Configuration {
 	private static Configuration instance = null;
 	public static String ROOT_NAME = "device";
 	private List<Properties> m_data = new ArrayList<Properties>();
+        private static final String path = "./src/main/resources/logs";
 	public static Configuration getInstance() {
 		  if(instance == null) {
 		         instance = new Configuration();
@@ -72,6 +76,8 @@ public class Configuration {
 			  }
 			 
 		}	
-	
+	public static FileAppender generateAppender(String pathToFile, Integer numberOfFile) throws IOException{
+            return new FileAppender(new PatternLayout("%d %p (%t) [%c] - %m%n"),path+pathToFile+numberOfFile+".out",true);
+        }
 		 
 }

@@ -1,9 +1,11 @@
 package pl.edu.pk.iti.copperAnt.network;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import pl.edu.pk.iti.copperAnt.Configuration;
 
 import pl.edu.pk.iti.copperAnt.gui.HubControl;
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
@@ -13,18 +15,21 @@ import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Hub   extends Device implements  WithControl {
     
-    private static final Logger hub_log = LoggerFactory.getLogger("hub_logs");
+    private static final Logger log = Logger.getLogger("hub_logs");
+    
+    
     
 	private final List<Port> ports;
 	private Clock clock;
 	private HubControl control;
+        private static Integer nrOfLogFile = 1;
+        private Logger hub_log = Logger.getLogger("hub_logs"+nrOfLogFile);
 
-	public Hub(int numberOfPorts, Clock clock) {
+	public Hub(int numberOfPorts, Clock clock) throws IOException {
 		this(numberOfPorts, clock, false);
-                hub_log.info("New hub created without GUI");
 	}
 
-	public Hub(int numberOfPorts, Clock clock, boolean withGui) {
+	public Hub(int numberOfPorts, Clock clock, boolean withGui) throws IOException {
 		this.clock = clock;
 		ports = new ArrayList<Port>(numberOfPorts);
 		for (int i = 0; i < numberOfPorts; i++) {
@@ -37,7 +42,10 @@ public class Hub   extends Device implements  WithControl {
 			}
 			control = new HubControl(list);
 		}
-                hub_log.info("New computer created with GUI");
+                
+                hub_log.addAppender(Configuration.generateAppender("/hub/hub", nrOfLogFile++));
+                hub_log.setLevel(Level.INFO);
+                log("New hub created with GUI"+(nrOfLogFile-1),3);
 	}
 
 	public Port getPort(int portNumber) {
@@ -66,4 +74,32 @@ public class Hub   extends Device implements  WithControl {
 	public void setControl(HubControl control) {
 		this.control = control;
 	}
+        
+        private void log(String msg, int type){
+            switch (type){
+                case 1:
+                    log.trace(msg);
+                    hub_log.trace(msg);
+                    break;
+                case 2:
+                    log.debug(msg);
+                    hub_log.debug(msg);
+                    break;
+                case 3:
+                    log.info(msg);
+                    hub_log.info(msg);
+                    break;
+                case 4:
+                    log.warn(msg);
+                    hub_log.warn(msg);
+                    break;
+                case 5:
+                    log.error(msg);
+                    hub_log.error(msg);
+                    break;
+                case 6:
+                    hub_log.fatal(msg);
+                    break;
+            }
+        }
 }

@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.simulation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,8 +17,10 @@ public class Clock {
 	long currentTime;
 	long lastEventTime;
 	boolean realTime = false;
-
+	boolean flag=false;
 	List<Event> events;
+
+
 	private long timeScale = 10;
 
 	private static Clock instance = new Clock();
@@ -40,10 +43,11 @@ public class Clock {
 		return this.events.get(index);
 	}
 
-	public void addEvent(Event eventToAdd) {
+	 public void addEvent(Event eventToAdd) {
 		log.debug("Added event: " + eventToAdd);
 		if (eventToAdd.getTime() >= currentTime) {
 			events.add(getCorrectIndex(eventToAdd), eventToAdd);
+			flag=true;
 		}
 	}
 
@@ -124,4 +128,21 @@ public class Clock {
 		instance = new Clock();
 
 	}
+	public List<Event> getEvents() {
+		return events;
+	}
+
+	public void setEvents(List<Event> events) {
+		this.events = events;
+	}
+
+	public boolean isFlag() {
+		return flag;
+	}
+
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
+	
+
 }

@@ -24,6 +24,11 @@ public class IPAddress {
 		subnet = new SubnetUtils(ip, netmask);
 
 	}
+	public IPAddress copy() {
+		IPAddress clone = new IPAddress(this);
+		return clone;
+
+	}
 
 	public IPAddress(String ip) {
 		this(ip, "255.255.255.0");

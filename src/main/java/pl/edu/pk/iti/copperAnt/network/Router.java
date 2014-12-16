@@ -209,6 +209,7 @@ public class Router extends Device implements WithControl {
 	public void setIpForPort(int portNumber, IPAddress ip) {
 		Triplet<Port, IPAddress, IPAddress> newValue = portIP.get(portNumber)
 				.setAt1(ip);
+		newValue.setAt2(ip.copy());
 		portIP.remove(portNumber);
 		portIP.add(portNumber, newValue);
 	}

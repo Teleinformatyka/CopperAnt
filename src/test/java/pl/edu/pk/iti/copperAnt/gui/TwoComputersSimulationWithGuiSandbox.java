@@ -16,10 +16,10 @@ public class TwoComputersSimulationWithGuiSandbox extends
 		SimulationCanvas simulationCanvas = new SimulationCanvas();
 		root.getChildren().add(simulationCanvas);
 
-		Clock clock = new Clock()
-				.withFinishCondition(new MaxTimeFinishCondition(100));
-		clock.setRealTime(true);
-		clock.setTimeScale(100);
+		Clock.getInstance().setFinishCondition(
+				new MaxTimeFinishCondition(100000));
+		Clock.getInstance().setRealTime(true);
+		Clock.getInstance().setTimeScale(100);
 		Cable cable = new Cable(true);
 		Computer computer1 = new Computer(new IPAddress("192.168.1.1"), true);
 		Computer computer2 = new Computer(new IPAddress("192.168.1.2"), true);
@@ -31,12 +31,12 @@ public class TwoComputersSimulationWithGuiSandbox extends
 		simulationCanvas.addControlOf(computer1, 0, 0);
 		simulationCanvas.addControlOf(computer2, 100, 0);
 
-		computer1.initTrafic(clock);
+		computer1.initTrafic();
 		Task<Void> task = new Task<Void>() {
 
 			@Override
 			protected Void call() throws Exception {
-				clock.run();
+				Clock.getInstance().run();
 				return null;
 			}
 		};

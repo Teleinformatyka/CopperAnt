@@ -30,7 +30,7 @@ public class CableSendsEventTest {
 		cable.setState(expectedStateBeforeEvent);
 		CableSendsEvent event = new CableSendsEvent(0, port, new Package());
 		// when
-		event.run(new Clock());
+		event.run();
 		// then
 		CableState stateAfterEvent = cable.getState();
 		assertEquals(expectedStateAfterEvent, stateAfterEvent);

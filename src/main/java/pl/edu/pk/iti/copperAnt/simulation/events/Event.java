@@ -15,14 +15,13 @@ public abstract class Event {
 		return this.time;
 	}
 
-	abstract public void run(Clock clock);
+	abstract public void run();
 
 	@Override
 	public String toString() {
 		return time + ": ";
 	}
-	abstract public  Package getPackage();
 
-	
+	abstract public Package getPackage();
 
 }

@@ -13,8 +13,8 @@ public class RealTimeSimulationSandbox {
 	@Test
 	@Ignore
 	public void sandbox2() {
-		Clock clock = new Clock()
-				.withFinishCondition(new MaxTimeFinishCondition(100));
+		Clock clock = Clock.getInstance().withFinishCondition(
+				new MaxTimeFinishCondition(100));
 		clock.setRealTime(true);
 		clock.setTimeScale(500);
 		Computer computer1 = new Computer(new IPAddress("192.168.1.1"));
@@ -23,18 +23,18 @@ public class RealTimeSimulationSandbox {
 		cable.insertInto(computer1.getPort());
 		cable.insertInto(computer2.getPort());
 
-		computer1.initTrafic(clock);
+		computer1.initTrafic();
 		clock.run();
 	}
 
 	@Test
 	@Ignore
 	public void sandbox3() {
-		Clock clock = new Clock()
-				.withFinishCondition(new MaxTimeFinishCondition(100));
+		Clock clock = Clock.getInstance().withFinishCondition(
+				new MaxTimeFinishCondition(100));
 		clock.setRealTime(true);
 		clock.setTimeScale(500);
-		Hub hub = new Hub(3, clock);
+		Hub hub = new Hub(3);
 		Computer computer1 = new Computer(new IPAddress("192.168.1.1"));
 		Computer computer2 = new Computer(new IPAddress("192.168.1.2"));
 		Computer computer3 = new Computer(new IPAddress("192.168.1.3"));
@@ -42,7 +42,7 @@ public class RealTimeSimulationSandbox {
 		connectComputerToHub(computer2, hub, 1);
 		connectComputerToHub(computer3, hub, 2);
 
-		computer1.initTrafic(clock);
+		computer1.initTrafic();
 		clock.run();
 	}
 

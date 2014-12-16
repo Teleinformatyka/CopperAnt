@@ -2,14 +2,20 @@ package pl.edu.pk.iti.copperAnt.network;
 
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
+import pl.edu.pk.iti.copperAnt.simulation.Clock;
+import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Port {
-
+	private static final Logger log = LoggerFactory.getLogger("computer_logs");
 	Cable cable;
 	final Device device;
 	final String MAC;
 	PortControl portControl;
+	private boolean controlDestinationMacOfPackages = false;
 
 	public Device getDevice() {
 		return device;
@@ -81,6 +87,33 @@ public class Port {
 	@Override
 	public String toString() {
 		return "[" + Integer.toHexString(hashCode()) + "]";
+	}
+
+	public void sendPackage(Package pack) {
+		Clock clock = Clock.getInstance();
+
+		clock.addEvent(new PortSendsEvent(clock.getCurrentTime()
+				+ device.getDelay(), this, pack));
+	}
+
+	public void receivePackage(Package pack) {
+		if (controlDestinationMacOfPackages) {
+			if (!pack.getDestinationMAC().equals(this.MAC)) {
+				log.info("Dropping package! Wrong MAC! " + pack + " my MAC "
+						+ this.MAC);
+				return;
+			}
+		}
+		device.acceptPackage(pack, this);
+	}
+
+	public boolean isControlDestinationMacOfPackages() {
+		return controlDestinationMacOfPackages;
+	}
+
+	public void setControlDestinationMacOfPackages(
+			boolean controlDestinationMacOfPackages) {
+		this.controlDestinationMacOfPackages = controlDestinationMacOfPackages;
 	}
 
 }

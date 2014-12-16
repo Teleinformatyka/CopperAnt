@@ -25,9 +25,10 @@ public class CableSendsEvent extends Event {
 	}
 
 	@Override
-	public void run(Clock clock) {
+	public void run() {
 		if (!cable.getState().equals(CableState.COLISION)) {
-			clock.addEvent(new PortReceivesEvent(time, port, pack));
+			Clock.getInstance().addEvent(
+					new PortReceivesEvent(time, port, pack));
 		}
 		if (cable.getBusyUntilTime() <= time) {
 			cable.setState(CableState.IDLE);
@@ -41,6 +42,7 @@ public class CableSendsEvent extends Event {
 		return super.toString() + "CableSendsEvent [port=" + port + ", cable="
 				+ cable + "]";
 	}
+
 	public Package getPackage() {
 		return this.pack;
 	}

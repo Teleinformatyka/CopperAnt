@@ -16,4 +16,15 @@ public class ConstatntTimeIntervalGeneratorTest {
 		Assert.assertEquals(13, actual);
 	}
 
+	@Test
+	public void getTimeIntervalDefaultConstructorTest() {
+		// given
+		ConstantTimeIntervalGenerator generator = new ConstantTimeIntervalGenerator();
+		// when
+		int actual = generator.getTimeInterval();
+		// then
+		Assert.assertEquals(ConstantTimeIntervalGenerator.DEFAULT_INTERVAL,
+				actual);
+	}
+
 }

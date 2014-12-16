@@ -16,4 +16,7 @@ public class MockDevice  extends Device {
 		return 0;
 	}
 
+	public String getIP() {
+		return null;
+	}
 }

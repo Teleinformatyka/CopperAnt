@@ -23,12 +23,12 @@ public class PortReceivesEvent extends Event {
 	}
 
 	@Override
-	public void run(Clock clock) {
+	public void run() {
 		PortControl portControl = port.getControl();
 		if (portControl != null) {
 			portControl.acceptPackage();
 		}
-		port.getDevice().acceptPackage(pack, port);
+		port.receivePackage(pack);
 		log.info(this.toString());
 
 	}

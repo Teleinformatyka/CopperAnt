@@ -13,17 +13,17 @@ public class RouterSimulationWithGuiSandbox extends AbstractControlSandbox {
 
 	@Override
 	protected void addElements(Pane root) {
-		
+
 		SimulationCanvas simulationCanvas = new SimulationCanvas();
 		root.getChildren().add(simulationCanvas);
 
-		Clock clock = new Clock()
-				.withFinishCondition(new MaxTimeFinishCondition(100));
-		clock.setRealTime(true);
-		clock.setTimeScale(100);
+		Clock.getInstance().setFinishCondition(
+				new MaxTimeFinishCondition(10000));
+		Clock.getInstance().setRealTime(true);
+		Clock.getInstance().setTimeScale(50);
 		Computer computer1 = new Computer(new IPAddress("192.168.1.1"), true);
 		Computer computer2 = new Computer(new IPAddress("192.168.1.2"), true);
-		Router router = new Router(2, clock, true);
+		Router router = new Router(2, true);
 		Cable cable = new Cable(true);
 		cable.insertInto(computer1.getPort());
 		cable.insertInto(router.getPort(0));
@@ -36,12 +36,12 @@ public class RouterSimulationWithGuiSandbox extends AbstractControlSandbox {
 		simulationCanvas.addControlOf(router, 100, 0);
 		simulationCanvas.addControlOf(computer2, 200, 200);
 
-		computer1.initTrafic(clock);
+		computer1.initTrafic();
 		Task<Void> task = new Task<Void>() {
 
 			@Override
 			protected Void call() throws Exception {
-				clock.run();
+				Clock.getInstance().run();
 				return null;
 			}
 		};

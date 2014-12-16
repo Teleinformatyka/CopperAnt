@@ -10,7 +10,12 @@ public enum PackageType {
 	
 	ECHO_REQUEST, // ping
 	ECHO_REPLY,  // pong
-	DESTINATION_UNREACHABLE // without content, send when host is unknown, eg when ttl reach 0
+	DESTINATION_UNREACHABLE, // without content, send when host is unknown, eg when ttl reach 0
+	
+	// to get MAC address from IP
+	ARP_REQ, // request to resolve IP address to MAC
+	
+	ARP_REP // response with MAC for IP
 	
 	
 }

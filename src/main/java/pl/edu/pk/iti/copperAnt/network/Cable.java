@@ -105,7 +105,7 @@ public class Cable implements WithControl {
 
 	public long getDelay() {
 		// TODO uzaleznić to od długości kabla
-		return 2;
+		return 0;
 	}
 
 	public void setBusyUntil(long time) {

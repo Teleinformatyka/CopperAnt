@@ -1,27 +1,28 @@
 package pl.edu.pk.iti.copperAnt.network;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 import org.javatuples.Triplet;
-import pl.edu.pk.iti.copperAnt.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.RouterControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
+import pl.edu.pk.iti.copperAnt.simulation.events.ComputerSendsEvent;
 import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Router extends Device implements  WithControl  {
     
-    private static final Logger log = Logger.getLogger("router_logs");
-
+    private static final Logger router_log = LoggerFactory.getLogger("router_logs");
+    
+	private static final Logger log = LoggerFactory
+			.getLogger(ComputerSendsEvent.class);
 	
 	private List<Triplet<Port, IPAddress, IPAddress>> portIP; // Port ip dhcpip
 	private Clock clock;
@@ -29,14 +30,13 @@ public class Router extends Device implements  WithControl  {
 
 	private Properties config;
 	private RouterControl control;
-        private static Integer nrOfLogFile = 1;
-        private Logger router_log = Logger.getLogger("router_logs"+nrOfLogFile);
 
-	public Router(int numberOfPorts, Clock clock) throws IOException {
+	public Router(int numberOfPorts, Clock clock) {
 		this(numberOfPorts, clock, false);
+                router_log.info("New router created without GUI");
 	}
 
-	public Router(int numberOfPorts, Clock clock, boolean withGui) throws IOException {
+	public Router(int numberOfPorts, Clock clock, boolean withGui) {
 		this.clock = clock;
 		
 		Random generator = new Random();
@@ -58,13 +58,10 @@ public class Router extends Device implements  WithControl  {
 			}
 			control = new RouterControl(list);
 		}
-                
-                router_log.addAppender(Configuration.generateAppender("/router/router", nrOfLogFile++));
-                router_log.setLevel(Level.INFO);
-                log("New router created with GUI"+(nrOfLogFile-1),3);
+                router_log.info("New router created with GUI");
 	}
 
-	public Router(Properties config, Clock clock) throws IOException {
+	public Router(Properties config, Clock clock) {
 		this(Integer.parseInt(config.getProperty("numbersOfPorts")),clock, config.getProperty("withGui", "false").equals("true"));
 	
 	}
@@ -217,33 +214,5 @@ public class Router extends Device implements  WithControl  {
 	public void setControl(RouterControl control) {
 		this.control = control;
 	}
-        
-        private void log(String msg, int type){
-            switch (type){
-                case 1:
-                    log.trace(msg);
-                    router_log.trace(msg);
-                    break;
-                case 2:
-                    log.debug(msg);
-                    router_log.debug(msg);
-                    break;
-                case 3:
-                    log.info(msg);
-                    router_log.info(msg);
-                    break;
-                case 4:
-                    log.warn(msg);
-                    router_log.warn(msg);
-                    break;
-                case 5:
-                    log.error(msg);
-                    router_log.error(msg);
-                    break;
-                case 6:
-                    router_log.fatal(msg);
-                    break;
-            }
-        }
 
 }

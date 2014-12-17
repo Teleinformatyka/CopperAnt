@@ -1,11 +1,9 @@
 package pl.edu.pk.iti.copperAnt.network;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.UUID;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import pl.edu.pk.iti.copperAnt.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
@@ -16,31 +14,28 @@ import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Computer extends Device implements WithControl {
     
-    private static final Logger log = Logger.getLogger("computer_logs");
+    private static final Logger computer_log = LoggerFactory.getLogger("computer_logs");
     
 	private Port port;
 	private IPAddress ip;
 	private ComputerControl control;
-        private static Integer nrOfLogFile = 1;
-        private Logger computer_log = Logger.getLogger("computer_logs"+nrOfLogFile);
 
-	public Computer() throws IOException {
+	public Computer() {
 		this(null);
 	}
 
-	public Computer(IPAddress ip) throws IOException {
+	public Computer(IPAddress ip) {
 		this(ip, false);
+                computer_log.info("New computer created without GUI");
 	}
 
-	public Computer(IPAddress ip, boolean withGui) throws IOException {
+	public Computer(IPAddress ip, boolean withGui) {
 		this.port = new Port(this, withGui);
 		this.ip = ip;
 		if (withGui) {
 			this.control = new ComputerControl(port.getControl());
 		}
-                computer_log.addAppender(Configuration.generateAppender("/computer/computer", nrOfLogFile++));
-                computer_log.setLevel(Level.INFO);
-                log("New computer created with GUI"+(nrOfLogFile-1),3);
+                computer_log.info("New computer created with GUI");
 	}
 
 	public Port getPort() {
@@ -88,33 +83,5 @@ public class Computer extends Device implements WithControl {
 	public ComputerControl getControl() {
 		return control;
 	}
-        
-        private void log(String msg, int type){
-            switch (type){
-                case 1:
-                    log.trace(msg);
-                    computer_log.trace(msg);
-                    break;
-                case 2:
-                    log.debug(msg);
-                    computer_log.debug(msg);
-                    break;
-                case 3:
-                    log.info(msg);
-                    computer_log.info(msg);
-                    break;
-                case 4:
-                    log.warn(msg);
-                    computer_log.warn(msg);
-                    break;
-                case 5:
-                    log.error(msg);
-                    computer_log.error(msg);
-                    break;
-                case 6:
-                    computer_log.fatal(msg);
-                    break;
-            }
-        }
 
 }

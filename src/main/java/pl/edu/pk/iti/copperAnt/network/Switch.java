@@ -1,12 +1,10 @@
 package pl.edu.pk.iti.copperAnt.network;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import pl.edu.pk.iti.copperAnt.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.SwitchControl;
@@ -16,22 +14,20 @@ import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Switch  extends Device implements  WithControl {
     
-    private static final Logger log = Logger.getLogger("switch_logs");
-    
+    private static final Logger switch_log = LoggerFactory.getLogger("switch_logs");
 
 	private final List<Port> ports;
 	private HashMap<String, Port> macTable; // <MAC, Port>
 	private Clock clock;
 	private String managementIP; // management IP
 	private SwitchControl control;
-        private static Integer nrOfLogFile = 1;
-        private Logger switch_logs = Logger.getLogger("switch_logs"+nrOfLogFile);
 
-	public Switch(int numberOfPorts, Clock clock) throws IOException {
+	public Switch(int numberOfPorts, Clock clock) {
 		this(numberOfPorts, clock, false);
+                switch_log.info("New switch created without GUI");
 	}
 
-	public Switch(int numberOfPorts, Clock clock, boolean withGui) throws IOException {
+	public Switch(int numberOfPorts, Clock clock, boolean withGui) {
 		this.clock = clock;
 		ports = new ArrayList<>(numberOfPorts);
 		for (int i = 0; i < numberOfPorts; i++) {
@@ -45,10 +41,7 @@ public class Switch  extends Device implements  WithControl {
 			}
 			control = new SwitchControl(list);
 		}
-                
-                switch_logs.addAppender(Configuration.generateAppender("/switch/switch", nrOfLogFile++));
-                switch_logs.setLevel(Level.INFO);
-                log("New switch created with GUI"+(nrOfLogFile-1),3);
+                switch_log.info("New computer created with GUI");
 	}
 
 	public Port getPort(int portNumber) {
@@ -128,33 +121,5 @@ public class Switch  extends Device implements  WithControl {
 	public void setControl(SwitchControl control) {
 		this.control = control;
 	}
-        
-        private void log(String msg, int type){
-            switch (type){
-                case 1:
-                    log.trace(msg);
-                    switch_logs.trace(msg);
-                    break;
-                case 2:
-                    log.debug(msg);
-                    switch_logs.debug(msg);
-                    break;
-                case 3:
-                    log.info(msg);
-                    switch_logs.info(msg);
-                    break;
-                case 4:
-                    log.warn(msg);
-                    switch_logs.warn(msg);
-                    break;
-                case 5:
-                    log.error(msg);
-                    switch_logs.error(msg);
-                    break;
-                case 6:
-                    switch_logs.fatal(msg);
-                    break;
-            }
-        }
 
 }

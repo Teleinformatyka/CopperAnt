@@ -17,21 +17,11 @@ public class RouterSimulationWithGuiSandbox extends AbstractControlSandbox {
 
 	@Override
 	protected void addElements(Pane root) {
-		BorderPane borderPane = new BorderPane();
-		root.getChildren().add(borderPane);
-		SimulationCanvas simulationCanvas = new SimulationCanvas();
+		SimulationCanvas simulationCanvas = new SimulationCanvas(); 
 		
-		//SplitPane centralSplitPane = new SplitPane();
-		//centralSplitPane.setOrientation(Orientation.VERTICAL);
-		//centralSplitPane.getItems().addAll(simulationCanvas, new TabbedLogPane());
-        //centralSplitPane.setDividerPositions(1.0f);
-        //root.getChildren().add(centralSplitPane);
 		
-		borderPane.setCenter(simulationCanvas);
-		borderPane.setBottom(new TabbedLogPane());
-		
-		//root.getChildren().add(simulationCanvas);
-		//root.getChildren().add(new TabbedLogPane());
+		root.getChildren().add(simulationCanvas);
+		root.getChildren().add(new TabbedLogPane());
 
 		Clock clock = new Clock()
 				.withFinishCondition(new MaxTimeFinishCondition(100));

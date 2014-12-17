@@ -38,7 +38,7 @@ public class PortSendsEvent extends Event {
 		}
 		if (this.port.getCable() != null) {
 			clock.addEvent(new CableReceivesEvent(this.time, port, pack));
-			notifyAboutUsage(clock);
+			notifyAboutUsage(clock, port);
 		} else {
 			log.debug("Dropping package, cable not inserted!");
 		}

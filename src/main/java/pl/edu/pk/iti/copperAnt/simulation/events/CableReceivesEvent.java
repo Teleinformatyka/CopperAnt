@@ -36,7 +36,6 @@ public class CableReceivesEvent extends Event {
 			cable.setState(CableState.BUSY);
 			clock.addEvent(new CableSendsEvent(time + cable.getDelay(), cable
 					.getOtherEnd(port), pack));
-			notifyAboutUsage(clock);
 		} else {
 			cable.setState(CableState.COLISION);
 			log.debug("There was collision. Package was lost.");

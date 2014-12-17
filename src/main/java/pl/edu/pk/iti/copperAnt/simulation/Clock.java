@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.simulation.events.Event;
 import pl.edu.pk.iti.copperAnt.simulation.StatisticData;
+import pl.edu.pk.iti.copperAnt.network.Device;
 import pl.edu.pk.iti.copperAnt.network.Package;
 import pl.edu.pk.iti.copperAnt.network.PackageType;
+import pl.edu.pk.iti.copperAnt.network.Port;
 
 
 public class Clock {
@@ -22,7 +24,7 @@ public class Clock {
 	long lastEventTime;
 	boolean realTime = false;
 	
-	private HashMap<String,List<StatisticData>> statsParams;
+	private HashMap<Port,List<StatisticData>> statsParams;
 
 	List<Event> events;
 	private long timeScale = 10;
@@ -31,7 +33,7 @@ public class Clock {
 		this.currentTime = -1;
 		this.lastEventTime = -1;
 		events = new ArrayList<Event>();
-		statsParams = new HashMap<String,List<StatisticData>>();
+		statsParams = new HashMap<Port,List<StatisticData>>();
 	}
 
 	public Event getEventFromList(int index) {
@@ -118,27 +120,27 @@ public class Clock {
 		this.realTime = realTime;
 	}
 	
-	public void updateStatistics(long time, Package triggeredPackage){
+	public void updateStatistics(long time, Port triggeredPort,Package triggeredPackage){
 		if(triggeredPackage.getType()== null && (triggeredPackage.getType() == PackageType.DESTINATION_UNREACHABLE 
 				|| triggeredPackage.getType() == PackageType.DHCP)){
 			return;
 		}
 		List<StatisticData> tempList = new ArrayList<StatisticData>();
 		if(triggeredPackage.getSourceMAC()!= null && triggeredPackage.getSourceMAC().length() > 0){
-			if(statsParams.containsKey(triggeredPackage.getSourceMAC())){
-				statsParams.get(triggeredPackage.getSourceMAC()).add(new StatisticData(time, triggeredPackage));
+			if(statsParams.containsKey(triggeredPort)){
+				statsParams.get(triggeredPort).add(new StatisticData(time, triggeredPackage));
 			} else {
-				statsParams.put(triggeredPackage.getSourceMAC(),tempList);
-				statsParams.get(triggeredPackage.getSourceMAC()).add(new StatisticData(time, triggeredPackage));				
+				statsParams.put(triggeredPort,tempList);
+				statsParams.get(triggeredPort).add(new StatisticData(time, triggeredPackage));				
 			}
 			log.debug("Statistics updated");
 		}
 		if(triggeredPackage.getDestinationMAC()!= null && triggeredPackage.getDestinationMAC().length() > 0){
-			if(statsParams.containsKey(triggeredPackage.getDestinationMAC())){
-				statsParams.get(triggeredPackage.getDestinationMAC()).add(new StatisticData(time, triggeredPackage));
+			if(statsParams.containsKey(triggeredPort)){
+				statsParams.get(triggeredPort).add(new StatisticData(time, triggeredPackage));
 			} else {
-				statsParams.put(triggeredPackage.getDestinationMAC(),tempList);
-				statsParams.get(triggeredPackage.getDestinationMAC()).add(new StatisticData(time, triggeredPackage));
+				statsParams.put(triggeredPort,tempList);
+				statsParams.get(triggeredPort).add(new StatisticData(time, triggeredPackage));
 			}
 			log.debug("Statistics updated");
 		}

@@ -29,6 +29,7 @@ public class PortReceivesEvent extends Event {
 			portControl.acceptPackage();
 		}
 		port.getDevice().acceptPackage(pack, port);
+		notifyAboutUsage(clock, port);
 		log.info(this.toString());
 
 	}

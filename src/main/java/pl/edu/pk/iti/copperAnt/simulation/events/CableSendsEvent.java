@@ -28,7 +28,6 @@ public class CableSendsEvent extends Event {
 	public void run(Clock clock) {
 		if (!cable.getState().equals(CableState.COLISION)) {
 			clock.addEvent(new PortReceivesEvent(time, port, pack));
-			notifyAboutUsage(clock);
 		}
 		if (cable.getBusyUntilTime() <= time) {
 			cable.setState(CableState.IDLE);

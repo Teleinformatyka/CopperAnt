@@ -1,4 +1,5 @@
 package pl.edu.pk.iti.copperAnt.network;
+import java.io.IOException;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -18,7 +19,7 @@ import pl.edu.pk.iti.copperAnt.simulation.events.Event;
 import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 public class ComputerTest {
 	@Test
-	public void testSendDHCPPackage() {
+	public void testSendDHCPPackage() throws IOException{
 		Clock clock = mock(Clock.class);
 		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
 		doNothing().when(clock).addEvent(eventCaptor.capture());

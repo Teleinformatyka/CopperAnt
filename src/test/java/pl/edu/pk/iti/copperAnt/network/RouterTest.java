@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.network;
 
+import java.io.IOException;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,7 +20,7 @@ import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class RouterTest {
 	@Test
-	public void testEmtpyRoutingTable() {
+	public void testEmtpyRoutingTable() throws IOException{
 		Clock clock = mock(Clock.class);
 		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
 		doNothing().when(clock).addEvent(eventCaptor.capture());
@@ -37,7 +38,7 @@ public class RouterTest {
 	}
 	
 	@Test
-	public void testNotEmtpyRoutingTable() {
+	public void testNotEmtpyRoutingTable() throws IOException{
 		Clock clock = mock(Clock.class);
 		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
 		doNothing().when(clock).addEvent(eventCaptor.capture());
@@ -56,7 +57,7 @@ public class RouterTest {
 	}
 	
 	@Test
-	public void testRequestForIp() {
+	public void testRequestForIp() throws IOException{
 		Clock clock = mock(Clock.class);
 		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
 		doNothing().when(clock).addEvent(eventCaptor.capture());
@@ -74,7 +75,7 @@ public class RouterTest {
 	}
 
 	@Test
-	public void testRequestForIp2() {
+	public void testRequestForIp2() throws IOException{
 		Clock clock = mock(Clock.class);
 		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
 		doNothing().when(clock).addEvent(eventCaptor.capture());
@@ -96,7 +97,7 @@ public class RouterTest {
 
 		
 	@Test
-	public void testTTl0() {
+	public void testTTl0() throws IOException{
 		Clock clock = mock(Clock.class);
 		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
 		doNothing().when(clock).addEvent(eventCaptor.capture());
@@ -121,7 +122,7 @@ public class RouterTest {
 	}	
 	
 	@Test
-	public void testRouting() {
+	public void testRouting() throws IOException{
 		Clock clock = mock(Clock.class);
 		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
 		doNothing().when(clock).addEvent(eventCaptor.capture());

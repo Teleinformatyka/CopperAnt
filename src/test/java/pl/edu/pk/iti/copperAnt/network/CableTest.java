@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.network;
 
+import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -13,7 +14,7 @@ import pl.edu.pk.iti.copperAnt.simulation.MockDevice;
 public class CableTest {
 
 	@Test
-	public void insertIntoImpactsPortFieldsTest() {
+	public void insertIntoImpactsPortFieldsTest() throws IOException{
 		// given
 		Port port1 = new Port(new MockDevice());
 		Port port2 = new Port(new MockDevice());
@@ -31,7 +32,7 @@ public class CableTest {
 	}
 
 	@Test
-	public void ejectFromPortTest() {
+	public void ejectFromPortTest() throws IOException{
 		Port port = new Port(new MockDevice());
 		Cable cable = new Cable();
 		port.conntectCalble(cable);
@@ -44,7 +45,7 @@ public class CableTest {
 	}
 
 	@Test
-	public void cannotConnectMoreThanTwoPortsTest() {
+	public void cannotConnectMoreThanTwoPortsTest() throws IOException{
 		Port port1 = new Port(new MockDevice());
 		Port port2 = new Port(new MockDevice());
 		Port port3 = new Port(new MockDevice());

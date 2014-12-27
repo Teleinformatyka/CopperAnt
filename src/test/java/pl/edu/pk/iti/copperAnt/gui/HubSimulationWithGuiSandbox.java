@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import java.io.IOException;
 import javafx.concurrent.Task;
 import javafx.scene.layout.Pane;
 import pl.edu.pk.iti.copperAnt.network.Cable;
@@ -12,7 +13,7 @@ import pl.edu.pk.iti.copperAnt.simulation.MaxTimeFinishCondition;
 public class HubSimulationWithGuiSandbox extends AbstractControlSandbox {
 
 	@Override
-	protected void addElements(Pane root) {
+	protected void addElements(Pane root) throws IOException{
 		SimulationCanvas simulationCanvas = new SimulationCanvas();
 		root.getChildren().add(simulationCanvas);
 

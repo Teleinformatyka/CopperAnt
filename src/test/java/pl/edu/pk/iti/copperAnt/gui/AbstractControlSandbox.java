@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -8,7 +9,7 @@ import javafx.stage.Stage;
 
 public abstract class AbstractControlSandbox extends Application {
 
-	protected abstract void addElements(Pane root);
+	protected abstract void addElements(Pane root) throws IOException;
 
 	public void start(Stage stage) throws Exception {
 		Pane root = new AnchorPane();

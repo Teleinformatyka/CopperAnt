@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.simulation;
 
+import java.io.IOException;
 import org.junit.Test;
 
 import pl.edu.pk.iti.copperAnt.network.Cable;
@@ -12,7 +13,7 @@ import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 public class SimulationSandbox {
 
 	@Test
-	public void sandbox1() {
+	public void sandbox1() throws IOException{
 		Clock clock = new Clock();
 		clock.setFinishCondition(new MaxTimeFinishCondition(100));
 		Port port1 = new Port(new MockDevice());
@@ -27,7 +28,7 @@ public class SimulationSandbox {
 	}
 
 	@Test
-	public void sandbox2() {
+	public void sandbox2() throws IOException{
 		Clock clock = new Clock()
 				.withFinishCondition(new MaxTimeFinishCondition(100));
 		Computer computer1 = new Computer();
@@ -41,7 +42,7 @@ public class SimulationSandbox {
 	}
 
 	@Test
-	public void sandbox3() {
+	public void sandbox3() throws IOException{
 		Clock clock = new Clock()
 				.withFinishCondition(new MaxTimeFinishCondition(100));
 		Hub hub = new Hub(3, clock);
@@ -56,7 +57,7 @@ public class SimulationSandbox {
 		clock.run();
 	}
 
-	private void connectComputerToHub(Computer computer, Hub hub, int portNr) {
+	private void connectComputerToHub(Computer computer, Hub hub, int portNr) throws IOException{
 		Cable cable = new Cable();
 		cable.insertInto(computer.getPort());
 		cable.insertInto(hub.getPort(portNr));

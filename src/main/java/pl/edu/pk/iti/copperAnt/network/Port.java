@@ -1,6 +1,8 @@
 package pl.edu.pk.iti.copperAnt.network;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,9 @@ public class Port {
 	final String MAC;
 	PortControl portControl;
 	private boolean controlDestinationMacOfPackages = false;
+	Set<Package> buffor;
+	int bufforSize = 100;
+	int bufforFreeSpace = 0;
 
 	public Device getDevice() {
 		return device;
@@ -26,7 +31,7 @@ public class Port {
 	}
 
 	public Port(Device device, boolean withGui) {
-		super();
+		this.buffor = new HashSet<Package>();
 		this.device = device;
 		this.MAC = setMAC();
 		if (withGui) {
@@ -91,14 +96,15 @@ public class Port {
 
 	public void sendPackage(Package pack) {
 		Clock clock = Clock.getInstance();
-
 		clock.addEvent(new PortSendsEvent(clock.getCurrentTime()
 				+ device.getDelay(), this, pack));
 	}
 
 	public void receivePackage(Package pack) {
 		if (controlDestinationMacOfPackages) {
-			if (!pack.getDestinationMAC().equals(this.MAC)) {
+			String destinationMAC = pack.getDestinationMAC();
+			if (!destinationMAC.equals(this.MAC)
+					&& !destinationMAC.equals(Package.MAC_BROADCAST)) {
 				log.info("Dropping package! Wrong MAC! " + pack + " my MAC "
 						+ this.MAC);
 				return;
@@ -116,4 +122,27 @@ public class Port {
 		this.controlDestinationMacOfPackages = controlDestinationMacOfPackages;
 	}
 
+	public void addPackToBuffor(Package pack) {
+		if (pack.getSize() > bufforFreeSpace) {
+			return;
+		}
+		if (buffor.add(pack)) {
+			bufforFreeSpace -= pack.getSize();
+		}
+
+	}
+
+	public void removePackFromBuffor(Package pack) {
+		if (buffor.remove(pack)) {
+			this.bufforFreeSpace += pack.getSize();
+		}
+		bufforFreeSpace = (bufforFreeSpace < bufforSize) ? bufforFreeSpace
+				: bufforSize;
+
+	}
+
+	public void clearBuffor() {
+		buffor.clear();
+		bufforFreeSpace = bufforSize;
+	}
 }

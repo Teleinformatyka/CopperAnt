@@ -9,6 +9,7 @@ import pl.edu.pk.iti.copperAnt.gui.CableControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
 import pl.edu.pk.iti.copperAnt.simulation.events.CableSendsEvent;
+import pl.edu.pk.iti.copperAnt.simulation.events.PortReceivesEvent;
 
 public class Cable implements WithControl {
 
@@ -140,6 +141,18 @@ public class Cable implements WithControl {
 		} else {
 			setState(CableState.COLISION);
 			cable_log.debug("There was collision. Package was lost.");
+		}
+
+	}
+
+	public void sendPackage(Package pack, Port port) {
+		long time = Clock.getInstance().getCurrentTime();
+		if (!getState().equals(CableState.COLISION)) {
+			Clock.getInstance().addEvent(
+					new PortReceivesEvent(time, port, pack));
+		}
+		if (getBusyUntilTime() <= time) {
+			setState(CableState.IDLE);
 		}
 
 	}

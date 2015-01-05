@@ -23,8 +23,8 @@ public class Clock {
 	private static Clock instance = new Clock();
 
 	private Clock() {
-		this.currentTime = -1;
-		this.lastEventTime = -1;
+		this.currentTime = 0;
+		this.lastEventTime = currentTime;
 		events = new ArrayList<Event>();
 	}
 

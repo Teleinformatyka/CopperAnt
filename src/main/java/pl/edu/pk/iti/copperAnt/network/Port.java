@@ -1,21 +1,25 @@
 package pl.edu.pk.iti.copperAnt.network;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
-import pl.edu.pk.iti.copperAnt.simulation.Clock;
-import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Port {
-	private static final Logger log = LoggerFactory.getLogger("computer_logs");
+	static final Logger log = LoggerFactory.getLogger("computer_logs");
 	Cable cable;
 	final Device device;
 	final String MAC;
 	PortControl portControl;
 	private boolean controlDestinationMacOfPackages = false;
+	Set<Package> buffor;
+	int bufforSize = 100;
+	int bufforFreeSpace = bufforSize;
+	PortSendingStrategy portSendingStrategy = new PortSendingStrategyWithCSMACD();
 
 	public Device getDevice() {
 		return device;
@@ -26,7 +30,7 @@ public class Port {
 	}
 
 	public Port(Device device, boolean withGui) {
-		super();
+		this.buffor = new HashSet<Package>();
 		this.device = device;
 		this.MAC = setMAC();
 		if (withGui) {
@@ -90,15 +94,16 @@ public class Port {
 	}
 
 	public void sendPackage(Package pack) {
-		Clock clock = Clock.getInstance();
-
-		clock.addEvent(new PortSendsEvent(clock.getCurrentTime()
-				+ device.getDelay(), this, pack));
+		if (getCable() != null) {
+			portSendingStrategy.sendPackage(pack, this);
+		}
 	}
 
 	public void receivePackage(Package pack) {
 		if (controlDestinationMacOfPackages) {
-			if (!pack.getDestinationMAC().equals(this.MAC)) {
+			String destinationMAC = pack.getDestinationMAC();
+			if (!destinationMAC.equals(this.MAC)
+					&& !destinationMAC.equals(Package.MAC_BROADCAST)) {
 				log.info("Dropping package! Wrong MAC! " + pack + " my MAC "
 						+ this.MAC);
 				return;
@@ -114,6 +119,42 @@ public class Port {
 	public void setControlDestinationMacOfPackages(
 			boolean controlDestinationMacOfPackages) {
 		this.controlDestinationMacOfPackages = controlDestinationMacOfPackages;
+	}
+
+	void addPackToBuffor(Package pack) {
+		if (!thereIsEnoughSpaceForPackageInBuffor(pack)) {
+			return;
+		}
+		if (buffor.add(pack)) {
+			bufforFreeSpace -= pack.getSize();
+		}
+
+	}
+
+	boolean thereIsEnoughSpaceForPackageInBuffor(Package pack) {
+		return pack.getSize() <= bufforFreeSpace;
+	}
+
+	void removePackFromBuffor(Package pack) {
+		if (buffor.remove(pack)) {
+			this.bufforFreeSpace += pack.getSize();
+		}
+		bufforFreeSpace = (bufforFreeSpace < bufforSize) ? bufforFreeSpace
+				: bufforSize;
+
+	}
+
+	public void clearBuffor() {
+		buffor.clear();
+		bufforFreeSpace = bufforSize;
+	}
+
+	public void enableCSMACD(boolean enable) {
+		if (enable) {
+			this.portSendingStrategy = new PortSendingStrategyWithCSMACD();
+		} else {
+			this.portSendingStrategy = new PortSendingStrategyWithoutCSMACD();
+		}
 	}
 
 }

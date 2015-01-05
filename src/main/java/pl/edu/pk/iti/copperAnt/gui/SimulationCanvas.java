@@ -1,9 +1,5 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
-import java.awt.List;
-import java.util.ArrayList;
-
-import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -81,8 +77,8 @@ public class SimulationCanvas extends Control {
 		Control control = withControl.getControl();
 		addControl(control, x, y);
 	}
-	
-	public ObservableList<Node> getControls(){
+
+	public ObservableList<Node> getControls() {
 		return getChildren();
 	}
 }

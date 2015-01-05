@@ -30,6 +30,7 @@ public class ComputerTest {
 		doNothing().when(clock).addEvent(eventCaptor.capture());
 		when(clock.getCurrentTime()).thenReturn(11L);
 		Computer computer = new Computer();
+		computer.getPort().conntectCalble(new Cable());
 		computer.init();
 		List<Event> capturedEvent = eventCaptor.getAllValues();
 		assertEquals(capturedEvent.size(), 1);

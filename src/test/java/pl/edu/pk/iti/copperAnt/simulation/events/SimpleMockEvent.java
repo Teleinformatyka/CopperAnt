@@ -1,7 +1,6 @@
 package pl.edu.pk.iti.copperAnt.simulation.events;
 
 import pl.edu.pk.iti.copperAnt.network.Package;
-import pl.edu.pk.iti.copperAnt.simulation.Clock;
 
 public class SimpleMockEvent extends Event {
 

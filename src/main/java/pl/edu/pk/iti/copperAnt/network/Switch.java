@@ -3,8 +3,6 @@ package pl.edu.pk.iti.copperAnt.network;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.SwitchControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
-import pl.edu.pk.iti.copperAnt.simulation.Clock;
-import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Switch extends Device implements WithControl {
 	private static final Logger switch_log = LoggerFactory
@@ -47,6 +43,11 @@ public class Switch extends Device implements WithControl {
 
 	public Port getPort(int portNumber) {
 		return ports.get(portNumber);
+	}
+
+	public void setPort(int portNumber, Port port) {
+		ports.remove(portNumber);
+		ports.add(portNumber, port);
 	}
 
 	/**

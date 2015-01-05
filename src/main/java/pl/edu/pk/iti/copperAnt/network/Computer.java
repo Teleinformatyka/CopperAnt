@@ -1,27 +1,22 @@
 package pl.edu.pk.iti.copperAnt.network;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
-import cern.jet.math.Mult;
 import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
-import pl.edu.pk.iti.copperAnt.simulation.ConstantTimeIntervalGenerator;
 import pl.edu.pk.iti.copperAnt.simulation.DistributionTimeIntervalGenerator;
 import pl.edu.pk.iti.copperAnt.simulation.events.ARPEvent;
 import pl.edu.pk.iti.copperAnt.simulation.events.ComputerSendsEvent;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public class Computer extends Device implements WithControl {
 

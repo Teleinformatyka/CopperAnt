@@ -45,6 +45,11 @@ public class Switch extends Device implements WithControl {
 		return ports.get(portNumber);
 	}
 
+	public void setPort(int portNumber, Port port) {
+		ports.remove(portNumber);
+		ports.add(portNumber, port);
+	}
+
 	/**
 	 * Process incoming Package on receiving port and forward it
 	 *

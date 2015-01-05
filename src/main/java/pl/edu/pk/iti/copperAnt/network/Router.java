@@ -78,6 +78,13 @@ public class Router extends Device implements WithControl {
 
 	}
 
+	public void setPort(int portNumber, Port port) {
+		Triplet<Port, IPAddress, IPAddress> newTriplet = portIP.get(portNumber)
+				.setAt0(port);
+		portIP.remove(portNumber);
+		portIP.add(portNumber, newTriplet);
+	}
+
 	public Port getPort(int portNumber) {
 		return portIP.get(portNumber).getValue0();
 	}

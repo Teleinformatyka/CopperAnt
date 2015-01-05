@@ -45,8 +45,11 @@ public class SwitchTest {
 		cable3.insertInto(mockPort3);
 
 		// when
-		mockPort0.sendPackage(new Package());
+		Package pack = new Package();
+		pack.setDestinationMAC("dest");
+		mockPort0.sendPackage(pack);
 		Clock.getInstance().run();
+
 		// then
 		verify(mockPort0, never()).receivePackage(any(Package.class));
 		verify(mockPort1).receivePackage(any(Package.class));

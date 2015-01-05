@@ -1,13 +1,9 @@
 package pl.edu.pk.iti.copperAnt.simulation.events;
 
-import java.util.Random;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
-import pl.edu.pk.iti.copperAnt.network.Cable;
-import pl.edu.pk.iti.copperAnt.network.CableState;
 import pl.edu.pk.iti.copperAnt.network.Package;
 import pl.edu.pk.iti.copperAnt.network.Port;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
@@ -43,24 +39,7 @@ public class PortSendsEvent extends Event {
 		if (portControl != null) {
 			portControl.acceptPackage();
 		}
-		Cable cable = this.port.getCable();
-		if (cable != null) {
-			if (cable.getState() == CableState.IDLE) {
-				port.removePackFromBuffor(pack);
-				Clock.getInstance().addEvent(
-						new CableReceivesEvent(this.time, port, pack));
-			} else {
-				Random random = new Random();
-				port.addPackToBuffor(pack);
-				Clock.getInstance().addEvent(
-						new PortSendsEvent(this.time + random.nextInt(100),
-								port, pack));
-			}
-
-		} else {
-			log.debug("Dropping package, cable not inserted!");
-		}
-
+		port.sendPackage(pack);
 		log.info(this.toString());
 
 	}

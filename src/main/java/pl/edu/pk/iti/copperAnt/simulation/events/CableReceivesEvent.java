@@ -32,16 +32,7 @@ public class CableReceivesEvent extends Event {
 
 	@Override
 	public void run() {
-		cable.setBusyUntil(time + cable.getDelay());
-		if (cable.getState() == CableState.IDLE) {
-			cable.setState(CableState.BUSY);
-			Clock.getInstance().addEvent(
-					new CableSendsEvent(time + cable.getDelay(), cable
-							.getOtherEnd(port), pack));
-		} else {
-			cable.setState(CableState.COLISION);
-			log.debug("There was collision. Package was lost.");
-		}
+		cable.receivePackage(pack, port);
 		log.info(this.toString());
 	}
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
+import pl.edu.pk.iti.copperAnt.simulation.events.CableReceivesEvent;
 import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Port {
@@ -20,7 +21,7 @@ public class Port {
 	private boolean controlDestinationMacOfPackages = false;
 	Set<Package> buffor;
 	int bufforSize = 100;
-	int bufforFreeSpace = 0;
+	int bufforFreeSpace = bufforSize;
 
 	public Device getDevice() {
 		return device;
@@ -96,8 +97,24 @@ public class Port {
 
 	public void sendPackage(Package pack) {
 		Clock clock = Clock.getInstance();
-		clock.addEvent(new PortSendsEvent(clock.getCurrentTime()
-				+ device.getDelay(), this, pack));
+		if (getCable() != null) {
+			if (getCable().getState() == CableState.IDLE) {
+				removePackFromBuffor(pack);
+				if (getCable() != null) {
+					Clock.getInstance().addEvent(
+							new CableReceivesEvent(clock.getCurrentTime(),
+									this, pack));
+				} else {
+					log.debug("Dropping package, cable not inserted!");
+				}
+			} else {
+				if (thereIsEnoughSpaceForPackageInBuffor(pack)) {
+					addPackToBuffor(pack);
+					clock.addEvent(new PortSendsEvent(clock.getCurrentTime()
+							+ new Random().nextInt(100), this, pack));
+				}
+			}
+		}
 	}
 
 	public void receivePackage(Package pack) {
@@ -122,8 +139,8 @@ public class Port {
 		this.controlDestinationMacOfPackages = controlDestinationMacOfPackages;
 	}
 
-	public void addPackToBuffor(Package pack) {
-		if (pack.getSize() > bufforFreeSpace) {
+	private void addPackToBuffor(Package pack) {
+		if (!thereIsEnoughSpaceForPackageInBuffor(pack)) {
 			return;
 		}
 		if (buffor.add(pack)) {
@@ -132,7 +149,11 @@ public class Port {
 
 	}
 
-	public void removePackFromBuffor(Package pack) {
+	private boolean thereIsEnoughSpaceForPackageInBuffor(Package pack) {
+		return pack.getSize() <= bufforFreeSpace;
+	}
+
+	private void removePackFromBuffor(Package pack) {
 		if (buffor.remove(pack)) {
 			this.bufforFreeSpace += pack.getSize();
 		}

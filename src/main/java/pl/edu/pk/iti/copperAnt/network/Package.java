@@ -6,7 +6,7 @@ public class Package {
 	private String sourceIP;
 	private String destinationIP;
 	private int ttl = 10;
-	private String content;
+	private String content = "";
 
 	private String header;
 	private PackageType type = PackageType.ECHO_REQUEST;

@@ -3,8 +3,12 @@ package pl.edu.pk.iti.copperAnt.network;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -27,47 +31,47 @@ public class RouterTest {
 	@Test
 	public void testEmtpyRoutingTable() {
 		// given
-		Clock clock = mock(Clock.class);
-		Clock.setInstance(clock);
-		ArgumentCaptor<PortSendsEvent> eventCaptor = ArgumentCaptor
-				.forClass(PortSendsEvent.class);
-		doNothing().when(clock).addEvent(eventCaptor.capture());
-		when(clock.getCurrentTime()).thenReturn(11L);
-		final int numberOfPorts = 4;
+		int numberOfPorts = 4;
 		Router router = new Router(numberOfPorts);
+		for (int i = 0; i < numberOfPorts; ++i) {
+			router.getPort(i).conntectCalble(new Cable());
+			router.setPort(i, spy(router.getPort(i)));
+
+		}
 		Package pack = new Package();
 		pack.setDestinationIP("192.158.2.55");
 		pack.setSourceMAC("96:66:d5:8d:3b:cb");
 		// when
 		router.acceptPackage(pack, router.getPort(0));
 		// then
-		List<PortSendsEvent> capturedEvents = eventCaptor.getAllValues();
-		assertEquals(3, capturedEvents.size());
-		for (int i = 1; i < numberOfPorts; i++) {
-			assertTrue(capturedEvents.stream().anyMatch(
-					e -> e.getPort().equals(router.getPort(1))));
-		}
+		verify(router.getPort(0), never()).sendPackage(any());
+		verify(router.getPort(1)).sendPackage(any());
+		verify(router.getPort(2)).sendPackage(any());
+		verify(router.getPort(3)).sendPackage(any());
 
 	}
 
 	@Test
 	public void testNotEmtpyRoutingTable() {
-		Clock clock = mock(Clock.class);
-		Clock.setInstance(clock);
-		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor
-				.forClass(Event.class);
-		doNothing().when(clock).addEvent(eventCaptor.capture());
-		when(clock.getCurrentTime()).thenReturn(11L);
-		Router router = new Router(4);
+		// given
+		int numberOfPorts = 4;
+		Router router = new Router(numberOfPorts);
+		for (int i = 0; i < numberOfPorts; ++i) {
+			router.getPort(i).conntectCalble(new Cable());
+			router.setPort(i, spy(router.getPort(i)));
+		}
 		router.addRouting("testowy", router.getPort(2));
 		Package pack = new Package();
 		pack.setDestinationIP("testowy");
-		PortSendsEvent expected = new PortSendsEvent(clock.getCurrentTime()
-				+ router.getDelay(), router.getPort(2), pack);
+
+		// when
 		router.acceptPackage(pack, router.getPort(0));
-		List<Event> capturedEvent = eventCaptor.getAllValues();
-		assertEquals(capturedEvent.size(), 1);
-		assertEquals(capturedEvent.get(0).toString(), expected.toString());
+
+		// then
+		verify(router.getPort(0), never()).sendPackage(any());
+		verify(router.getPort(1), never()).sendPackage(any());
+		verify(router.getPort(2)).sendPackage(any());
+		verify(router.getPort(3), never()).sendPackage(any());
 
 	}
 
@@ -80,7 +84,11 @@ public class RouterTest {
 		doNothing().when(clock).addEvent(eventCaptor.capture());
 		when(clock.getCurrentTime()).thenReturn(11L);
 
-		Router router = new Router(4);
+		int numberOfPorts = 4;
+		Router router = new Router(numberOfPorts);
+		for (int i = 0; i < numberOfPorts; ++i) {
+			router.getPort(i).conntectCalble(new Cable());
+		}
 		Package pack = new Package(PackageType.DHCP, null);
 		pack.setSourceMAC("aaaaaa");
 		router.acceptPackage(pack, router.getPort(0));
@@ -101,8 +109,10 @@ public class RouterTest {
 		when(clock.getCurrentTime()).thenReturn(11L);
 		Properties config = new Properties();
 		config.setProperty("numbersOfPorts", "4");
-
 		Router router = new Router(config);
+		for (int i = 0; i < 4; ++i) {
+			router.getPort(i).conntectCalble(new Cable());
+		}
 		Package pack = new Package(PackageType.DHCP, null);
 		pack.setSourceMAC("aaaaaa");
 		router.acceptPackage(pack, router.getPort(0));
@@ -127,6 +137,9 @@ public class RouterTest {
 		config.setProperty("DHCPstartIP", "192.168.0.1");
 
 		Router router = new Router(config);
+		for (int i = 0; i < 4; ++i) {
+			router.getPort(i).conntectCalble(new Cable());
+		}
 		Package pack = new Package(PackageType.ECHO_REQUEST, "wiadomosc");
 		pack.setSourceMAC("aaaaaa");
 		pack.setDestinationIP("192.168.222.222");
@@ -143,27 +156,26 @@ public class RouterTest {
 
 	@Test
 	public void testRouting() {
-		Clock clock = mock(Clock.class);
-		Clock.setInstance(clock);
-		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor
-				.forClass(Event.class);
-		doNothing().when(clock).addEvent(eventCaptor.capture());
-		when(clock.getCurrentTime()).thenReturn(11L);
+		// given
+
 		Properties config = new Properties();
 		config.setProperty("numbersOfPorts", "4");
-
 		Router router = new Router(config);
+		for (int i = 0; i < 4; ++i) {
+			router.getPort(i).conntectCalble(new Cable());
+			router.setPort(i, spy(router.getPort(i)));
+		}
 		Package pack = new Package(PackageType.ECHO_REQUEST, "wiadomosc");
 		pack.setSourceMAC("aaaaaa");
 		pack.setDestinationIP(new IPAddress(router.getIP(2)).increment());
-
+		// when
 		router.acceptPackage(pack, router.getPort(0));
-		List<Event> capturedEvent = eventCaptor.getAllValues();
-		assertEquals(1, capturedEvent.size());
-		PortSendsEvent event = ((PortSendsEvent) capturedEvent.get(0));
 
-		assertEquals(1, capturedEvent.size());
-		assertEquals(event.getPort(), router.getPort(2));
+		// then
+		verify(router.getPort(0), never()).sendPackage(any());
+		verify(router.getPort(1), never()).sendPackage(any());
+		verify(router.getPort(2)).sendPackage(any());
+		verify(router.getPort(3), never()).sendPackage(any());
 	}
 
 	@Test
@@ -208,26 +220,26 @@ public class RouterTest {
 
 	@Test
 	public void routerCanRespnseForPingTest() {
-		Clock clock = mock(Clock.class);
-		Clock.setInstance(clock);
-		ArgumentCaptor<PortSendsEvent> eventCaptor = ArgumentCaptor
-				.forClass(PortSendsEvent.class);
-		doNothing().when(clock).addEvent(eventCaptor.capture());
-		when(clock.getCurrentTime()).thenReturn(11L);
+		// given
+		ArgumentCaptor<Package> eventCaptor = ArgumentCaptor
+				.forClass(Package.class);
 		Router router = new Router(1);
+		router.setPort(0, spy(router.getPort(0)));
+		doNothing().when(router.getPort(0)).sendPackage(eventCaptor.capture());
 		router.setIpForPort(0, new IPAddress("192.158.2.55"));
 		Package pack = new Package();
 		pack.setSourceIP("192.158.2.1");
 		pack.setDestinationIP("192.158.2.55");
 		pack.setType(PackageType.ECHO_REQUEST);
+
+		// when
 		router.acceptPackage(pack, router.getPort(0));
-		PortSendsEvent capturedEvent = eventCaptor.getValue();
-		assertEquals(capturedEvent.getPort(), router.getPort(0));
-		assertEquals(capturedEvent.getPackage().getType(),
-				PackageType.ECHO_REPLY);
-		assertEquals(capturedEvent.getPackage().getSourceIP().toString(),
-				"192.158.2.55");
-		assertEquals(capturedEvent.getPackage().getDestinationIP().toString(),
+
+		// then
+		Package capturedPackage = eventCaptor.getValue();
+		assertEquals(capturedPackage.getType(), PackageType.ECHO_REPLY);
+		assertEquals(capturedPackage.getSourceIP().toString(), "192.158.2.55");
+		assertEquals(capturedPackage.getDestinationIP().toString(),
 				"192.158.2.1");
 	}
 

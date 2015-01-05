@@ -8,12 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
-import pl.edu.pk.iti.copperAnt.simulation.Clock;
-import pl.edu.pk.iti.copperAnt.simulation.events.CableReceivesEvent;
-import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Port {
-	private static final Logger log = LoggerFactory.getLogger("computer_logs");
+	static final Logger log = LoggerFactory.getLogger("computer_logs");
 	Cable cable;
 	final Device device;
 	final String MAC;
@@ -22,6 +19,7 @@ public class Port {
 	Set<Package> buffor;
 	int bufforSize = 100;
 	int bufforFreeSpace = bufforSize;
+	PortSendingStrategy portSendingStrategy = new PortSendingStrategyWithCSMACD();
 
 	public Device getDevice() {
 		return device;
@@ -96,24 +94,8 @@ public class Port {
 	}
 
 	public void sendPackage(Package pack) {
-		Clock clock = Clock.getInstance();
 		if (getCable() != null) {
-			if (getCable().getState() == CableState.IDLE) {
-				removePackFromBuffor(pack);
-				if (getCable() != null) {
-					Clock.getInstance().addEvent(
-							new CableReceivesEvent(clock.getCurrentTime(),
-									this, pack));
-				} else {
-					log.debug("Dropping package, cable not inserted!");
-				}
-			} else {
-				if (thereIsEnoughSpaceForPackageInBuffor(pack)) {
-					addPackToBuffor(pack);
-					clock.addEvent(new PortSendsEvent(clock.getCurrentTime()
-							+ new Random().nextInt(100), this, pack));
-				}
-			}
+			portSendingStrategy.sendPackage(pack, this);
 		}
 	}
 
@@ -139,7 +121,7 @@ public class Port {
 		this.controlDestinationMacOfPackages = controlDestinationMacOfPackages;
 	}
 
-	private void addPackToBuffor(Package pack) {
+	void addPackToBuffor(Package pack) {
 		if (!thereIsEnoughSpaceForPackageInBuffor(pack)) {
 			return;
 		}
@@ -149,11 +131,11 @@ public class Port {
 
 	}
 
-	private boolean thereIsEnoughSpaceForPackageInBuffor(Package pack) {
+	boolean thereIsEnoughSpaceForPackageInBuffor(Package pack) {
 		return pack.getSize() <= bufforFreeSpace;
 	}
 
-	private void removePackFromBuffor(Package pack) {
+	void removePackFromBuffor(Package pack) {
 		if (buffor.remove(pack)) {
 			this.bufforFreeSpace += pack.getSize();
 		}
@@ -166,4 +148,13 @@ public class Port {
 		buffor.clear();
 		bufforFreeSpace = bufforSize;
 	}
+
+	public void enableCSMACD(boolean enable) {
+		if (enable) {
+			this.portSendingStrategy = new PortSendingStrategyWithCSMACD();
+		} else {
+			this.portSendingStrategy = new PortSendingStrategyWithoutCSMACD();
+		}
+	}
+
 }

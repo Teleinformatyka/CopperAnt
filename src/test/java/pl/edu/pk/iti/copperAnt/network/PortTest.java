@@ -132,6 +132,23 @@ public class PortTest {
 	}
 
 	@Test
+	public void doNotBufferPackagesWhenBufferingIsDisabled() {
+		Port port = new Port(mock(Device.class));
+		port.enableCSMACD(false);
+		Cable cableSpy = spy(new Cable());
+		cableSpy.insertInto(new Port(mock(Device.class)));
+		port.conntectCalble(cableSpy);
+		// when
+		cableSpy.setState(CableState.BUSY);
+		port.sendPackage(new Package());
+		Clock.getInstance().//
+				withFinishCondition(new EmptyListFinishCondition()).//
+				run();
+		// then
+		verify(cableSpy).receivePackage(any(), any());
+	}
+
+	@Test
 	public void canSendBufferedPackagesAfterCableStateChange() {
 		Port port = new Port(mock(Device.class));
 		Cable cableSpy = spy(new Cable());
@@ -150,6 +167,5 @@ public class PortTest {
 		clock.run();
 		// then
 		verify(cableSpy).receivePackage(any(), any());
-
 	}
 }

@@ -127,6 +127,7 @@ public class RouterTest {
 
 	@Test
 	public void testTTl0() {
+		// given
 		Clock clock = mock(Clock.class);
 		Clock.setInstance(clock);
 		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor
@@ -144,7 +145,7 @@ public class RouterTest {
 		Package pack = new Package(PackageType.ECHO_REQUEST, "wiadomosc");
 		pack.setSourceMAC("aaaaaa");
 		pack.setDestinationIP("192.168.222.222");
-		for (int i = 0; i < 101; ++i)
+		for (int i = 0; i < 256; ++i)
 			pack.validTTL();
 		router.acceptPackage(pack, router.getPort(0));
 		List<Event> capturedEvent = eventCaptor.getAllValues();

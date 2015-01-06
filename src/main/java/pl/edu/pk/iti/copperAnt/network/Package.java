@@ -1,11 +1,11 @@
 package pl.edu.pk.iti.copperAnt.network;
 
 public class Package {
-	private String sourceMAC;
-	private String destinationMAC;
-	private String sourceIP;
-	private String destinationIP;
-	private int ttl = 10;
+	private String sourceMAC = "";
+	private String destinationMAC = "";
+	private String sourceIP = "";
+	private String destinationIP = "";
+	private int ttl = 255;
 	private String content = "";
 
 	private String header;

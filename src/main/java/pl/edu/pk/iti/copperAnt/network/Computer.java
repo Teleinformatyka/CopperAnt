@@ -99,18 +99,17 @@ public class Computer extends Device implements WithControl {
 			}
 			break;
 		case ARP_REQ:
-			if (pack.getContent() == null
-					&& pack.getHeader() == this.ip.toString()) {
+			if (pack.getHeader().equals(this.ip.toString())) {
 				Package outPack = new Package(PackageType.ARP_REP,
 						this.port.getMAC());
 				// FIXME: ----------------------------------------------
 				outPack.setDestinationIP(pack.getSourceIP());
 				outPack.setDestinationMAC(pack.getSourceMAC());
+				outPack.setSourceIP(this.ip.toString());
+				outPack.setSourceMAC(this.port.getMAC());
 				// ---------------------------------------------
 				addPortSendsEvent(outPack);
 
-			} else {
-				arpTable.put(pack.getSourceIP(), pack.getContent());
 			}
 			break;
 		case ARP_REP:
@@ -196,9 +195,14 @@ public class Computer extends Device implements WithControl {
 	}
 
 	private void sendArpRqFor(String destinationIP) {
-		Package pack = new Package(PackageType.ARP_REQ, this.ip.toString());
+		Package pack = new Package(PackageType.ARP_REQ, destinationIP);
 		pack.setDestinationMAC(Package.MAC_BROADCAST);
 		sendPackage(pack);
+	}
+
+	public void setPort(Port port) {
+		this.port = port;
+
 	}
 
 }

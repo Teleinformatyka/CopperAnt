@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.SwitchControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.simulation.Clock;
+import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Switch extends Device implements WithControl {
 	private static final Logger switch_log = LoggerFactory
@@ -74,13 +76,14 @@ public class Switch extends Device implements WithControl {
 
 		if (outPort != null) {
 			log.debug("Known MAC address. Send to port");
-			outPort.sendPackage(pack);
+			addPortSendsEvent(outPort, pack);
+
 		} else {
 			log.debug("Unknown MAC " + destinationMAC
 					+ " address. Send to all ports");
 			for (Port port : ports) {
 				if (port != inPort) {
-					port.sendPackage(pack);
+					addPortSendsEvent(port, pack);
 				}
 			}
 		}
@@ -97,5 +100,10 @@ public class Switch extends Device implements WithControl {
 
 	public HashMap<String, Port> getMacTable() {
 		return macTable;
+	}
+
+	private void addPortSendsEvent(Port port, Package pack) {
+		long time = Clock.getInstance().getCurrentTime() + getDelay();
+		Clock.getInstance().addEvent(new PortSendsEvent(time, port, pack));
 	}
 }

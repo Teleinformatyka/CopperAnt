@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.RouterControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.simulation.Clock;
+import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Router extends Device implements WithControl {
 
@@ -187,22 +189,25 @@ public class Router extends Device implements WithControl {
 
 					Port port = trip.getValue0();
 					if (port != inPort) {
-						port.sendPackage(pack);
+						addPortSendsEvent(port, pack);
 					}
 				}
 				return;
 			}
 
 		}
+		addPortSendsEvent(outPort, response);
 
-		outPort.sendPackage(response);
+	}
 
+	private void addPortSendsEvent(Port port, Package pack) {
+		long time = Clock.getInstance().getCurrentTime() + getDelay();
+		Clock.getInstance().addEvent(new PortSendsEvent(time, port, pack));
 	}
 
 	@Override
 	public int getDelay() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	public RouterControl getControl() {

@@ -18,7 +18,7 @@ public class CableSendsEvent extends Event {
 		super(time);
 		this.port = port;
 		this.pack = pack;
-		this.cable = port.getCable();
+		this.cable = port != null ? port.getCable() : null;
 
 	}
 

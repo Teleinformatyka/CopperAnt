@@ -26,7 +26,7 @@ public class ComputerSendsEventTest {
 		when(clock.getCurrentTime()).thenReturn(11L);
 		// when
 		Computer computer = new Computer();
-		new ComputerSendsEvent(1L, computer, new Package())
+		new ComputerInitializeTrafficEvent(1L, computer, new Package())
 				.withIntervalGenerator(new ConstantTimeIntervalGenerator(10))
 				.run();
 

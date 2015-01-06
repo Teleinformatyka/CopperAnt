@@ -1,8 +1,8 @@
 package pl.edu.pk.iti.copperAnt.network;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -11,9 +11,8 @@ import org.slf4j.LoggerFactory;
 import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
-import pl.edu.pk.iti.copperAnt.simulation.DistributionTimeIntervalGenerator;
-import pl.edu.pk.iti.copperAnt.simulation.events.ARPEvent;
-import pl.edu.pk.iti.copperAnt.simulation.events.ComputerSendsEvent;
+import pl.edu.pk.iti.copperAnt.simulation.events.ComputerInitializeTrafficEvent;
+import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -27,8 +26,6 @@ public class Computer extends Device implements WithControl {
 	private IPAddress ip;
 	private ComputerControl control;
 	private HashMap<String, String> arpTable = new HashMap<String, String>();
-	private Clock clock;
-	private static int TIMEOUT_ADDRESS_RESOLVE = 10;
 	private static final Logger log = LoggerFactory.getLogger(Computer.class);
 	private Multimap<String, Package> packageQueue = HashMultimap.create(); // Ip
 																			// package
@@ -49,7 +46,7 @@ public class Computer extends Device implements WithControl {
 		this.arpTable.put(ip, mac);
 	}
 
-	public boolean knownHost(String ip) {
+	public boolean hostIsKnown(String ip) {
 		return arpTable.containsKey(ip);
 	}
 
@@ -88,6 +85,8 @@ public class Computer extends Device implements WithControl {
 		case ECHO_REQUEST:
 			// TODO: add event to pong
 			break;
+		default:
+			break;
 
 		}
 	}
@@ -108,7 +107,7 @@ public class Computer extends Device implements WithControl {
 				outPack.setDestinationIP(pack.getSourceIP());
 				outPack.setDestinationMAC(pack.getSourceMAC());
 				// ---------------------------------------------
-				port.sendPackage(outPack);
+				addPortSendsEvent(outPack);
 
 			} else {
 				arpTable.put(pack.getSourceIP(), pack.getContent());
@@ -118,69 +117,42 @@ public class Computer extends Device implements WithControl {
 			arpTable.put(pack.getSourceIP(), pack.getContent());
 			tryToSendPackagesFromQueue();
 			break;
+		default:
+			break;
 
 		}
 	}
 
 	private void tryToSendPackagesFromQueue() {
 		for (String toSendIP : packageQueue.keySet()) {
-			if (this.knownHost(toSendIP)) {
+			if (this.hostIsKnown(toSendIP)) {
 				for (Package toSend : packageQueue.get(toSendIP)) {
 					toSend.setDestinationMAC(this.getKnownHostMac(toSendIP));
-					ComputerSendsEvent event = new ComputerSendsEvent(
-							clock.getCurrentTime() + this.getDelay(), this,
-							toSend);
-					event.setIntervalGenerator(new DistributionTimeIntervalGenerator());
-					clock.addEvent(event);
+					addPortSendsEvent(toSend);
 					packageQueue.remove(toSendIP, toSend);
 				}
 			}
 		}
 	}
 
-	public void initTrafic() {
+	private void addPortSendsEvent(Package pack) {
+		PortSendsEvent event = new PortSendsEvent(Clock.getInstance()
+				.getCurrentTime() + this.getDelay(), port, pack);
+		Clock.getInstance().addEvent(event);
+	}
+
+	public void initTrafic(IPAddress destinationIp) {
 		if (this.ip == null) {
 			return;
 		}
 		Clock clock = Clock.getInstance();
 		long time = clock.getCurrentTime() + this.getDelay();
 
-		ComputerSendsEvent event = null;
-
 		Package pack = new Package(PackageType.ECHO_REQUEST, UUID.randomUUID()
 				.toString());
-		pack.setSourceIP(this.ip.toString());
-		IPAddress dest = this.ip;
-		Random generator = new Random();
-		// if (generator.nextBoolean()) {
-		Set<String> ipAddreses = arpTable.keySet();
-		for (String ip : arpTable.keySet()) {
-			if (generator.nextInt(100) > 50) {
-				dest = new IPAddress(ip);
-				break;
-			}
-		}
-		/*
-		 * } else { dest.set(generator.nextInt(4) + 1, generator.nextInt(254) +
-		 * 1); }
-		 */
-		pack.setDestinationIP(dest.toString());
-		String destMAC = null;
-		if (arpTable.containsKey(dest.toString())) {
-			destMAC = arpTable.get(dest.toString());
-			pack.setDestinationMAC(destMAC);
-			event = new ComputerSendsEvent(time, this, pack);
-			event.setIntervalGenerator(new DistributionTimeIntervalGenerator());
-		} else {
-			Package resolvePack = new Package(PackageType.ARP_REQ,
-					dest.toString());
-			resolvePack.setDestinationMAC(Package.MAC_BROADCAST);
-			resolvePack.setDestinationIP(dest.toString());
-
-			event = new ARPEvent(time + getDelay(), this, resolvePack);
-			packageQueue.put(dest.toString(), pack);
-
-		}
+		pack.setDestinationIP(destinationIp.toString());
+		ComputerInitializeTrafficEvent event = new ComputerInitializeTrafficEvent(
+				time, this, pack);
 
 		clock.addEvent(event);
 	}
@@ -195,7 +167,7 @@ public class Computer extends Device implements WithControl {
 		}
 
 		pack.setDestinationMAC(Package.MAC_BROADCAST);
-		port.sendPackage(pack);
+		addPortSendsEvent(pack);
 	}
 
 	@Override
@@ -208,4 +180,25 @@ public class Computer extends Device implements WithControl {
 			return this.ip.toString();
 		return null;
 	}
+
+	public void sendPackage(Package pack) {
+		pack.setSourceIP(getIP());
+		pack.setSourceMAC(this.port.getMAC());
+		if (isNotBlank(pack.getDestinationMAC())) {
+			addPortSendsEvent(pack);
+		} else {
+			if (isNotBlank(pack.getDestinationIP())) {
+				packageQueue.put(pack.getDestinationIP(), pack);
+				sendArpRqFor(pack.getDestinationIP());
+			}
+		}
+
+	}
+
+	private void sendArpRqFor(String destinationIP) {
+		Package pack = new Package(PackageType.ARP_REQ, this.ip.toString());
+		pack.setDestinationMAC(Package.MAC_BROADCAST);
+		sendPackage(pack);
+	}
+
 }

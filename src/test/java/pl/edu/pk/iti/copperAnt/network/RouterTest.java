@@ -43,6 +43,7 @@ public class RouterTest {
 		pack.setSourceMAC("96:66:d5:8d:3b:cb");
 		// when
 		router.acceptPackage(pack, router.getPort(0));
+		Clock.getInstance().tick();
 		// then
 		verify(router.getPort(0), never()).sendPackage(any());
 		verify(router.getPort(1)).sendPackage(any());
@@ -66,7 +67,7 @@ public class RouterTest {
 
 		// when
 		router.acceptPackage(pack, router.getPort(0));
-
+		Clock.getInstance().tick();
 		// then
 		verify(router.getPort(0), never()).sendPackage(any());
 		verify(router.getPort(1), never()).sendPackage(any());
@@ -170,7 +171,7 @@ public class RouterTest {
 		pack.setDestinationIP(new IPAddress(router.getIP(2)).increment());
 		// when
 		router.acceptPackage(pack, router.getPort(0));
-
+		Clock.getInstance().tick();
 		// then
 		verify(router.getPort(0), never()).sendPackage(any());
 		verify(router.getPort(1), never()).sendPackage(any());
@@ -234,7 +235,7 @@ public class RouterTest {
 
 		// when
 		router.acceptPackage(pack, router.getPort(0));
-
+		Clock.getInstance().tick();
 		// then
 		Package capturedPackage = eventCaptor.getValue();
 		assertEquals(capturedPackage.getType(), PackageType.ECHO_REPLY);

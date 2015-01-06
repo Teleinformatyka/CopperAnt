@@ -31,7 +31,7 @@ public class TwoComputersSimulationWithGuiSandbox extends
 		simulationCanvas.addControlOf(computer1, 0, 0);
 		simulationCanvas.addControlOf(computer2, 100, 0);
 
-		computer1.initTrafic();
+		computer1.initTrafic(new IPAddress("192.168.1.2"));
 		Task<Void> task = new Task<Void>() {
 
 			@Override

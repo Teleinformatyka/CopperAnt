@@ -9,7 +9,8 @@ public class PortSendingStrategyWithoutCSMACD implements PortSendingStrategy {
 		if (port.getCable() != null) {
 			Clock.getInstance().addEvent(
 					new CableReceivesEvent(
-							Clock.getInstance().getCurrentTime(), port, pack));
+							Clock.getInstance().getCurrentTime() + 1, port,
+							pack));
 		} else {
 			Port.log.debug("Dropping package, cable not inserted!");
 		}

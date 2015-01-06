@@ -7,7 +7,7 @@ import pl.edu.pk.iti.copperAnt.network.Computer;
 import pl.edu.pk.iti.copperAnt.network.Package;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
 
-public class ARPEvent extends ComputerSendsEvent {
+public class ARPEvent extends ComputerInitializeTrafficEvent {
 	private static final Logger log = LoggerFactory.getLogger(ARPEvent.class);
 
 	private Event eventAfter;
@@ -23,7 +23,7 @@ public class ARPEvent extends ComputerSendsEvent {
 
 	@Override
 	public void run() {
-		if (!this.computer.knownHost(this.pack.getContent())) {
+		if (!this.computer.hostIsKnown(this.pack.getContent())) {
 			Clock.getInstance().addEvent(
 					new PortSendsEvent(time, this.computer.getPort(), pack));
 		}

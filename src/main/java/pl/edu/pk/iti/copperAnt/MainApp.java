@@ -1,11 +1,8 @@
 package pl.edu.pk.iti.copperAnt;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -13,6 +10,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.edu.pk.iti.copperAnt.gui.MenuController;
 import pl.edu.pk.iti.copperAnt.gui.SimulationCanvas;
 
 
@@ -31,12 +29,10 @@ public class MainApp extends Application {
 		VBox box = new VBox();
         Scene scene = new Scene(box, 500, 500);
         stage.setScene(scene);
-        stage.setTitle("Scroll Pane Main App");
+        stage.setTitle("CopperAnt");
 		new MenuController(stage,sp,box, simulationCanvas);
         box.getChildren().add(sp);
         VBox.setVgrow(sp, Priority.ALWAYS);
-        
-		
         
         vb.getChildren().add(simulationCanvas);
 

@@ -7,22 +7,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
-public class PortControl extends Control {
-	private static final int defaultIconHeight = 14;
-	private static final int defaultIconWidth = 14;
-	private int width;
-	private int height;
+public class PortControl extends DeviceControl {
 	private DiodeControl redDiode;
 	private DiodeControl greenDiode;
 	private boolean isOn;
 
 	public PortControl() {
-		this(defaultIconWidth, defaultIconHeight);
+		super();
 	}
 
 	public PortControl(int width, int height) {
-		this.width = width;
-		this.height = height;
 		Image image = new Image(PortControl.class.getResource(
 				"/images/portMini.png").toExternalForm(), width, height, false,
 				false);

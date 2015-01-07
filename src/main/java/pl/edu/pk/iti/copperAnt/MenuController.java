@@ -14,6 +14,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.handler.MessageContext.Scope;
 
+import org.junit.runner.Computer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -21,7 +22,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
+import pl.edu.pk.iti.copperAnt.gui.PortControl;
+import pl.edu.pk.iti.copperAnt.gui.RouterControl;
 import pl.edu.pk.iti.copperAnt.gui.SimulationCanvas;
+import pl.edu.pk.iti.copperAnt.gui.SwitchControl;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -31,6 +36,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -39,16 +45,16 @@ import javafx.stage.WindowEvent;
 public class MenuController {
 	Stage stage;
 	ScrollPane scrollPane;
-	BorderPane borderPane;
-	
+	VBox vbox;
+	private SimulationCanvas simulationCanvas;
 
 	private static final Logger log = LoggerFactory.getLogger(MenuController.class);
 
-	public MenuController(Stage stage, ScrollPane scrollPane, BorderPane borderPane) {
-		this.borderPane = borderPane;
+	public MenuController(Stage stage, ScrollPane scrollPane, VBox vbox, SimulationCanvas simulationCanvas) {
+		this.vbox = vbox;
 		this.scrollPane = scrollPane;
 		this.stage = stage;
-		
+		this.simulationCanvas = simulationCanvas;
 		createMenu();
 	}
 	
@@ -97,7 +103,7 @@ public class MenuController {
 				helpAuthors.setOnAction(e -> helpAuthors());
 			menuHelp.getItems().add(helpAuthors);
 
-		borderPane.setTop(menuBar);
+		vbox.getChildren().add(menuBar);
 	}
 	
 
@@ -105,23 +111,38 @@ public class MenuController {
 		//load
 		private void fileLoad() {
 			try{
+				simulationCanvas = new SimulationCanvas();
 				String xmlFile = "devices.xml";
 		        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		        DocumentBuilder builder;
 				builder = factory.newDocumentBuilder();
 		        Document document = builder.parse(new File(xmlFile));
-	
 		        NodeList nodeList = document.getDocumentElement().getChildNodes();
 		        for (int i = 0; i < nodeList.getLength(); i++) {
 		        	org.w3c.dom.Node node = nodeList.item(i);
 		        	
 		            if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
 		                Element elem = (Element) node;
-	
+
+		                String controlName = elem.getNodeName();
 		            	String xpos = elem.getElementsByTagName("xPos").item(0).getChildNodes().item(0).getNodeValue();
 		            	String ypos = elem.getElementsByTagName("yPos").item(0).getChildNodes().item(0).getNodeValue();
 		            	
-		            	System.out.println("X: " + xpos + " Y: " + ypos );
+		            	System.out.println(controlName + "  X: " + xpos + " Y: " + ypos );
+		            	switch (controlName){
+		            	case "ComputerControl":
+			            	simulationCanvas.addControl(new ComputerControl(new PortControl()), Double.parseDouble(xpos), Double.parseDouble(ypos));
+		            		break;
+
+		            	case "RouterControl":
+			            	simulationCanvas.addControl(RouterControl.prepareRouterWithPorts(4), Double.parseDouble(xpos), Double.parseDouble(ypos));
+		            		break;
+
+		            	case "SwitchControl":
+			            	simulationCanvas.addControl(SwitchControl.prepareSwithcWithPorts(4), Double.parseDouble(xpos), Double.parseDouble(ypos));
+		            		break;
+		            	
+		            	}
 		            }
 		        }
 				
@@ -141,7 +162,7 @@ public class MenuController {
 		
 		//save
 		private void fileSave(){
-			SimulationCanvas  simCan = (SimulationCanvas) scrollPane.getContent();
+			SimulationCanvas  simCan = simulationCanvas;
 			
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder docBuilder;

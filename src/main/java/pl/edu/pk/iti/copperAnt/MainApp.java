@@ -1,18 +1,23 @@
 package pl.edu.pk.iti.copperAnt;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import pl.edu.pk.iti.copperAnt.gui.MenuController;
 import pl.edu.pk.iti.copperAnt.gui.SimulationCanvas;
 
 public class MainApp extends Application {
-
+	final ScrollPane sp = new ScrollPane();
+    final VBox vb = new VBox();
+    final SimulationCanvas simulationCanvas = new SimulationCanvas();
+    
 	private static final Logger dev_log = LoggerFactory.getLogger("dev_logs");
 
 	public static void main(String[] args) throws Exception {
@@ -20,30 +25,20 @@ public class MainApp extends Application {
 	}
 
 	public void start(Stage stage) throws Exception {
-		dev_log.info("Starting Hello JavaFX and Maven demonstration application");
+		VBox box = new VBox();
+        Scene scene = new Scene(box, 500, 500);
+        stage.setScene(scene);
+        stage.setTitle("CopperAnt");
+		new MenuController(stage,sp,box, simulationCanvas);
+        box.getChildren().add(sp);
+        VBox.setVgrow(sp, Priority.ALWAYS);
+        
+        vb.getChildren().add(simulationCanvas);
 
-		String fxmlFile = "/fxml/main.fxml";
-		dev_log.debug("Loading FXML for main view from: {}", fxmlFile);
-		FXMLLoader loader = new FXMLLoader();
-		BorderPane rootNode = (BorderPane) loader.load(getClass()
-				.getResourceAsStream(fxmlFile));
-
-		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setPrefSize(400, 400);
-		scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-		scrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
-		scrollPane.setContent(new SimulationCanvas());
-
-		rootNode.setCenter(scrollPane);
-
-		new MenuController(stage, scrollPane, rootNode);
-
-		dev_log.debug("Showing JFX scene");
-		Scene scene = new Scene(rootNode, 500, 500);
-		stage.setTitle("CopperAnt");
-		stage.setScene(scene);
-		stage.setMaximized(true);
+        sp.setVmax(440);
+        sp.setPrefSize(115, 150);
+        sp.setContent(vb);
+        
 		stage.show();
 	}
-
 }

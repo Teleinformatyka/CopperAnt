@@ -2,17 +2,20 @@ package pl.edu.pk.iti.copperAnt.gui;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class SimulationCanvas extends Control {
+public class SimulationCanvas extends Region {
 	private double nextDeviceX;
 	private double nextDeviceY;
+	private ContextMenu contextMenu;
 
 	public SimulationCanvas() {
 		setWidth(1900);
@@ -32,6 +35,7 @@ public class SimulationCanvas extends Control {
 			public void handle(ContextMenuEvent event) {
 				nextDeviceX = event.getSceneX();
 				nextDeviceY = event.getSceneY();
+				contextMenu.show(rectangle, Side.TOP, nextDeviceX, nextDeviceY+70);
 			}
 		});
 	}
@@ -59,7 +63,7 @@ public class SimulationCanvas extends Control {
 		// addHubItem.setOnAction(e -> add(new ComputerControl()));
 		// contextMenu.getItems().add(addHubItem);
 
-		setContextMenu(contextMenu);
+		this.contextMenu = contextMenu;
 	}
 
 	private void addControl(Control control) {

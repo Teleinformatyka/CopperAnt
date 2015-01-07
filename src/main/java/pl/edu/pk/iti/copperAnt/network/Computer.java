@@ -73,7 +73,8 @@ public class Computer extends Device implements WithControl {
 	public void acceptPackage(Package pack, Port inPort) {
 		log.info("Computer received package " + pack);
 		acceptPackegesWhichDoesNotRequireIP(pack);
-		if (this.ip == null || pack.getDestinationIP() != this.ip.toString()) {
+		if (this.ip == null
+				|| !pack.getDestinationIP().equals(this.ip.toString())) {
 			return;
 		}
 		acceptPackegesWhichRequireIP(pack);
@@ -83,7 +84,12 @@ public class Computer extends Device implements WithControl {
 	private void acceptPackegesWhichRequireIP(Package pack) {
 		switch (pack.getType()) {
 		case ECHO_REQUEST:
-			// TODO: add event to pong
+			Package outPack = new Package(PackageType.ECHO_REPLY);
+			outPack.setDestinationIP(pack.getSourceIP());
+			outPack.setDestinationMAC(pack.getSourceMAC());
+			outPack.setSourceIP(this.ip.toString());
+			outPack.setSourceMAC(this.port.getMAC());
+			addPortSendsEvent(outPack);
 			break;
 		default:
 			break;
@@ -102,12 +108,10 @@ public class Computer extends Device implements WithControl {
 			if (pack.getHeader().equals(this.ip.toString())) {
 				Package outPack = new Package(PackageType.ARP_REP,
 						this.port.getMAC());
-				// FIXME: ----------------------------------------------
 				outPack.setDestinationIP(pack.getSourceIP());
 				outPack.setDestinationMAC(pack.getSourceMAC());
 				outPack.setSourceIP(this.ip.toString());
 				outPack.setSourceMAC(this.port.getMAC());
-				// ---------------------------------------------
 				addPortSendsEvent(outPack);
 
 			}

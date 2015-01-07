@@ -50,6 +50,10 @@ public class Package {
 
 	}
 
+	public Package(PackageType packageType) {
+		this(packageType, "");
+	}
+
 	public boolean validTTL() {
 		return --ttl > 0;
 	}

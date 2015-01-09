@@ -27,7 +27,8 @@ public class SwitchControl extends MultiportDeviceControl {
 		}
 		return new SwitchControl(list);
 	}
-	private void prepareContextMenu() {
+	@Override
+	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
 
 		MenuItem addComputerItem = new MenuItem("Akcja switcha");

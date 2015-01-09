@@ -1,11 +1,14 @@
 package pl.edu.pk.iti.copperAnt;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import jfxtras.scene.control.window.Window;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,5 +43,24 @@ public class MainApp extends Application {
         sp.setContent(vb);
         
 		stage.show();
+		
+		isWorkingProperty = new SimpleBooleanProperty(true);
+
+		window = new Window("Router");
+		window.setMinSize(200, 200);
+		windowIsVisible = true;
+		HBox statusHBox = new HBox();
+		Label isOnLabel = new Label();
+		isOnLabel.textProperty().bind(this.isWorkingProperty.asString());
+
+		statusHBox.getChildren().add(isOnLabel);
+		window.getContentPane().getChildren().add(statusHBox);
+		window.setVisible(windowIsVisible);
+
 	}
+	
+	private Window window;
+	private boolean windowIsVisible;
+	private SimpleBooleanProperty isWorkingProperty;
+
 }

@@ -16,6 +16,7 @@ public class RouterControl extends MultiportDeviceControl {
 	
 	private Window window;
 	private boolean windowIsVisible;
+	
 	public RouterControl(List<PortControl> portList) {
 		super(portList);
 		prepareContextMenu();
@@ -41,7 +42,9 @@ public class RouterControl extends MultiportDeviceControl {
 		}
 		return new RouterControl(list);
 	}
-	private void prepareContextMenu() {
+	
+	@Override
+	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
 
 		MenuItem addComputerItem = new MenuItem("Akcja 3");
@@ -52,14 +55,9 @@ public class RouterControl extends MultiportDeviceControl {
 		addRouterItem.setOnAction(e -> sampleAction());
 		contextMenu.getItems().add(addRouterItem);
 
-
-		// TODO
-		// MenuItem addHubItem = new MenuItem("add hub");
-		// addHubItem.setOnAction(e -> add(new ComputerControl()));
-		// contextMenu.getItems().add(addHubItem);
-
 		setContextMenu(contextMenu);
 	}
+	
 	private void sampleAction(){}
 
 	private void setListeners() {
@@ -75,10 +73,8 @@ public class RouterControl extends MultiportDeviceControl {
 				} else {
 //					isWorkingProperty.set(!isWorkingProperty.get());
 				}
-
 			}
 		});
-
 	}
 	
 }

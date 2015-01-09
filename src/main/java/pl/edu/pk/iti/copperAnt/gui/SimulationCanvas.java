@@ -1,5 +1,7 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import org.w3c.dom.NodeList;
+
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Side;
@@ -16,13 +18,15 @@ public class SimulationCanvas extends Region {
 	private double nextDeviceX;
 	private double nextDeviceY;
 	private ContextMenu contextMenu;
+	
+	private Rectangle rectangle;
 
 	public SimulationCanvas() {
 		setWidth(1900);
 		setHeight(1000);
 
 		// TODO ten prostokat to brzydki hack którego trzeba sie pozbyc
-		Rectangle rectangle = new Rectangle(getWidth(), getHeight());
+		rectangle = new Rectangle(getWidth(), getHeight());
 		rectangle.setFill(Color.WHITE);
 		rectangle.setStroke(Color.BLACK);
 		getChildren().add(rectangle);
@@ -58,11 +62,6 @@ public class SimulationCanvas extends Region {
 				.prepareSwithcWithPorts(4)));
 		contextMenu.getItems().add(addSwitchItem);
 
-		// TODO
-		// MenuItem addHubItem = new MenuItem("add hub");
-		// addHubItem.setOnAction(e -> add(new ComputerControl()));
-		// contextMenu.getItems().add(addHubItem);
-
 		this.contextMenu = contextMenu;
 	}
 
@@ -84,5 +83,10 @@ public class SimulationCanvas extends Region {
 
 	public ObservableList<Node> getControls() {
 		return getChildren();
+	}
+	
+	public void cleanScreen(){
+		this.getControls().clear();
+		this.getChildren().add(rectangle);
 	}
 }

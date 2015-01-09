@@ -51,7 +51,7 @@ public class MenuController {
 		this.stage = stage;
 		this.simulationCanvas = simulationCanvas;
 		createMenu();
-	}
+	}	
 	
 	private void createMenu() {
 		MenuBar menuBar = new MenuBar();
@@ -103,7 +103,8 @@ public class MenuController {
 
 	private void fileLoad() {
 		try {
-			simulationCanvas = new SimulationCanvas();
+//			simulationCanvas = new SimulationCanvas();
+			simulationCanvas.cleanScreen();
 			String xmlFile = "devices.xml";
 	        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder builder;
@@ -132,6 +133,9 @@ public class MenuController {
 
 	            	case "SwitchControl":
 		            	simulationCanvas.addControl(SwitchControl.prepareSwithcWithPorts(4), Double.parseDouble(xpos), Double.parseDouble(ypos));
+	            		break;
+	            	default:
+		            	System.out.println("urządzenie nie rozpoznane");
 	            		break;
 	            	
 	            	}

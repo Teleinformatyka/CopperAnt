@@ -8,12 +8,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 public class PortControl extends DeviceControl {
+	private static final int defaultIconHeight = 14;
+	private static final int defaultIconWidth = 14;
+	
 	private DiodeControl redDiode;
 	private DiodeControl greenDiode;
 	private boolean isOn;
-
+	
 	public PortControl() {
-		super();
+		this(defaultIconWidth, defaultIconHeight);
 	}
 
 	public PortControl(int width, int height) {
@@ -45,11 +48,11 @@ public class PortControl extends DeviceControl {
 	}
 
 	private void prepareDiods() {
-		redDiode = new DiodeControl(width / 2, height / 10, Color.RED);
-		redDiode.setLayoutX(width / 2);
+		redDiode = new DiodeControl((int)getWidth() / 2, (int)getHeight() / 10, Color.RED);
+		redDiode.setLayoutX((int)getWidth() / 2);
 		redDiode.turnOn();
 
-		greenDiode = new DiodeControl(width / 2, height / 10, Color.GREENYELLOW);
+		greenDiode = new DiodeControl((int)getWidth() / 2, (int)getHeight() / 10, Color.GREENYELLOW);
 		greenDiode.turnOn();
 
 		getChildren().add(redDiode);
@@ -66,7 +69,8 @@ public class PortControl extends DeviceControl {
 		return this.isOn;
 	}
 	
-	private void prepareContextMenu() {
+	@Override
+	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
 
 		MenuItem addComputerItem = new MenuItem("Akcja 1");
@@ -77,15 +81,8 @@ public class PortControl extends DeviceControl {
 		addRouterItem.setOnAction(e -> sampleAction());
 		contextMenu.getItems().add(addRouterItem);
 
-
-		// TODO
-		// MenuItem addHubItem = new MenuItem("add hub");
-		// addHubItem.setOnAction(e -> add(new ComputerControl()));
-		// contextMenu.getItems().add(addHubItem);
-
 		setContextMenu(contextMenu);
 	}
+	
 	private void sampleAction(){}
-
-
 }

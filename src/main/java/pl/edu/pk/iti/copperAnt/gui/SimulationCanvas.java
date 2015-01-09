@@ -7,7 +7,10 @@ import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -19,7 +22,7 @@ public class SimulationCanvas extends Region {
 	
 	private Rectangle rectangle;
 
-	public SimulationCanvas() {
+	public SimulationCanvas(ScrollPane sp) {
 		setWidth(1900);
 		setHeight(1000);
 
@@ -32,13 +35,20 @@ public class SimulationCanvas extends Region {
 		prepareContextMenu();
 
 		setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-
 			@Override
 			public void handle(ContextMenuEvent event) {
-				nextDeviceX = event.getSceneX();
-				nextDeviceY = event.getSceneY();
+				nextDeviceX = event.getSceneX() + sp.hvalueProperty().getValue() * sp.getContent().getBoundsInLocal().getWidth() - sp.hvalueProperty().getValue() * (-1 * (int)sp.getViewportBounds().getMinX() + (int)sp.getViewportBounds().getMaxX());
+				nextDeviceY = event.getSceneY() + sp.vvalueProperty().getValue() * sp.getContent().getBoundsInLocal().getHeight() - sp.vvalueProperty().getValue() * (-1 * (int)sp.getViewportBounds().getMinY() + (int)sp.getViewportBounds().getMaxY());
 				contextMenu.show(rectangle, Side.TOP, nextDeviceX, nextDeviceY+70);
 			}
+		});
+		
+		rectangle.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		    @Override
+		    public void handle(MouseEvent t) {
+		    	if(t.getButton() == MouseButton.PRIMARY)
+		    		contextMenu.hide();
+		    }
 		});
 	}
 
@@ -65,7 +75,6 @@ public class SimulationCanvas extends Region {
 
 	private void addControl(Control control) {
 		addControl(control, nextDeviceX, nextDeviceY);
-
 	}
 
 	public void addControl(Control control, double x, double y) {

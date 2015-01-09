@@ -1,6 +1,7 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
 import javafx.concurrent.Task;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import pl.edu.pk.iti.copperAnt.network.Cable;
 import pl.edu.pk.iti.copperAnt.network.Computer;
@@ -14,7 +15,7 @@ public class RouterSimulationWithGuiSandbox extends AbstractControlSandbox {
 	@Override
 	protected void addElements(Pane root) {
 
-		SimulationCanvas simulationCanvas = new SimulationCanvas();
+		SimulationCanvas simulationCanvas = new SimulationCanvas(new ScrollPane());
 		root.getChildren().add(simulationCanvas);
 
 		Clock.getInstance().setFinishCondition(

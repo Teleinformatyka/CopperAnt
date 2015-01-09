@@ -1,7 +1,5 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
-import org.w3c.dom.NodeList;
-
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Side;
@@ -85,7 +83,7 @@ public class SimulationCanvas extends Region {
 		return getChildren();
 	}
 	
-	public void cleanScreen(){
+	public void clearScreen(){
 		this.getControls().clear();
 		this.getChildren().add(rectangle);
 	}

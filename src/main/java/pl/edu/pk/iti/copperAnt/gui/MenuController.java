@@ -28,8 +28,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.thoughtworks.xstream.XStream;
-
 public class MenuController {
 	Stage stage;
 	ScrollPane scrollPane;
@@ -149,17 +147,8 @@ public class MenuController {
 		}
 	}
 	
-	
 	//save
 	private void fileSave(){
-
-		XStream xstream = new XStream();
-		xstream.alias("ComputerControl", ComputerControl.class);
-		xstream.setMode(XStream.NO_REFERENCES);
-		String xml = xstream.toXML(simulationCanvas.getControls().get(0));
-		System.out.println(xml);
-		
-		
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
         
@@ -199,11 +188,8 @@ public class MenuController {
         catch (TransformerException ex) {
             log.info("TransformerException ex" + ex.getMessage());
         }
-        
-		
 
         popUp.showPopupMessage(stage, "Plik xml został zapisany");
-		
 	}
 
 	private void defaultAction(){
@@ -217,5 +203,4 @@ public class MenuController {
 	private void helpAbout(){
 		popUp.showPopupMessage(stage, "O programie CopperAnt:\nsome text");
 	}
-
 }

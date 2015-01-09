@@ -23,15 +23,6 @@ public abstract class MultiportDeviceControl extends DeviceControl {
 		setHeight(placeForIconHeight);
 		drawIcon(placeForIconHeight);
 		drawPortsInBlock(portList, placeForPortsHeight);//drawPortsWithLines(portList, placeForIconHeight);
-		drawBorder();
-	}
-
-	private void drawBorder() {
-		Rectangle rectangle = new Rectangle(getWidth(), getHeight());
-		rectangle.setFill(null);
-		rectangle.setStrokeWidth(1);
-		rectangle.setStroke(Color.BLACK);
-		getChildren().add(rectangle);
 	}
 
 	private void drawIcon(double placeForIconHeight) {

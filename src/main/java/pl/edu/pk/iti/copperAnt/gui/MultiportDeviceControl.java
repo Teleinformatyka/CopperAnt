@@ -11,7 +11,7 @@ import javafx.scene.shape.Rectangle;
 import jfxtras.labs.util.event.MouseControlUtil;
 
 public abstract class MultiportDeviceControl extends DeviceControl {
-	private static final double placeForIconHeight = 210;
+	protected static final double placeForIconHeight = 210;
 	private static final double placeForPortsHeight = placeForIconHeight/1.8;
 
 	public MultiportDeviceControl(List<PortControl> portList) {

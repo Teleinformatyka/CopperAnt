@@ -3,30 +3,20 @@ package pl.edu.pk.iti.copperAnt.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import jfxtras.labs.util.event.MouseControlUtil;
+import javafx.scene.layout.VBox;
 import jfxtras.scene.control.window.Window;
-import javafx.event.EventHandler;
 
 public class RouterControl extends MultiportDeviceControl {
-	
-	private Window window;
-	private boolean windowIsVisible;
 	
 	public RouterControl(List<PortControl> portList) {
 		super(portList);
 		prepareContextMenu();
-		
-		setListeners();
-		window = new Window("Router");
-		window.setMinSize(200, 200);
-		windowIsVisible = false;
-		window.getContentPane().getChildren().add(new HBox());
-		window.setVisible(windowIsVisible);
 	}
 
 	@Override
@@ -58,23 +48,15 @@ public class RouterControl extends MultiportDeviceControl {
 		setContextMenu(contextMenu);
 	}
 	
-	private void sampleAction(){}
-
-	private void setListeners() {
-		MouseControlUtil.makeDraggable(this);
-		setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				windowIsVisible = !windowIsVisible;
-				window.setVisible(true);
-				System.out.println("click");
-				if (event.getClickCount() > 1) {
-				} else {
-//					isWorkingProperty.set(!isWorkingProperty.get());
-				}
-			}
-		});
+	private void sampleAction() {
+		Window window = createDefaultWindow("Router - Akcja 3", placeForIconHeight);
+		
+		VBox windowContent = new VBox();
+		windowContent.getChildren().add(new Button("button"));
+		windowContent.getChildren().add(new Button("button"));
+		windowContent.getChildren().add(new Label("label"));
+		windowContent.getChildren().add(new TextField("textfield"));
+		window.getContentPane().getChildren().add(windowContent);
 	}
 	
 }

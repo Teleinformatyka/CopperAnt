@@ -28,6 +28,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.thoughtworks.xstream.XStream;
+
 public class MenuController {
 	Stage stage;
 	ScrollPane scrollPane;
@@ -52,8 +54,9 @@ public class MenuController {
 		Menu menuHelp = new Menu("Pomoc");
 		
 		menuBar.getMenus().add(menuFile);
+		
 		MenuItem fileNew = new MenuItem("Nowy");
-		//fileNew.setOnAction(e -> fileNew(scrollPane));
+		fileNew.setOnAction(e -> defaultAction());
 		menuFile.getItems().add(fileNew);
 		
 		MenuItem fileLoad = new MenuItem("Wczytaj");
@@ -95,7 +98,6 @@ public class MenuController {
 
 	private void fileLoad() {
 		try {
-//			simulationCanvas = new SimulationCanvas();
 			simulationCanvas.clearScreen();
 			String xmlFile = "devices.xml";
 	        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -150,7 +152,13 @@ public class MenuController {
 	
 	//save
 	private void fileSave(){
-		SimulationCanvas  simCan = simulationCanvas;
+
+		XStream xstream = new XStream();
+		xstream.alias("ComputerControl", ComputerControl.class);
+		xstream.setMode(XStream.NO_REFERENCES);
+		String xml = xstream.toXML(simulationCanvas.getControls().get(0));
+		System.out.println(xml);
+		
 		
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
@@ -162,7 +170,7 @@ public class MenuController {
             Element rootElement = doc.createElement("devices");
             doc.appendChild(rootElement);
 
-			for(Node node : simCan.getControls()){
+			for(Node node : simulationCanvas.getControls()){
 				String nodeName = node.getClass().toString().substring(node.getClass().toString().lastIndexOf('.') + 1);
 				
 				Element elNode = doc.createElement(nodeName);

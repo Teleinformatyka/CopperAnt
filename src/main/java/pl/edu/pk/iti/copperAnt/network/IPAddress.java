@@ -7,7 +7,7 @@ import org.apache.commons.net.util.SubnetUtils;
 public class IPAddress {
 	private int[] ipParts = { 192, 168, 0, 1 };
 	private int[] netmaskParts = { 255, 255, 255, 0 };
-	private static final String NETMASK = "255.255.255.0";
+	public static final String NETMASK = "255.255.255.0";
 	private SubnetUtils subnet;
 	private int broadcast = 255;
 
@@ -24,6 +24,7 @@ public class IPAddress {
 		subnet = new SubnetUtils(ip, netmask);
 
 	}
+
 	public IPAddress copy() {
 		IPAddress clone = new IPAddress(this);
 		return clone;

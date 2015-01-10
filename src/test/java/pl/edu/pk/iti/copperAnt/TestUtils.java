@@ -15,4 +15,11 @@ public class TestUtils {
 				&& sourceIp.equals(pack.getSourceIP());
 	}
 
+	public static boolean checkExpectedParametersOfPackage(Package pack,
+			String sourceIp, String destinationIp, PackageType packageType) {
+		return packageType.equals(pack.getType())//
+				&& destinationIp.equals(pack.getDestinationIP())//
+				&& sourceIp.equals(pack.getSourceIP());
+	}
+
 }

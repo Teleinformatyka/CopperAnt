@@ -24,6 +24,7 @@ public class Computer extends Device implements WithControl {
 
 	private Port port;
 	private IPAddress ip;
+	private IPAddress defaultGateway;
 	private ComputerControl control;
 	private HashMap<String, String> arpTable = new HashMap<String, String>();
 	private static final Logger log = LoggerFactory.getLogger(Computer.class);
@@ -191,10 +192,29 @@ public class Computer extends Device implements WithControl {
 			addPortSendsEvent(pack);
 		} else {
 			if (isNotBlank(pack.getDestinationIP())) {
-				packageQueue.put(pack.getDestinationIP(), pack);
-				sendArpRqFor(pack.getDestinationIP());
+				if (packGoesToThisSubnet(pack)) {
+					packageQueue.put(pack.getDestinationIP(), pack);
+					sendArpRqFor(pack.getDestinationIP());
+				} else {
+					String gatewayMac = getKnownHostMac(this.defaultGateway
+							.toString());
+					if (gatewayMac == null) {
+						packageQueue.put(pack.getDestinationIP(), pack);
+						sendArpRqFor(this.defaultGateway.toString());
+					} else {
+						pack.setDestinationMAC(gatewayMac);
+						addPortSendsEvent(pack);
+					}
+				}
 			}
 		}
+
+	}
+
+	private boolean packGoesToThisSubnet(Package pack) {
+		IPAddress computerIp = new IPAddress(this.getIP());
+		return IPAddress.isInSubnet(pack.getDestinationIP(),
+				computerIp.getNetwork(), IPAddress.NETMASK);
 
 	}
 
@@ -207,6 +227,14 @@ public class Computer extends Device implements WithControl {
 	public void setPort(Port port) {
 		this.port = port;
 
+	}
+
+	public IPAddress getDefaultGateway() {
+		return defaultGateway;
+	}
+
+	public void setDefaultGateway(IPAddress defaultGateway) {
+		this.defaultGateway = defaultGateway;
 	}
 
 }

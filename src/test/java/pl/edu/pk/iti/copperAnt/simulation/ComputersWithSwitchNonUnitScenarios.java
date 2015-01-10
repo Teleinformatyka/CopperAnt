@@ -27,12 +27,12 @@ public class ComputersWithSwitchNonUnitScenarios {
 		computer1.setPort(spy(computer1.getPort()));
 		Computer computer2 = new Computer(new IPAddress("192.168.1.2"));
 		computer2.setPort(spy(computer2.getPort()));
-		Switch swotch = new Switch(2);
+		Switch _switch = new Switch(2);
 		Cable cable1 = new Cable();
-		cable1.insertInto(swotch.getPort(0));
+		cable1.insertInto(_switch.getPort(0));
 		cable1.insertInto(computer1.getPort());
 		Cable cable2 = new Cable();
-		cable2.insertInto(swotch.getPort(1));
+		cable2.insertInto(_switch.getPort(1));
 		cable2.insertInto(computer2.getPort());
 		Package pack = new Package();
 		pack.setDestinationIP(computer2.getIP());

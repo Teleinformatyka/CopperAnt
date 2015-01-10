@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Triplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +128,12 @@ public class Router extends Device implements WithControl {
 				+ pack.getSourceIP());
 		String destinationIP = pack.getDestinationIP();
 		String sourceIP = pack.getSourceIP();
+
+		if (StringUtils.isBlank(destinationIP) || StringUtils.isBlank(sourceIP)) {
+			log.debug("Pacakge from does not contains IP address. Droped.");
+			return;
+		}
+
 		Port outPort = null;
 		Package response = pack;
 		if (!pack.validTTL()) {

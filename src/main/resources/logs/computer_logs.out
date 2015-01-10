@@ -1,0 +1,17 @@
+2015-01-09 22:26:27,878 INFO (JavaFX Application Thread) [computer_logs] - New computer created with GUI
+2015-01-09 22:26:27,884 INFO (JavaFX Application Thread) [computer_logs] - New computer created with GUI
+2015-01-09 22:26:27,888 INFO (JavaFX Application Thread) [computer_logs] - New computer created with GUI
+2015-01-09 22:28:15,707 INFO (JavaFX Application Thread) [computer_logs] - New computer created with GUI
+2015-01-09 22:28:15,712 INFO (JavaFX Application Thread) [computer_logs] - New computer created with GUI
+2015-01-09 22:28:15,716 INFO (JavaFX Application Thread) [computer_logs] - New computer created with GUI
+2015-01-09 22:29:09,822 INFO (JavaFX Application Thread) [computer_logs] - New computer created with GUI
+2015-01-09 22:29:09,827 INFO (JavaFX Application Thread) [computer_logs] - New computer created with GUI
+2015-01-10 19:37:37,353 INFO (main) [computer_logs] - Dropping package! Wrong MAC! Package [sourceMAC=, destinationMAC=no:tc:or:re:ct, sourceIP=, destinationIP=, ttl=255, content=, header=, type=ECHO_REQUEST] my MAC 32:ee:ec:cf:ec:39
+2015-01-10 19:37:37,725 INFO (main) [computer_logs] - New computer created with GUI
+2015-01-10 19:37:37,725 INFO (main) [computer_logs] - New computer created without GUI
+2015-01-10 19:37:37,727 INFO (main) [computer_logs] - New computer created with GUI
+2015-01-10 19:37:37,727 INFO (main) [computer_logs] - New computer created without GUI
+2015-01-10 19:37:37,729 INFO (main) [computer_logs] - New computer created with GUI
+2015-01-10 19:37:37,729 INFO (main) [computer_logs] - New computer created without GUI
+2015-01-10 19:37:37,878 INFO (main) [computer_logs] - New computer created with GUI
+2015-01-10 19:37:37,878 INFO (main) [computer_logs] - New computer created without GUI

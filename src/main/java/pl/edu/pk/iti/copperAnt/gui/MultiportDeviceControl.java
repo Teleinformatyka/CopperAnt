@@ -3,7 +3,6 @@ package pl.edu.pk.iti.copperAnt.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -11,8 +10,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import jfxtras.labs.util.event.MouseControlUtil;
 
-public abstract class MultiportDeviceControl extends Control {
-	private static final double placeForIconHeight = 210;
+public abstract class MultiportDeviceControl extends DeviceControl {
+	protected static final double placeForIconHeight = 210;
 	private static final double placeForPortsHeight = placeForIconHeight/1.8;
 
 	public MultiportDeviceControl(List<PortControl> portList) {
@@ -24,15 +23,6 @@ public abstract class MultiportDeviceControl extends Control {
 		setHeight(placeForIconHeight);
 		drawIcon(placeForIconHeight);
 		drawPortsInBlock(portList, placeForPortsHeight);//drawPortsWithLines(portList, placeForIconHeight);
-		drawBorder();
-	}
-
-	private void drawBorder() {
-		Rectangle rectangle = new Rectangle(getWidth(), getHeight());
-		rectangle.setFill(null);
-		rectangle.setStrokeWidth(1);
-		rectangle.setStroke(Color.BLACK);
-		getChildren().add(rectangle);
 	}
 
 	private void drawIcon(double placeForIconHeight) {

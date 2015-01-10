@@ -4,4 +4,16 @@
 <xPos>0.0</xPos>
 <yPos>0.0</yPos>
 </Rectangle>
+<ComputerControl>
+<xPos>44.0</xPos>
+<yPos>184.0</yPos>
+</ComputerControl>
+<RouterControl>
+<xPos>198.0</xPos>
+<yPos>241.0</yPos>
+</RouterControl>
+<RouterControl>
+<xPos>198.0</xPos>
+<yPos>24.0</yPos>
+</RouterControl>
 </devices>

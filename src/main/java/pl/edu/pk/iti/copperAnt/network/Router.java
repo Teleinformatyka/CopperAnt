@@ -140,10 +140,12 @@ public class Router extends Device implements WithControl {
 			log.debug("Pack has not valid ttl!");
 			response = new Package(PackageType.DESTINATION_UNREACHABLE, "TTL<0");
 			response.setDestinationIP(sourceIP);
-			response.setDestinationMAC(pack.getDestinationMAC());
+			response.setDestinationMAC(pack.getSourceMAC());
 			outPort = inPort;
-
+			addPortSendsEvent(outPort, response);
+			return;
 		}
+
 		if (pack.getType() == PackageType.DHCP) {
 			// request to this router to get IP, DHCP only local network
 			if (pack.getContent() == null) {
@@ -168,6 +170,21 @@ public class Router extends Device implements WithControl {
 			response.setDestinationIP(sourceIP);
 			response.setSourceIP(destinationIP);
 			outPort = inPort;
+		} else if (pack.getType() == PackageType.ARP_REQ) {
+			int portNumber = getPortNumber(inPort);
+			String ipStringOfPort = portIP.get(portNumber).getValue1()
+					.toString();
+			if (pack.getHeader().equals(ipStringOfPort)) {
+				Package outPack = new Package(PackageType.ARP_REP,
+						inPort.getMAC());
+				outPack.setDestinationIP(pack.getSourceIP());
+				outPack.setDestinationMAC(pack.getSourceMAC());
+				outPack.setSourceIP(ipStringOfPort);
+				outPack.setSourceMAC(inPort.getMAC());
+				outPort = inPort;
+				addPortSendsEvent(outPort, outPack);
+				return;
+			}
 		}
 		if (!routingTable.containsKey(sourceIP)) {
 			log.debug("Adding source ip " + sourceIP + " to routingTable");
@@ -205,6 +222,16 @@ public class Router extends Device implements WithControl {
 		}
 		addPortSendsEvent(outPort, response);
 
+	}
+
+	private int getPortNumber(Port inPort) {
+		for (int i = 0; i < portIP.size(); i++) {
+			Triplet<Port, IPAddress, IPAddress> triplet = portIP.get(i);
+			if (triplet.getValue0().equals(inPort)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	private void addPortSendsEvent(Port port, Package pack) {

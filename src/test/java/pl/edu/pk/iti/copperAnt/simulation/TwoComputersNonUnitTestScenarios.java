@@ -64,7 +64,7 @@ public class TwoComputersNonUnitTestScenarios {
 		Package arpRQ = packageCaptor.getAllValues().get(0);
 		assertEquals(PackageType.ARP_REQ, arpRQ.getType());
 		assertEquals(Package.MAC_BROADCAST, arpRQ.getDestinationMAC());
-		assertEquals("", arpRQ.getDestinationIP());
+		assertEquals(computer2.getIP(), arpRQ.getDestinationIP());
 		assertEquals(computer1.getPort().getMAC(), arpRQ.getSourceMAC());
 		assertEquals(computer1.getIP(), arpRQ.getSourceIP());
 		assertEquals(computer2.getIP(), arpRQ.getContent());

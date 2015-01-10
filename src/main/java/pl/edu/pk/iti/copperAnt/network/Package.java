@@ -8,7 +8,7 @@ public class Package {
 	private int ttl = 255;
 	private String content = "";
 
-	private String header;
+	private String header = "";
 	private PackageType type = PackageType.ECHO_REQUEST;
 	public final static String MAC_BROADCAST = "00:00:00:00:00:00";
 

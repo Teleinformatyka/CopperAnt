@@ -58,7 +58,7 @@ public class ComputerTest {
 	@Test
 	public void arpResponseTest() {
 		// given
-		Computer computer = new Computer();
+		Computer computer = new Computer(new IPAddress("192.168.11.11"));
 		Package pack = new Package();
 		pack.setDestinationMAC(computer.getPort().getMAC());
 		pack.setType(PackageType.ARP_REP);
@@ -72,5 +72,4 @@ public class ComputerTest {
 				"00:B0:D0:86:BB:F7");
 
 	}
-
 }

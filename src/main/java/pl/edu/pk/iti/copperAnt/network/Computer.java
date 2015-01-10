@@ -44,15 +44,27 @@ public class Computer extends Device implements WithControl {
 	}
 
 	public void addKnownHost(String ip, String mac) {
-		this.arpTable.put(ip, mac);
+		if (ipIsInTheSameNetworkAsComputer(ip)) {
+			this.arpTable.put(ip, mac);
+		} else {
+			this.arpTable.put(this.defaultGateway.toString(), mac);
+		}
 	}
 
 	public boolean hostIsKnown(String ip) {
-		return arpTable.containsKey(ip);
+		if (ipIsInTheSameNetworkAsComputer(ip)) {
+			return arpTable.containsKey(ip);
+		} else {
+			return arpTable.containsKey(this.defaultGateway.toString());
+		}
 	}
 
 	public String getKnownHostMac(String ip) {
-		return arpTable.get(ip);
+		if (ipIsInTheSameNetworkAsComputer(ip)) {
+			return arpTable.get(ip);
+		} else {
+			return arpTable.get(this.defaultGateway.toString());
+		}
 
 	}
 
@@ -192,10 +204,10 @@ public class Computer extends Device implements WithControl {
 			addPortSendsEvent(pack);
 		} else {
 			if (isNotBlank(pack.getDestinationIP())) {
-				if (packGoesToThisSubnet(pack)) {
+				if (ipIsInTheSameNetworkAsComputer(pack.getDestinationIP())) {
 					packageQueue.put(pack.getDestinationIP(), pack);
 					sendArpRqFor(pack.getDestinationIP());
-				} else {
+				} else if (defaultGateway != null) {
 					String gatewayMac = getKnownHostMac(this.defaultGateway
 							.toString());
 					if (gatewayMac == null) {
@@ -211,16 +223,17 @@ public class Computer extends Device implements WithControl {
 
 	}
 
-	private boolean packGoesToThisSubnet(Package pack) {
+	private boolean ipIsInTheSameNetworkAsComputer(String destinationIp) {
 		IPAddress computerIp = new IPAddress(this.getIP());
-		return IPAddress.isInSubnet(pack.getDestinationIP(),
-				computerIp.getNetwork(), IPAddress.NETMASK);
+		return IPAddress.isInSubnet(destinationIp, computerIp.getNetwork(),
+				IPAddress.NETMASK);
 
 	}
 
 	private void sendArpRqFor(String destinationIP) {
 		Package pack = new Package(PackageType.ARP_REQ, destinationIP);
 		pack.setDestinationMAC(Package.MAC_BROADCAST);
+		pack.setDestinationIP(destinationIP);
 		sendPackage(pack);
 	}
 

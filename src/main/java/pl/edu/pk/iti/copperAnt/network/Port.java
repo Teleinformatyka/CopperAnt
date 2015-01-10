@@ -95,6 +95,8 @@ public class Port {
 
 	public void sendPackage(Package pack) {
 		if (getCable() != null) {
+			System.out.println(this);
+			System.out.println(pack);
 			portSendingStrategy.sendPackage(pack, this);
 		}
 	}

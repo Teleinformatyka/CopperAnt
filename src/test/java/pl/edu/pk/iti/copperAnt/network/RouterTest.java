@@ -48,9 +48,9 @@ public class RouterTest {
 		Clock.getInstance().tick();
 		// then
 		verify(router.getPort(0), never()).sendPackage(any());
-		verify(router.getPort(1)).sendPackage(any());
-		verify(router.getPort(2)).sendPackage(any());
-		verify(router.getPort(3)).sendPackage(any());
+		verify(router.getPort(1), never()).sendPackage(any());
+		verify(router.getPort(2), never()).sendPackage(any());
+		verify(router.getPort(3), never()).sendPackage(any());
 
 	}
 
@@ -62,10 +62,11 @@ public class RouterTest {
 		for (int i = 0; i < numberOfPorts; ++i) {
 			router.getPort(i).conntectCalble(new Cable());
 			router.setPort(i, spy(router.getPort(i)));
+			router.setIpForPort(i, new IPAddress("192.168." + (i + 1) + ".254"));
 		}
-		router.addRouting("testowy", router.getPort(2));
+		router.addRouting("192.168.3.0", router.getPort(2));
 		Package pack = new Package();
-		pack.setDestinationIP("testowy");
+		pack.setDestinationIP("192.168.3.1");
 		pack.setSourceIP("192.168.1.1");
 
 		// when
@@ -172,10 +173,11 @@ public class RouterTest {
 		for (int i = 0; i < 4; ++i) {
 			router.getPort(i).conntectCalble(new Cable());
 			router.setPort(i, spy(router.getPort(i)));
+			router.setIpForPort(i, new IPAddress("192.168." + (i + 1) + ".254"));
 		}
 		Package pack = new Package(PackageType.ECHO_REQUEST, "wiadomosc");
 		pack.setSourceMAC("aaaaaa");
-		pack.setDestinationIP(new IPAddress(router.getIP(2)).increment());
+		pack.setDestinationIP("192.168.3.1");
 		pack.setSourceIP("192.168.1.1");
 		// when
 		router.acceptPackage(pack, router.getPort(0));

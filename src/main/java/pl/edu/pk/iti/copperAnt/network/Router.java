@@ -197,41 +197,45 @@ public class Router extends Device implements WithControl {
 			tryToSendPackagesFromQueue(inPort);
 			return;
 		}
-		if (!routingTable.containsKey(sourceIP)) {
-			log.debug("Adding source ip " + sourceIP + " to routingTable");
-			routingTable.put(sourceIP, inPort);
+		String sourceNetwork = new IPAddress(sourceIP).getNetwork();
+		if (!routingTable.containsKey(sourceNetwork)) {
+			log.debug("Adding source ip " + sourceNetwork + " to routingTable");
+			routingTable.put(sourceNetwork, inPort);
 		}
 
-		if (routingTable.containsKey(destinationIP)
+		String destinationNetwork = new IPAddress(destinationIP).getNetwork();
+		if (routingTable.containsKey(destinationNetwork)
 				&& !this.isMyIP(destinationIP)) {
 			// IP in table
 			log.debug("Know IP, send to LAN port");
 
-			outPort = routingTable.get(destinationIP);
+			outPort = routingTable.get(destinationNetwork);
 
-		} else if (outPort == null) {
-			// routing
-			boolean isInSubnet = false;
-			for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
-				if (trip.getValue1().isInRange(destinationIP)) {
-					outPort = trip.getValue0();
-					isInSubnet = true;
-					break;
-				}
-			}
-			if (!isInSubnet) {
-				for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
-
-					Port port = trip.getValue0();
-					if (port != inPort) {
-						addPortSendsEvent(port, response);
-					}
-				}
-				return;
-			}
+			// } else if (outPort == null) {
+			// // routing
+			// boolean isInSubnet = false;
+			// for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
+			// if (trip.getValue1().isInRange(destinationIP)) {
+			// outPort = trip.getValue0();
+			// isInSubnet = true;
+			// break;
+			// }
+			// }
+			// if (!isInSubnet) {
+			// for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
+			//
+			// Port port = trip.getValue0();
+			// if (port != inPort) {
+			// addPortSendsEvent(port, response);
+			// }
+			// }
+			// return;
+			// }
 
 		}
-		addPortSendsEvent(outPort, response);
+		if (outPort != null) {
+			addPortSendsEvent(outPort, response);
+		}
 
 	}
 
@@ -255,7 +259,14 @@ public class Router extends Device implements WithControl {
 		if (StringUtils.isNotBlank(pack.getDestinationMAC())) {
 			Clock.getInstance().addEvent(new PortSendsEvent(time, port, pack));
 		} else {
-			String mac = this.arpTable.get(pack.getDestinationIP());
+			String mac;
+			if (itIsNetworkConnetedDirectlyToRouter(pack.getDestinationIP(),
+					port)) {
+				mac = this.arpTable.get(pack.getDestinationIP());
+			} else {
+				mac = Package.MAC_BROADCAST;
+			}
+
 			if (StringUtils.isNotBlank(mac)) {
 				pack.setDestinationMAC(mac);
 				Clock.getInstance().addEvent(
@@ -265,6 +276,14 @@ public class Router extends Device implements WithControl {
 				sendArpRqFor(port, pack.getDestinationIP());
 			}
 		}
+	}
+
+	private boolean itIsNetworkConnetedDirectlyToRouter(String destinationIP,
+			Port port) {
+		String destinationNetwork = new IPAddress(destinationIP).getNetwork();
+		String portNetwork = new IPAddress(getIP(port)).getNetwork();
+
+		return destinationNetwork.equals(portNetwork);
 	}
 
 	private void sendArpRqFor(Port port, String destinationIP) {
@@ -290,11 +309,15 @@ public class Router extends Device implements WithControl {
 	}
 
 	public void setIpForPort(int portNumber, IPAddress ip) {
+		routingTable.remove(portIP.get(portNumber).getValue1().getNetwork());
+		routingTable.put(ip.getNetwork(), portIP.get(portNumber).getValue0());
+
 		Triplet<Port, IPAddress, IPAddress> newValue = portIP.get(portNumber)
 				.setAt1(ip);
 		newValue.setAt2(ip.copy());
 		portIP.remove(portNumber);
 		portIP.add(portNumber, newValue);
+
 	}
 
 	private void tryToSendPackagesFromQueue(Port port) {

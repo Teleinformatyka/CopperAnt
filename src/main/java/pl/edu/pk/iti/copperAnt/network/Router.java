@@ -251,6 +251,7 @@ public class Router extends Device implements WithControl {
 		} else {
 			String mac = this.arpTable.get(pack.getDestinationIP());
 			if (StringUtils.isNotBlank(mac)) {
+				pack.setDestinationMAC(mac);
 				Clock.getInstance().addEvent(
 						new PortSendsEvent(time, port, pack));
 			} else {

@@ -41,6 +41,7 @@ public class RouterTest {
 		Package pack = new Package();
 		pack.setDestinationIP("192.158.2.55");
 		pack.setSourceMAC("96:66:d5:8d:3b:cb");
+		pack.setSourceIP("192.168.1.1");
 		// when
 		router.acceptPackage(pack, router.getPort(0));
 		Clock.getInstance().tick();
@@ -64,6 +65,7 @@ public class RouterTest {
 		router.addRouting("testowy", router.getPort(2));
 		Package pack = new Package();
 		pack.setDestinationIP("testowy");
+		pack.setSourceIP("192.168.1.1");
 
 		// when
 		router.acceptPackage(pack, router.getPort(0));
@@ -145,6 +147,7 @@ public class RouterTest {
 		Package pack = new Package(PackageType.ECHO_REQUEST, "wiadomosc");
 		pack.setSourceMAC("aaaaaa");
 		pack.setDestinationIP("192.168.222.222");
+		pack.setSourceIP("192.168.1.1");
 		for (int i = 0; i < 256; ++i)
 			pack.validTTL();
 		router.acceptPackage(pack, router.getPort(0));
@@ -170,6 +173,7 @@ public class RouterTest {
 		Package pack = new Package(PackageType.ECHO_REQUEST, "wiadomosc");
 		pack.setSourceMAC("aaaaaa");
 		pack.setDestinationIP(new IPAddress(router.getIP(2)).increment());
+		pack.setSourceIP("192.168.1.1");
 		// when
 		router.acceptPackage(pack, router.getPort(0));
 		Clock.getInstance().tick();
@@ -229,6 +233,7 @@ public class RouterTest {
 		router.setPort(0, spy(router.getPort(0)));
 		doNothing().when(router.getPort(0)).sendPackage(eventCaptor.capture());
 		router.setIpForPort(0, new IPAddress("192.158.2.55"));
+		router.addToArpTable("192.158.2.1", "so:me:th:in:gg");
 		Package pack = new Package();
 		pack.setSourceIP("192.158.2.1");
 		pack.setDestinationIP("192.158.2.55");
@@ -236,9 +241,10 @@ public class RouterTest {
 
 		// when
 		router.acceptPackage(pack, router.getPort(0));
-		Clock.getInstance().tick();
+		Clock.getInstance().run();
 		// then
-		Package capturedPackage = eventCaptor.getValue();
+		List<Package> allValues = eventCaptor.getAllValues();
+		Package capturedPackage = allValues.get(allValues.size() - 1);
 		assertEquals(capturedPackage.getType(), PackageType.ECHO_REPLY);
 		assertEquals(capturedPackage.getSourceIP().toString(), "192.158.2.55");
 		assertEquals(capturedPackage.getDestinationIP().toString(),

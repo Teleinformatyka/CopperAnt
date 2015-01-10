@@ -191,7 +191,9 @@ public class Router extends Device implements WithControl {
 				return;
 			}
 		} else if (receivedPack.getType() == PackageType.ARP_REP) {
-			arpTable.put(receivedPack.getSourceIP(), receivedPack.getContent());
+			String receivedIp = receivedPack.getSourceIP();
+			String receivedContent = receivedPack.getContent();
+			addToArpTable(receivedIp, receivedContent);
 			tryToSendPackagesFromQueue(inPort);
 			return;
 		}
@@ -231,6 +233,10 @@ public class Router extends Device implements WithControl {
 		}
 		addPortSendsEvent(outPort, response);
 
+	}
+
+	public void addToArpTable(String ip, String mac) {
+		arpTable.put(ip, mac);
 	}
 
 	private int getPortNumber(Port inPort) {

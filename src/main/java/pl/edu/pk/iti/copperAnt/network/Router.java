@@ -11,6 +11,9 @@ import org.javatuples.Triplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.RouterControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
@@ -26,9 +29,14 @@ public class Router extends Device implements WithControl {
 
 	private HashMap<String, Port> routingTable; // <IP, Port>
 
-	private Properties config;
 	private RouterControl control;
 	private static final Logger log = LoggerFactory.getLogger(Router.class);
+	private HashMap<String, String> arpTable = new HashMap<String, String>();
+	private Multimap<String, Package> packageQueue = HashMultimap.create(); // Ip
+																			// --->
+																			// package
+																			// to
+																			// send;
 
 	public Router(int numberOfPorts) {
 		this(numberOfPorts, false);
@@ -48,7 +56,6 @@ public class Router extends Device implements WithControl {
 
 		}
 		routingTable = new HashMap<String, Port>();
-		config = new Properties();
 
 		if (withGui) {
 			List<PortControl> list = new ArrayList<PortControl>(numberOfPorts);
@@ -63,11 +70,6 @@ public class Router extends Device implements WithControl {
 	public Router(Properties config) {
 		this(Integer.parseInt(config.getProperty("numbersOfPorts")), config
 				.getProperty("withGui", "false").equals("true"));
-
-	}
-
-	private String generateIP(int index) {
-		return portIP.get(index).getValue2().increment();
 
 	}
 
@@ -123,11 +125,10 @@ public class Router extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package receivedPack, Port inPort) {
-		Package pack = receivedPack.copy();
-		log.debug("Accept pacakge from " + pack.getSourceIP() + " to "
-				+ pack.getSourceIP());
-		String destinationIP = pack.getDestinationIP();
-		String sourceIP = pack.getSourceIP();
+		log.debug("Accept pacakge from " + receivedPack.getSourceIP() + " to "
+				+ receivedPack.getSourceIP());
+		String destinationIP = receivedPack.getDestinationIP();
+		String sourceIP = receivedPack.getSourceIP();
 
 		if (StringUtils.isBlank(destinationIP) || StringUtils.isBlank(sourceIP)) {
 			log.debug("Pacakge from does not contains IP address. Droped.");
@@ -135,24 +136,26 @@ public class Router extends Device implements WithControl {
 		}
 
 		Port outPort = null;
-		Package response = pack;
-		if (!pack.validTTL()) {
+		Package response = receivedPack.copy();
+		response.setDestinationMAC("");
+		response.setSourceMAC("");
+		if (!receivedPack.validTTL()) {
 			log.debug("Pack has not valid ttl!");
 			response = new Package(PackageType.DESTINATION_UNREACHABLE, "TTL<0");
 			response.setDestinationIP(sourceIP);
-			response.setDestinationMAC(pack.getSourceMAC());
+			response.setDestinationMAC(receivedPack.getSourceMAC());
 			outPort = inPort;
 			addPortSendsEvent(outPort, response);
 			return;
 		}
 
-		if (pack.getType() == PackageType.DHCP) {
+		if (receivedPack.getType() == PackageType.DHCP) {
 			// request to this router to get IP, DHCP only local network
-			if (pack.getContent() == null) {
+			if (receivedPack.getContent() == null) {
 				log.debug("Request to router for IP");
 				sourceIP = generateIP(inPort);
 				response = new Package(PackageType.DHCP, sourceIP);
-				response.setDestinationMAC(pack.getDestinationMAC());
+				response.setDestinationMAC(receivedPack.getDestinationMAC());
 				outPort = inPort;
 			} else {
 				// response from wan router
@@ -162,23 +165,24 @@ public class Router extends Device implements WithControl {
 				return;
 			}
 
-		} else if (pack.getType() == PackageType.ECHO_REQUEST
+		} else if (receivedPack.getType() == PackageType.ECHO_REQUEST
 				&& this.isMyIP(destinationIP)) {
 			log.debug("Response for ECHO_REQUEST");
-			response = new Package(PackageType.ECHO_REPLY, pack.getContent());
-			response.setDestinationMAC(pack.getSourceMAC());
+			response = new Package(PackageType.ECHO_REPLY,
+					receivedPack.getContent());
+			response.setDestinationMAC(receivedPack.getSourceMAC());
 			response.setDestinationIP(sourceIP);
 			response.setSourceIP(destinationIP);
 			outPort = inPort;
-		} else if (pack.getType() == PackageType.ARP_REQ) {
+		} else if (receivedPack.getType() == PackageType.ARP_REQ) {
 			int portNumber = getPortNumber(inPort);
 			String ipStringOfPort = portIP.get(portNumber).getValue1()
 					.toString();
-			if (pack.getHeader().equals(ipStringOfPort)) {
+			if (receivedPack.getHeader().equals(ipStringOfPort)) {
 				Package outPack = new Package(PackageType.ARP_REP,
 						inPort.getMAC());
-				outPack.setDestinationIP(pack.getSourceIP());
-				outPack.setDestinationMAC(pack.getSourceMAC());
+				outPack.setDestinationIP(receivedPack.getSourceIP());
+				outPack.setDestinationMAC(receivedPack.getSourceMAC());
 				outPack.setSourceIP(ipStringOfPort);
 				outPack.setSourceMAC(inPort.getMAC());
 				outPort = inPort;
@@ -213,7 +217,7 @@ public class Router extends Device implements WithControl {
 
 					Port port = trip.getValue0();
 					if (port != inPort) {
-						addPortSendsEvent(port, pack);
+						addPortSendsEvent(port, response);
 					}
 				}
 				return;
@@ -236,7 +240,27 @@ public class Router extends Device implements WithControl {
 
 	private void addPortSendsEvent(Port port, Package pack) {
 		long time = Clock.getInstance().getCurrentTime() + getDelay();
-		Clock.getInstance().addEvent(new PortSendsEvent(time, port, pack));
+		pack.setSourceMAC(port.getMAC());
+		if (StringUtils.isNotBlank(pack.getDestinationMAC())) {
+			Clock.getInstance().addEvent(new PortSendsEvent(time, port, pack));
+		} else {
+			String mac = this.arpTable.get(pack.getDestinationIP());
+			if (StringUtils.isNotBlank(mac)) {
+				Clock.getInstance().addEvent(
+						new PortSendsEvent(time, port, pack));
+			} else {
+				packageQueue.put(pack.getDestinationIP(), pack);
+				sendArpRqFor(port, pack.getDestinationIP());
+			}
+		}
+	}
+
+	private void sendArpRqFor(Port port, String destinationIP) {
+		Package pack = new Package(PackageType.ARP_REQ, destinationIP);
+		pack.setDestinationMAC(Package.MAC_BROADCAST);
+		pack.setDestinationIP(destinationIP);
+		pack.setSourceIP(getIP(port));
+		addPortSendsEvent(port, pack);
 	}
 
 	@Override

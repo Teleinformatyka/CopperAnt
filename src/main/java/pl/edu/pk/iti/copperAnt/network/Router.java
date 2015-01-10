@@ -2,6 +2,7 @@ package pl.edu.pk.iti.copperAnt.network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -189,6 +190,10 @@ public class Router extends Device implements WithControl {
 				addPortSendsEvent(outPort, outPack);
 				return;
 			}
+		} else if (receivedPack.getType() == PackageType.ARP_REP) {
+			arpTable.put(receivedPack.getSourceIP(), receivedPack.getContent());
+			tryToSendPackagesFromQueue(inPort);
+			return;
 		}
 		if (!routingTable.containsKey(sourceIP)) {
 			log.debug("Adding source ip " + sourceIP + " to routingTable");
@@ -257,6 +262,7 @@ public class Router extends Device implements WithControl {
 
 	private void sendArpRqFor(Port port, String destinationIP) {
 		Package pack = new Package(PackageType.ARP_REQ, destinationIP);
+		pack.setSourceMAC(port.getMAC());
 		pack.setDestinationMAC(Package.MAC_BROADCAST);
 		pack.setDestinationIP(destinationIP);
 		pack.setSourceIP(getIP(port));
@@ -284,4 +290,17 @@ public class Router extends Device implements WithControl {
 		portIP.add(portNumber, newValue);
 	}
 
+	private void tryToSendPackagesFromQueue(Port port) {
+		for (String toSendIP : packageQueue.keySet()) {
+			if (arpTable.containsKey(toSendIP)) {
+				for (Iterator<Package> iterator = packageQueue.get(toSendIP)
+						.iterator(); iterator.hasNext();) {
+					Package toSend = iterator.next();
+					packageQueue.remove(toSendIP, toSend);
+					toSend.setDestinationMAC(arpTable.get(toSendIP));
+					addPortSendsEvent(port, toSend);
+				}
+			}
+		}
+	}
 }

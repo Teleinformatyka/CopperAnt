@@ -5,11 +5,11 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.logging.DeviceInstanceLoggerFactory;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
 import pl.edu.pk.iti.copperAnt.simulation.DistributionTimeIntervalGenerator;
 import pl.edu.pk.iti.copperAnt.simulation.events.ARPEvent;
@@ -19,9 +19,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 public class Computer extends Device implements WithControl {
-
-	private static final Logger computer_log = LoggerFactory
-			.getLogger("computer_logs");
+	private final Logger computer_log = Logger.getLogger("computer_logs");	//todo package-pattern path with allows to user hierarchical loggers
 
 	private Port port;
 	private IPAddress ip;
@@ -29,7 +27,7 @@ public class Computer extends Device implements WithControl {
 	private HashMap<String, String> arpTable = new HashMap<String, String>();
 	private Clock clock;
 	private static int TIMEOUT_ADDRESS_RESOLVE = 10;
-	private static final Logger log = LoggerFactory.getLogger(Computer.class);
+	//private static final Logger log = LoggerFactory.getLogger(Computer.class);
 	private Multimap<String, Package> packageQueue = HashMultimap.create(); // Ip
 																			// package
 																			// to
@@ -74,7 +72,7 @@ public class Computer extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package pack, Port inPort) {
-		log.info("Computer received package " + pack);
+		computer_log.info("Computer received package " + pack);
 		acceptPackegesWhichDoesNotRequireIP(pack);
 		if (this.ip == null || pack.getDestinationIP() != this.ip.toString()) {
 			return;

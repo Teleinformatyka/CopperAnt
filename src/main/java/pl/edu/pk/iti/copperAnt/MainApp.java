@@ -1,6 +1,7 @@
 package pl.edu.pk.iti.copperAnt;
 
 import javafx.application.Application;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Priority;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.MenuController;
 import pl.edu.pk.iti.copperAnt.gui.SimulationCanvas;
+import pl.edu.pk.iti.copperAnt.gui.TabbedLogPane;
+import pl.edu.pk.iti.copperAnt.logging.DeviceInstanceLoggerFactory;
 
 public class MainApp extends Application {
 	private ScrollPane sp;
@@ -37,10 +40,18 @@ public class MainApp extends Application {
         
         //adding menu to box
 		new MenuController(stage, sp, box, simulationCanvas);
+
+		TabbedLogPane tabbedLogPane = new TabbedLogPane();
+		DeviceInstanceLoggerFactory.initializeInstanceOutputPane(tabbedLogPane);
 		
-        box.getChildren().add(sp);
-        VBox.setVgrow(sp, Priority.ALWAYS);
+        SplitPane centralSplitPane = new SplitPane();
+        centralSplitPane.setOrientation(Orientation.VERTICAL);
+        centralSplitPane.getItems().addAll(sp, tabbedLogPane);
+        centralSplitPane.setDividerPositions(0.9f);
         
+        box.getChildren().add(centralSplitPane);
+        VBox.setVgrow(centralSplitPane, Priority.ALWAYS);
+
         vb.getChildren().add(simulationCanvas);
         sp.setContent(vb);
         

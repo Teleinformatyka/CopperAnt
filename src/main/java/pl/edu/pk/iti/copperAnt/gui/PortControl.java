@@ -9,11 +9,11 @@ import javafx.scene.paint.Color;
 public class PortControl extends DeviceControl {
 	private static final int defaultIconHeight = 14;
 	private static final int defaultIconWidth = 14;
-	
+
 	private DiodeControl redDiode;
 	private DiodeControl greenDiode;
 	private boolean isOn;
-	
+
 	public PortControl() {
 		this(defaultIconWidth, defaultIconHeight);
 	}
@@ -46,12 +46,13 @@ public class PortControl extends DeviceControl {
 	}
 
 	private void prepareDiods() {
-		redDiode = new DiodeControl((int)getWidth() / 2, (int)getHeight() / 10, Color.RED);
-		redDiode.setLayoutX((int)getWidth() / 2);
+		redDiode = new DiodeControl((int) getWidth() / 2,
+				(int) getHeight() / 10, Color.RED);
+		redDiode.setLayoutX((int) getWidth() / 2);
 		redDiode.turnOn();
 
-		greenDiode = new DiodeControl((int)getWidth() / 2, (int)getHeight() / 10, Color.GREENYELLOW);
-		greenDiode.turnOn();
+		greenDiode = new DiodeControl((int) getWidth() / 2,
+				(int) getHeight() / 10, Color.GREENYELLOW);
 
 		getChildren().add(redDiode);
 		getChildren().add(greenDiode);
@@ -66,7 +67,7 @@ public class PortControl extends DeviceControl {
 	public boolean isOn() {
 		return this.isOn;
 	}
-	
+
 	@Override
 	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
@@ -81,6 +82,7 @@ public class PortControl extends DeviceControl {
 
 		setContextMenu(contextMenu);
 	}
-	
-	private void sampleAction(){}
+
+	private void sampleAction() {
+	}
 }

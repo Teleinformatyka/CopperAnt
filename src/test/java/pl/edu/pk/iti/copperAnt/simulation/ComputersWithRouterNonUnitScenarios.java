@@ -53,10 +53,7 @@ public class ComputersWithRouterNonUnitScenarios {
 		// then
 		verify(computer1.getPort(), atLeastOnce()).receivePackage(
 				packageCaptor.capture());
-		packageCaptor//
-				.getAllValues()//
-				.stream().forEach(p -> System.out.println(p));
-		boolean echoReplyWasReceived = packageCaptor//
+		boolean expectedPackageWasPresent = packageCaptor//
 				.getAllValues()//
 				.stream()
 				//
@@ -66,7 +63,7 @@ public class ComputersWithRouterNonUnitScenarios {
 						computer1.getPort().getMAC(),//
 						computer1.getIP(),//
 						PackageType.ECHO_REPLY)));
-		assertTrue(echoReplyWasReceived);
+		assertTrue(expectedPackageWasPresent);
 	}
 
 	@Test
@@ -93,7 +90,7 @@ public class ComputersWithRouterNonUnitScenarios {
 		// then
 		verify(computer1.getPort(), atLeastOnce()).sendPackage(
 				packageCaptor.capture());
-		boolean echoReplyWasReceived = packageCaptor//
+		boolean expectedPackageWasPresent = packageCaptor//
 				.getAllValues()//
 				.stream()
 				//
@@ -104,7 +101,7 @@ public class ComputersWithRouterNonUnitScenarios {
 								Package.MAC_BROADCAST,//
 								"192.168.1.100",//
 								PackageType.ARP_REQ)));
-		assertTrue(echoReplyWasReceived);
+		assertTrue(expectedPackageWasPresent);
 	}
 
 	@Test
@@ -131,7 +128,7 @@ public class ComputersWithRouterNonUnitScenarios {
 		// then
 		verify(computer1.getPort(), atLeastOnce()).receivePackage(
 				packageCaptor.capture());
-		boolean echoReplyWasReceived = packageCaptor//
+		boolean expectedPackageWasPresent = packageCaptor//
 				.getAllValues()//
 				.stream()
 				//
@@ -142,7 +139,7 @@ public class ComputersWithRouterNonUnitScenarios {
 								computer1.getIP(), //
 								PackageType.ARP_REP)));
 
-		assertTrue(echoReplyWasReceived);
+		assertTrue(expectedPackageWasPresent);
 	}
 
 	@Test
@@ -175,10 +172,8 @@ public class ComputersWithRouterNonUnitScenarios {
 		// then
 		verify(computer1.getPort(), atLeastOnce()).sendPackage(
 				packageCaptor.capture());
-		packageCaptor//
-				.getAllValues()//
-				.stream().forEach(p -> System.out.println(p));
-		boolean echoReplyWasReceived = packageCaptor//
+
+		boolean expectedPackageWasPresent = packageCaptor//
 				.getAllValues()//
 				.stream()
 				//
@@ -188,7 +183,7 @@ public class ComputersWithRouterNonUnitScenarios {
 						router.getPort(0).getMAC(),//
 						computer2.getIP(),//
 						PackageType.ECHO_REQUEST)));
-		assertTrue(echoReplyWasReceived);
+		assertTrue(expectedPackageWasPresent);
 	}
 
 	@Test
@@ -220,10 +215,8 @@ public class ComputersWithRouterNonUnitScenarios {
 		// then
 		verify(router.getPort(1), atLeastOnce()).sendPackage(
 				packageCaptor.capture());
-		packageCaptor//
-				.getAllValues()//
-				.stream().forEach(p -> System.out.println(p));
-		boolean echoReplyWasReceived = packageCaptor//
+
+		boolean expectedPackageWasPresent = packageCaptor//
 				.getAllValues()//
 				.stream()
 				//
@@ -233,7 +226,7 @@ public class ComputersWithRouterNonUnitScenarios {
 						Package.MAC_BROADCAST,//
 						computer2.getIP(),//
 						PackageType.ARP_REQ)));
-		assertTrue(echoReplyWasReceived);
+		assertTrue(expectedPackageWasPresent);
 	}
 
 	@Test
@@ -265,10 +258,8 @@ public class ComputersWithRouterNonUnitScenarios {
 		// then
 		verify(router.getPort(1), atLeastOnce()).sendPackage(
 				packageCaptor.capture());
-		packageCaptor//
-				.getAllValues()//
-				.stream().forEach(p -> System.out.println(p));
-		boolean echoReplyWasReceived = packageCaptor//
+
+		boolean expectedPackageWasPresent = packageCaptor//
 				.getAllValues()//
 				.stream()
 				//
@@ -278,7 +269,7 @@ public class ComputersWithRouterNonUnitScenarios {
 						computer2.getPort().getMAC(),//
 						computer2.getIP(),//
 						PackageType.ECHO_REQUEST)));
-		assertTrue(echoReplyWasReceived);
+		assertTrue(expectedPackageWasPresent);
 	}
 
 	@Test
@@ -310,10 +301,8 @@ public class ComputersWithRouterNonUnitScenarios {
 		// then
 		verify(router.getPort(1), atLeastOnce()).receivePackage(
 				packageCaptor.capture());
-		packageCaptor//
-				.getAllValues()//
-				.stream().forEach(p -> System.out.println(p));
-		boolean echoReplyWasReceived = packageCaptor//
+
+		boolean expectedPackageWasPresent = packageCaptor//
 				.getAllValues()//
 				.stream()
 				//
@@ -323,7 +312,7 @@ public class ComputersWithRouterNonUnitScenarios {
 						router.getPort(1).getMAC(),//
 						computer1.getIP(),//
 						PackageType.ECHO_REPLY)));
-		assertTrue(echoReplyWasReceived);
+		assertTrue(expectedPackageWasPresent);
 	}
 
 	@Test
@@ -355,10 +344,8 @@ public class ComputersWithRouterNonUnitScenarios {
 		// then
 		verify(router.getPort(1), atLeastOnce()).receivePackage(
 				packageCaptor.capture());
-		packageCaptor//
-				.getAllValues()//
-				.stream().forEach(p -> System.out.println(p));
-		boolean echoReplyWasReceived = packageCaptor//
+
+		boolean expectedPackageWasPresent = packageCaptor//
 				.getAllValues()//
 				.stream()
 				//
@@ -368,7 +355,7 @@ public class ComputersWithRouterNonUnitScenarios {
 						router.getPort(1).getMAC(),//
 						router.getIP(1),//
 						PackageType.ARP_REP)));
-		assertTrue(echoReplyWasReceived);
+		assertTrue(expectedPackageWasPresent);
 	}
 
 	@Test
@@ -409,13 +396,6 @@ public class ComputersWithRouterNonUnitScenarios {
 				packageCaptor1.capture());
 		verify(computer2.getPort(), atLeastOnce()).receivePackage(
 				packageCaptor2.capture());
-		packageCaptor1//
-				.getAllValues()//
-				.stream().forEach(p -> System.out.println(p));
-		System.out.println("==========================================");
-		packageCaptor2//
-				.getAllValues()//
-				.stream().forEach(p -> System.out.println(p));
 		boolean computer1ReceivedPingResponse = packageCaptor1//
 				.getAllValues()//
 				.stream()

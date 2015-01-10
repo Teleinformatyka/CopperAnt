@@ -53,7 +53,6 @@ public class PortControl extends Control {
 		redDiode.turnOn();
 
 		greenDiode = new DiodeControl(width / 2, height / 10, Color.GREENYELLOW);
-		//greenDiode.turnOn();
 
 		getChildren().add(redDiode);
 		getChildren().add(greenDiode);

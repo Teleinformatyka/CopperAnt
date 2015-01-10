@@ -2,7 +2,7 @@ package pl.edu.pk.iti.copperAnt.simulation;
 
 public class ConstantTimeIntervalGenerator implements TimeIntervalGenerator {
 
-	private static final int DEFAULT_INTERVAL = 10;
+	public static final int DEFAULT_INTERVAL = 10;
 	private final int constantInterval;
 
 	public ConstantTimeIntervalGenerator() {

@@ -1,6 +1,7 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
 import javafx.concurrent.Task;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import pl.edu.pk.iti.copperAnt.network.Cable;
 import pl.edu.pk.iti.copperAnt.network.Computer;
@@ -13,17 +14,16 @@ public class HubSimulationWithGuiSandbox extends AbstractControlSandbox {
 
 	@Override
 	protected void addElements(Pane root) {
-		SimulationCanvas simulationCanvas = new SimulationCanvas();
+		SimulationCanvas simulationCanvas = new SimulationCanvas(new ScrollPane());
 		root.getChildren().add(simulationCanvas);
 
-		Clock clock = new Clock()
-				.withFinishCondition(new MaxTimeFinishCondition(100));
-		clock.setRealTime(true);
-		clock.setTimeScale(100);
+		Clock.getInstance().setFinishCondition(new MaxTimeFinishCondition(100));
+		Clock.getInstance().setRealTime(true);
+		Clock.getInstance().setTimeScale(100);
 		Computer computer1 = new Computer(new IPAddress("192.168.1.1"), true);
 		Computer computer2 = new Computer(new IPAddress("192.168.1.2"), true);
 		Computer computer3 = new Computer(new IPAddress("192.168.1.3"), true);
-		Hub hub = new Hub(3, clock, true);
+		Hub hub = new Hub(3, true);
 		Cable cable = new Cable(true);
 		cable.insertInto(computer1.getPort());
 		cable.insertInto(hub.getPort(0));
@@ -41,12 +41,12 @@ public class HubSimulationWithGuiSandbox extends AbstractControlSandbox {
 		simulationCanvas.addControlOf(computer2, 100, 200);
 		simulationCanvas.addControlOf(computer3, 200, 200);
 
-		computer1.initTrafic(clock);
+		computer1.initTrafic();
 		Task<Void> task = new Task<Void>() {
 
 			@Override
 			protected Void call() throws Exception {
-				clock.run();
+				Clock.getInstance().run();
 				return null;
 			}
 		};

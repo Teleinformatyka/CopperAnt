@@ -1,7 +1,6 @@
 package pl.edu.pk.iti.copperAnt.simulation.events;
 
 import pl.edu.pk.iti.copperAnt.network.Package;
-import pl.edu.pk.iti.copperAnt.simulation.Clock;
 
 public class SimpleMockEvent extends Event {
 
@@ -10,7 +9,7 @@ public class SimpleMockEvent extends Event {
 	}
 
 	@Override
-	public void run(Clock clock) {
+	public void run() {
 		System.out.println(this);
 
 	}
@@ -19,6 +18,7 @@ public class SimpleMockEvent extends Event {
 	public String toString() {
 		return "SimpleMockEvent [time=" + time + "]";
 	}
+
 	public Package getPackage() {
 		return null;
 	}

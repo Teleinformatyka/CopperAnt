@@ -24,9 +24,9 @@ public class ComplexMockEvent extends Event {
 	}
 
 	@Override
-	public void run(Clock clock) {
-		clock.addEvent(new SimpleMockEvent(this.time + delay1));
-		clock.addEvent(new SimpleMockEvent(this.time + delay2));
+	public void run() {
+		Clock.getInstance().addEvent(new SimpleMockEvent(this.time + delay1));
+		Clock.getInstance().addEvent(new SimpleMockEvent(this.time + delay2));
 		System.out.println(this);
 
 	}
@@ -35,9 +35,9 @@ public class ComplexMockEvent extends Event {
 	public String toString() {
 		return "ComplexMockEvent [time=" + time + "]";
 	}
+
 	public Package getPackage() {
 		return null;
 	}
-
 
 }

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.network.Package;
 import pl.edu.pk.iti.copperAnt.network.Port;
-import pl.edu.pk.iti.copperAnt.simulation.Clock;
 
 public class PortReceivesEvent extends Event {
 	private static final Logger log = LoggerFactory
@@ -23,12 +22,12 @@ public class PortReceivesEvent extends Event {
 	}
 
 	@Override
-	public void run(Clock clock) {
+	public void run() {
 		PortControl portControl = port.getControl();
 		if (portControl != null) {
 			portControl.acceptPackage();
 		}
-		port.getDevice().acceptPackage(pack, port);
+		port.receivePackage(pack);
 		log.info(this.toString());
 
 	}

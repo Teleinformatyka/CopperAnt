@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -17,9 +18,14 @@ import pl.edu.pk.iti.copperAnt.simulation.MockDevice;
 @RunWith(JUnitParamsRunner.class)
 public class CableSendsEventTest {
 
+	@Before
+	public void setUp() {
+		Clock.resetInstance();
+	}
+
 	@Test
 	@Parameters({ "IDLE, IDLE", "BUSY, IDLE", "COLISION, IDLE" })
-	public void eventChangesCableStateTest(CableState expectedStateBeforeEvent,
+	public void eventChangesCableStateTest(CableState stateBeforeEvent,
 			CableState expectedStateAfterEvent) throws Exception {
 		// given
 		Port port = new Port(new MockDevice());
@@ -27,10 +33,10 @@ public class CableSendsEventTest {
 		port.conntectCalble(cable);
 		cable.insertInto(new Port(new MockDevice()));
 		cable.setA(port);
-		cable.setState(expectedStateBeforeEvent);
-		CableSendsEvent event = new CableSendsEvent(0, port, new Package());
+		cable.setState(stateBeforeEvent);
+		CableSendsEvent event = new CableSendsEvent(10, port, new Package());
 		// when
-		event.run(new Clock());
+		event.run();
 		// then
 		CableState stateAfterEvent = cable.getState();
 		assertEquals(expectedStateAfterEvent, stateAfterEvent);

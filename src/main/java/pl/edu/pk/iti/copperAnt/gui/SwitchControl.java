@@ -3,12 +3,15 @@ package pl.edu.pk.iti.copperAnt.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 
 public class SwitchControl extends MultiportDeviceControl {
 
 	public SwitchControl(List<PortControl> portList) {
 		super(portList);
+		prepareContextMenu();
 	}
 
 	@Override
@@ -24,5 +27,27 @@ public class SwitchControl extends MultiportDeviceControl {
 		}
 		return new SwitchControl(list);
 	}
+	@Override
+	protected void prepareContextMenu() {
+		ContextMenu contextMenu = new ContextMenu();
+
+		MenuItem addComputerItem = new MenuItem("Akcja switcha");
+		addComputerItem.setOnAction(e -> sampleAction());
+		contextMenu.getItems().add(addComputerItem);
+
+		MenuItem addRouterItem = new MenuItem("Akcja switcha 2");
+		addRouterItem.setOnAction(e -> sampleAction());
+		contextMenu.getItems().add(addRouterItem);
+
+
+		// TODO
+		// MenuItem addHubItem = new MenuItem("add hub");
+		// addHubItem.setOnAction(e -> add(new ComputerControl()));
+		// contextMenu.getItems().add(addHubItem);
+
+		setContextMenu(contextMenu);
+	}
+	private void sampleAction(){}
+
 
 }

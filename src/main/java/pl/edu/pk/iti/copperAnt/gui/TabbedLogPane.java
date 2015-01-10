@@ -1,7 +1,8 @@
-package pl.edu.pk.iti.copperAnt.logging;
+package pl.edu.pk.iti.copperAnt.gui;
 import org.apache.log4j.TTCCLayout;
 import org.apache.log4j.Logger;
 
+import pl.edu.pk.iti.copperAnt.logging.TextAreaLogAppender;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;

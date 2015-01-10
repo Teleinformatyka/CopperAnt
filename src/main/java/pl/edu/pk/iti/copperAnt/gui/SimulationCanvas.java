@@ -1,29 +1,33 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
-import java.awt.List;
-import java.util.ArrayList;
-
-import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class SimulationCanvas extends Control {
+public class SimulationCanvas extends Region {
 	private double nextDeviceX;
 	private double nextDeviceY;
+	private ContextMenu contextMenu;
+	
+	private Rectangle rectangle;
 
-	public SimulationCanvas() {
+	public SimulationCanvas(ScrollPane sp) {
 		setWidth(1900);
 		setHeight(1000);
 
 		// TODO ten prostokat to brzydki hack którego trzeba sie pozbyc
-		Rectangle rectangle = new Rectangle(getWidth(), getHeight());
+		rectangle = new Rectangle(getWidth(), getHeight());
 		rectangle.setFill(Color.WHITE);
 		rectangle.setStroke(Color.BLACK);
 		getChildren().add(rectangle);
@@ -31,12 +35,20 @@ public class SimulationCanvas extends Control {
 		prepareContextMenu();
 
 		setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-
 			@Override
 			public void handle(ContextMenuEvent event) {
-				nextDeviceX = event.getSceneX();
-				nextDeviceY = event.getSceneY();
+				nextDeviceX = event.getSceneX() + sp.hvalueProperty().getValue() * sp.getContent().getBoundsInLocal().getWidth() - sp.hvalueProperty().getValue() * (-1 * (int)sp.getViewportBounds().getMinX() + (int)sp.getViewportBounds().getMaxX());
+				nextDeviceY = event.getSceneY() + sp.vvalueProperty().getValue() * sp.getContent().getBoundsInLocal().getHeight() - sp.vvalueProperty().getValue() * (-1 * (int)sp.getViewportBounds().getMinY() + (int)sp.getViewportBounds().getMaxY());
+				contextMenu.show(rectangle, Side.TOP, nextDeviceX, nextDeviceY+70);
 			}
+		});
+		
+		rectangle.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		    @Override
+		    public void handle(MouseEvent t) {
+		    	if(t.getButton() == MouseButton.PRIMARY)
+		    		contextMenu.hide();
+		    }
 		});
 	}
 
@@ -58,17 +70,11 @@ public class SimulationCanvas extends Control {
 				.prepareSwithcWithPorts(4)));
 		contextMenu.getItems().add(addSwitchItem);
 
-		// TODO
-		// MenuItem addHubItem = new MenuItem("add hub");
-		// addHubItem.setOnAction(e -> add(new ComputerControl()));
-		// contextMenu.getItems().add(addHubItem);
-
-		setContextMenu(contextMenu);
+		this.contextMenu = contextMenu;
 	}
 
 	private void addControl(Control control) {
 		addControl(control, nextDeviceX, nextDeviceY);
-
 	}
 
 	public void addControl(Control control, double x, double y) {
@@ -81,8 +87,13 @@ public class SimulationCanvas extends Control {
 		Control control = withControl.getControl();
 		addControl(control, x, y);
 	}
-	
-	public ObservableList<Node> getControls(){
+
+	public ObservableList<Node> getControls() {
 		return getChildren();
+	}
+	
+	public void clearScreen(){
+		this.getControls().clear();
+		this.getChildren().add(rectangle);
 	}
 }

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.network.Package;
 import pl.edu.pk.iti.copperAnt.network.Port;
-import pl.edu.pk.iti.copperAnt.simulation.Clock;
 
 public class PortSendsEvent extends Event {
 	private static final Logger log = LoggerFactory
@@ -20,28 +19,26 @@ public class PortSendsEvent extends Event {
 		super(time);
 		this.port = port;
 		this.pack = pack;
-		this.pack.setSourceMAC(port.getMAC());
+		if (this.pack.getSourceMAC() == null)
+			this.pack.setSourceMAC(port.getMAC());
 
 	}
+
 	public Port getPort() {
 		return this.port;
 	}
+
 	public Package getPackage() {
 		return this.pack;
 	}
 
 	@Override
-	public void run(Clock clock) {
+	public void run() {
 		PortControl portControl = port.getControl();
 		if (portControl != null) {
 			portControl.acceptPackage();
 		}
-		if (this.port.getCable() != null) {
-			clock.addEvent(new CableReceivesEvent(this.time, port, pack));
-		} else {
-			log.debug("Dropping package, cable not inserted!");
-		}
-			
+		port.sendPackage(pack);
 		log.info(this.toString());
 
 	}

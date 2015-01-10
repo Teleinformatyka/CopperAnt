@@ -13,44 +13,40 @@ import org.slf4j.LoggerFactory;
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.RouterControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
-import pl.edu.pk.iti.copperAnt.simulation.Clock;
-import pl.edu.pk.iti.copperAnt.simulation.events.ComputerSendsEvent;
-import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
-public class Router extends Device implements  WithControl  {
-    
-    private static final Logger router_log = LoggerFactory.getLogger("router_logs");
-    
-	private static final Logger log = LoggerFactory
-			.getLogger(ComputerSendsEvent.class);
-	
+public class Router extends Device implements WithControl {
+
+	private static final Logger router_log = LoggerFactory
+			.getLogger("router_logs");
+
 	private List<Triplet<Port, IPAddress, IPAddress>> portIP; // Port ip dhcpip
-	private Clock clock;
+
 	private HashMap<String, Port> routingTable; // <IP, Port>
 
 	private Properties config;
 	private RouterControl control;
+	private static final Logger log = LoggerFactory.getLogger(Router.class);
 
-	public Router(int numberOfPorts, Clock clock) {
-		this(numberOfPorts, clock, false);
-                router_log.info("New router created without GUI");
+	public Router(int numberOfPorts) {
+		this(numberOfPorts, false);
+		router_log.info("New router created without GUI");
 	}
 
-	public Router(int numberOfPorts, Clock clock, boolean withGui) {
-		this.clock = clock;
-		
+	public Router(int numberOfPorts, boolean withGui) {
+
 		Random generator = new Random();
 		portIP = new ArrayList<Triplet<Port, IPAddress, IPAddress>>();
-		
+
 		for (int i = 0; i < numberOfPorts; i++) {
 			IPAddress tmp = new IPAddress("192.168.0.1");
 			tmp.set(3, generator.nextInt(254) + 1);
-			portIP.add(new Triplet<Port, IPAddress, IPAddress>(new Port(this, withGui), tmp, new IPAddress(tmp)));
-			
+			portIP.add(new Triplet<Port, IPAddress, IPAddress>(new Port(this,
+					withGui), tmp, new IPAddress(tmp)));
+
 		}
 		routingTable = new HashMap<String, Port>();
 		config = new Properties();
-		
+
 		if (withGui) {
 			List<PortControl> list = new ArrayList<PortControl>(numberOfPorts);
 			for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
@@ -58,22 +54,22 @@ public class Router extends Device implements  WithControl  {
 			}
 			control = new RouterControl(list);
 		}
-                router_log.info("New router created with GUI");
+		router_log.info("New router created with GUI");
 	}
 
-	public Router(Properties config, Clock clock) {
-		this(Integer.parseInt(config.getProperty("numbersOfPorts")),clock, config.getProperty("withGui", "false").equals("true"));
-	
-	}
+	public Router(Properties config) {
+		this(Integer.parseInt(config.getProperty("numbersOfPorts")), config
+				.getProperty("withGui", "false").equals("true"));
 
-	
+	}
 
 	private String generateIP(int index) {
 		return portIP.get(index).getValue2().increment();
 
 	}
+
 	private String generateIP(Port inPort) {
-		for (Triplet<Port, IPAddress, IPAddress> trip: portIP) {
+		for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
 			if (trip.getValue0() == inPort) {
 				return trip.getValue2().increment();
 			}
@@ -82,14 +78,23 @@ public class Router extends Device implements  WithControl  {
 
 	}
 
+	public void setPort(int portNumber, Port port) {
+		Triplet<Port, IPAddress, IPAddress> newTriplet = portIP.get(portNumber)
+				.setAt0(port);
+		portIP.remove(portNumber);
+		portIP.add(portNumber, newTriplet);
+	}
+
 	public Port getPort(int portNumber) {
 		return portIP.get(portNumber).getValue0();
 	}
+
 	public String getIP(int portNumber) {
 		return portIP.get(portNumber).getValue1().toString();
 	}
+
 	public String getIP(Port port) {
-		for (Triplet<Port, IPAddress, IPAddress> trip: portIP) {
+		for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
 			if (trip.getValue0() == port) {
 				return trip.getValue1().toString();
 			}
@@ -98,8 +103,8 @@ public class Router extends Device implements  WithControl  {
 	}
 
 	private boolean isMyIP(String addr) {
-		
-		for (Triplet<Port, IPAddress, IPAddress> trip: portIP) {
+
+		for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
 			if (trip.getValue1().toString().equals(addr)) {
 				return true;
 			}
@@ -114,7 +119,8 @@ public class Router extends Device implements  WithControl  {
 	}
 
 	@Override
-	public void acceptPackage(Package pack, Port inPort) {
+	public void acceptPackage(Package receivedPack, Port inPort) {
+		Package pack = receivedPack.copy();
 		log.debug("Accept pacakge from " + pack.getSourceIP() + " to "
 				+ pack.getSourceIP());
 		String destinationIP = pack.getDestinationIP();
@@ -151,6 +157,7 @@ public class Router extends Device implements  WithControl  {
 			response = new Package(PackageType.ECHO_REPLY, pack.getContent());
 			response.setDestinationMAC(pack.getSourceMAC());
 			response.setDestinationIP(sourceIP);
+			response.setSourceIP(destinationIP);
 			outPort = inPort;
 		}
 		if (!routingTable.containsKey(sourceIP)) {
@@ -178,26 +185,18 @@ public class Router extends Device implements  WithControl  {
 			if (!isInSubnet) {
 				for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
 
-					if (trip.getValue0() != inPort) {						
-						clock.addEvent(new PortSendsEvent(clock.getCurrentTime()				
-							+ getDelay(), trip.getValue0(), pack));
+					Port port = trip.getValue0();
+					if (port != inPort) {
+						port.sendPackage(pack);
 					}
 				}
 				return;
 			}
-			
-			
+
 		}
-		
 
-		clock.addEvent(new PortSendsEvent(clock.getCurrentTime() + getDelay(),
-				outPort, response));
+		outPort.sendPackage(response);
 
-	}
-
-	
-	public String getMac() {
-		return this.portIP.get(0).getValue0().getMAC();
 	}
 
 	@Override
@@ -205,7 +204,6 @@ public class Router extends Device implements  WithControl  {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
 
 	public RouterControl getControl() {
 		return control;
@@ -213,6 +211,14 @@ public class Router extends Device implements  WithControl  {
 
 	public void setControl(RouterControl control) {
 		this.control = control;
+	}
+
+	public void setIpForPort(int portNumber, IPAddress ip) {
+		Triplet<Port, IPAddress, IPAddress> newValue = portIP.get(portNumber)
+				.setAt1(ip);
+		newValue.setAt2(ip.copy());
+		portIP.remove(portNumber);
+		portIP.add(portNumber, newValue);
 	}
 
 }

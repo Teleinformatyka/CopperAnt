@@ -20,10 +20,20 @@ public class Clock {
 	List<Event> events;
 	private long timeScale = 10;
 
-	public Clock() {
-		this.currentTime = -1;
-		this.lastEventTime = -1;
+	private static Clock instance = new Clock();
+
+	private Clock() {
+		this.currentTime = 0;
+		this.lastEventTime = currentTime;
 		events = new ArrayList<Event>();
+	}
+
+	public static Clock getInstance() {
+		return instance;
+	}
+
+	public static void setInstance(Clock instance) {
+		Clock.instance = instance;
 	}
 
 	public Event getEventFromList(int index) {
@@ -61,7 +71,7 @@ public class Clock {
 			while (!events.isEmpty() && events.get(0).getTime() == currentTime) {
 				Event eventToRun = events.get(0);
 				events.remove(eventToRun);
-				eventToRun.run(this);
+				eventToRun.run();
 			}
 
 		}
@@ -108,5 +118,10 @@ public class Clock {
 
 	public void setRealTime(boolean realTime) {
 		this.realTime = realTime;
+	}
+
+	public static void resetInstance() {
+		instance = new Clock();
+
 	}
 }

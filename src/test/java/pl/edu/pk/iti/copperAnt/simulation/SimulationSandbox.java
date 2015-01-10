@@ -13,7 +13,7 @@ public class SimulationSandbox {
 
 	@Test
 	public void sandbox1() {
-		Clock clock = new Clock();
+		Clock clock = Clock.getInstance();
 		clock.setFinishCondition(new MaxTimeFinishCondition(100));
 		Port port1 = new Port(new MockDevice());
 		Port port2 = new Port(new MockDevice());
@@ -28,23 +28,23 @@ public class SimulationSandbox {
 
 	@Test
 	public void sandbox2() {
-		Clock clock = new Clock()
-				.withFinishCondition(new MaxTimeFinishCondition(100));
+		Clock clock = Clock.getInstance().withFinishCondition(
+				new MaxTimeFinishCondition(100));
 		Computer computer1 = new Computer();
 		Computer computer2 = new Computer();
 		Cable cable = new Cable();
 		cable.insertInto(computer1.getPort());
 		cable.insertInto(computer2.getPort());
 
-		computer1.initTrafic(clock);
+		computer1.initTrafic();
 		clock.run();
 	}
 
 	@Test
 	public void sandbox3() {
-		Clock clock = new Clock()
-				.withFinishCondition(new MaxTimeFinishCondition(100));
-		Hub hub = new Hub(3, clock);
+		Clock clock = Clock.getInstance().withFinishCondition(
+				new MaxTimeFinishCondition(100));
+		Hub hub = new Hub(3);
 		Computer computer1 = new Computer();
 		Computer computer2 = new Computer();
 		Computer computer3 = new Computer();
@@ -52,7 +52,7 @@ public class SimulationSandbox {
 		connectComputerToHub(computer2, hub, 1);
 		connectComputerToHub(computer3, hub, 2);
 
-		computer1.initTrafic(clock);
+		computer1.initTrafic();
 		clock.run();
 	}
 

@@ -6,11 +6,17 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static pl.edu.pk.iti.copperAnt.network.TestHelper.portIsConnectedToOneOfCableEnds;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import pl.edu.pk.iti.copperAnt.simulation.Clock;
 import pl.edu.pk.iti.copperAnt.simulation.MockDevice;
 
 public class CableTest {
+	@Before
+	public void setUp() {
+		Clock.resetInstance();
+	}
 
 	@Test
 	public void insertIntoImpactsPortFieldsTest() {

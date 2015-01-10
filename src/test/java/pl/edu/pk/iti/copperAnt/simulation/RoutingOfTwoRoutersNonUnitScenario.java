@@ -127,40 +127,42 @@ public class RoutingOfTwoRoutersNonUnitScenario {
 		Clock.getInstance().run();
 
 		// then
-		System.out.println("== router 1 port 0 =================");
 		verify(router1.getPort(0), atLeastOnce()).sendPackage(
 				router1Port0PackageCaptor.capture());
-		router1Port0PackageCaptor.getAllValues().stream()
-				.forEach(p -> System.out.println(p));
 
-		System.out.println("== router 1 port 1 =================");
 		verify(router1.getPort(1), atLeastOnce()).sendPackage(
 				router1Port1PackageCaptor.capture());
-		router1Port1PackageCaptor.getAllValues().stream()
-				.forEach(p -> System.out.println(p));
 
-		System.out.println("== router 2 port 0 =================");
 		verify(router2.getPort(0), atLeastOnce()).sendPackage(
 				router2Port0PackageCaptor.capture());
-		router2Port0PackageCaptor.getAllValues().stream()
-				.forEach(p -> System.out.println(p));
 
-		System.out.println("== router 2 port 1 =================");
 		verify(router2.getPort(1), atLeastOnce()).sendPackage(
 				router2Port1PackageCaptor.capture());
-		router2Port1PackageCaptor.getAllValues().stream()
-				.forEach(p -> System.out.println(p));
 
 		boolean expectedPackageWasPresent = router1Port0PackageCaptor//
 				.getAllValues()//
-				.stream()
-				//
+				.stream()//
 				.anyMatch(p -> (TestUtils.checkExpectedParametersOfPackage(p,//
 						router1.getPort(0).getMAC(),//
 						computer2.getIP(),//
 						computer1.getPort().getMAC(),//
 						computer1.getIP(),//
 						PackageType.ECHO_REPLY)));
-		// assertTrue(expectedPackageWasPresent);
+
+		if (!expectedPackageWasPresent) {
+			System.out.println("== router 1 port 0 =================");
+			router1Port0PackageCaptor.getAllValues().stream()
+					.forEach(p -> System.out.println(p));
+			System.out.println("== router 1 port 1 =================");
+			router1Port1PackageCaptor.getAllValues().stream()
+					.forEach(p -> System.out.println(p));
+			System.out.println("== router 2 port 0 =================");
+			router2Port0PackageCaptor.getAllValues().stream()
+					.forEach(p -> System.out.println(p));
+			System.out.println("== router 2 port 1 =================");
+			router2Port1PackageCaptor.getAllValues().stream()
+					.forEach(p -> System.out.println(p));
+		}
+		assertTrue(expectedPackageWasPresent);
 	}
 }

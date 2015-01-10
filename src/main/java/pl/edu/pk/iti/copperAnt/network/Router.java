@@ -211,27 +211,6 @@ public class Router extends Device implements WithControl {
 
 			outPort = routingTable.get(destinationNetwork);
 
-			// } else if (outPort == null) {
-			// // routing
-			// boolean isInSubnet = false;
-			// for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
-			// if (trip.getValue1().isInRange(destinationIP)) {
-			// outPort = trip.getValue0();
-			// isInSubnet = true;
-			// break;
-			// }
-			// }
-			// if (!isInSubnet) {
-			// for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
-			//
-			// Port port = trip.getValue0();
-			// if (port != inPort) {
-			// addPortSendsEvent(port, response);
-			// }
-			// }
-			// return;
-			// }
-
 		}
 		if (outPort != null) {
 			addPortSendsEvent(outPort, response);

@@ -235,6 +235,51 @@ public class ComputersWithRouterNonUnitScenarios {
 	}
 
 	@Test
+	public void routerForwardsEchoRequest() {
+		// given
+		ArgumentCaptor<Package> packageCaptor = ArgumentCaptor
+				.forClass(Package.class);
+		Computer computer1 = new Computer(new IPAddress("192.168.1.1"));
+		computer1.setDefaultGateway(new IPAddress("192.168.1.100"));
+		Computer computer2 = new Computer(new IPAddress("192.168.2.1"));
+		computer2.setDefaultGateway(new IPAddress("192.168.2.100"));
+		Router router = new Router(2);
+		router.setPort(1, spy(router.getPort(1)));
+		router.setIpForPort(0, new IPAddress("192.168.1.100"));
+		router.setIpForPort(1, new IPAddress("192.168.2.100"));
+		Cable cable1 = new Cable();
+		cable1.insertInto(router.getPort(0));
+		cable1.insertInto(computer1.getPort());
+		Cable cable2 = new Cable();
+		cable2.insertInto(router.getPort(1));
+		cable2.insertInto(computer2.getPort());
+		Package pack = new Package();
+		pack.setDestinationIP(computer2.getIP());
+
+		// when
+		computer1.sendPackage(pack);
+		Clock.getInstance().run();
+
+		// then
+		verify(router.getPort(1), atLeastOnce()).sendPackage(
+				packageCaptor.capture());
+		packageCaptor//
+				.getAllValues()//
+				.stream().forEach(p -> System.out.println(p));
+		boolean echoReplyWasReceived = packageCaptor//
+				.getAllValues()//
+				.stream()
+				//
+				.anyMatch(p -> (TestUtils.checkExpectedParametersOfPackage(p,//
+						router.getPort(1).getMAC(),//
+						computer1.getIP(),//
+						computer2.getPort().getMAC(),//
+						computer2.getIP(),//
+						PackageType.ECHO_REQUEST)));
+		assertTrue(echoReplyWasReceived);
+	}
+
+	@Test
 	public void routerReceivesEchoResponseFromComputer2() {
 		// given
 		ArgumentCaptor<Package> packageCaptor = ArgumentCaptor
@@ -271,11 +316,11 @@ public class ComputersWithRouterNonUnitScenarios {
 				.stream()
 				//
 				.anyMatch(p -> (TestUtils.checkExpectedParametersOfPackage(p,//
+						computer2.getPort().getMAC(),//
+						computer2.getIP(),//
 						router.getPort(1).getMAC(),//
 						computer1.getIP(),//
-						router.getPort(0).getMAC(),//
-						computer2.getIP(),//
-						PackageType.ECHO_REQUEST)));
+						PackageType.ECHO_REPLY)));
 		assertTrue(echoReplyWasReceived);
 	}
 
@@ -321,51 +366,6 @@ public class ComputersWithRouterNonUnitScenarios {
 						router.getPort(1).getMAC(),//
 						router.getIP(1),//
 						PackageType.ARP_REP)));
-		assertTrue(echoReplyWasReceived);
-	}
-
-	@Test
-	public void routerForwardsEchoRequest() {
-		// given
-		ArgumentCaptor<Package> packageCaptor = ArgumentCaptor
-				.forClass(Package.class);
-		Computer computer1 = new Computer(new IPAddress("192.168.1.1"));
-		computer1.setDefaultGateway(new IPAddress("192.168.1.100"));
-		Computer computer2 = new Computer(new IPAddress("192.168.2.1"));
-		computer2.setDefaultGateway(new IPAddress("192.168.2.100"));
-		Router router = new Router(2);
-		router.setPort(1, spy(router.getPort(1)));
-		router.setIpForPort(0, new IPAddress("192.168.1.100"));
-		router.setIpForPort(1, new IPAddress("192.168.2.100"));
-		Cable cable1 = new Cable();
-		cable1.insertInto(router.getPort(0));
-		cable1.insertInto(computer1.getPort());
-		Cable cable2 = new Cable();
-		cable2.insertInto(router.getPort(1));
-		cable2.insertInto(computer2.getPort());
-		Package pack = new Package();
-		pack.setDestinationIP(computer2.getIP());
-
-		// when
-		computer1.sendPackage(pack);
-		Clock.getInstance().run();
-
-		// then
-		verify(router.getPort(1), atLeastOnce()).sendPackage(
-				packageCaptor.capture());
-		packageCaptor//
-				.getAllValues()//
-				.stream().forEach(p -> System.out.println(p));
-		boolean echoReplyWasReceived = packageCaptor//
-				.getAllValues()//
-				.stream()
-				//
-				.anyMatch(p -> (TestUtils.checkExpectedParametersOfPackage(p,//
-						router.getPort(1).getMAC(),//
-						computer1.getIP(),//
-						computer2.getPort().getMAC(),//
-						computer2.getIP(),//
-						PackageType.ECHO_REQUEST)));
 		assertTrue(echoReplyWasReceived);
 	}
 

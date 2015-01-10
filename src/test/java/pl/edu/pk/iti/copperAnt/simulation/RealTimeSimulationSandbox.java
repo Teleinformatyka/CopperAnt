@@ -23,7 +23,7 @@ public class RealTimeSimulationSandbox {
 		cable.insertInto(computer1.getPort());
 		cable.insertInto(computer2.getPort());
 
-		computer1.initTrafic();
+		computer1.initTrafic(new IPAddress("192.168.1.2"));
 		clock.run();
 	}
 
@@ -42,7 +42,7 @@ public class RealTimeSimulationSandbox {
 		connectComputerToHub(computer2, hub, 1);
 		connectComputerToHub(computer3, hub, 2);
 
-		computer1.initTrafic();
+		computer1.initTrafic(new IPAddress("192.168.1.2"));
 		clock.run();
 	}
 

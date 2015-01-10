@@ -2,17 +2,24 @@ package pl.edu.pk.iti.copperAnt.network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Triplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.RouterControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.simulation.Clock;
+import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Router extends Device implements WithControl {
 
@@ -23,9 +30,14 @@ public class Router extends Device implements WithControl {
 
 	private HashMap<String, Port> routingTable; // <IP, Port>
 
-	private Properties config;
 	private RouterControl control;
 	private static final Logger log = LoggerFactory.getLogger(Router.class);
+	private HashMap<String, String> arpTable = new HashMap<String, String>();
+	private Multimap<String, Package> packageQueue = HashMultimap.create(); // Ip
+																			// --->
+																			// package
+																			// to
+																			// send;
 
 	public Router(int numberOfPorts) {
 		this(numberOfPorts, false);
@@ -45,7 +57,6 @@ public class Router extends Device implements WithControl {
 
 		}
 		routingTable = new HashMap<String, Port>();
-		config = new Properties();
 
 		if (withGui) {
 			List<PortControl> list = new ArrayList<PortControl>(numberOfPorts);
@@ -60,11 +71,6 @@ public class Router extends Device implements WithControl {
 	public Router(Properties config) {
 		this(Integer.parseInt(config.getProperty("numbersOfPorts")), config
 				.getProperty("withGui", "false").equals("true"));
-
-	}
-
-	private String generateIP(int index) {
-		return portIP.get(index).getValue2().increment();
 
 	}
 
@@ -120,28 +126,37 @@ public class Router extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package receivedPack, Port inPort) {
-		Package pack = receivedPack.copy();
-		log.debug("Accept pacakge from " + pack.getSourceIP() + " to "
-				+ pack.getSourceIP());
-		String destinationIP = pack.getDestinationIP();
-		String sourceIP = pack.getSourceIP();
+		log.debug("Accept pacakge from " + receivedPack.getSourceIP() + " to "
+				+ receivedPack.getSourceIP());
+		String destinationIP = receivedPack.getDestinationIP();
+		String sourceIP = receivedPack.getSourceIP();
+
+		if (StringUtils.isBlank(destinationIP) || StringUtils.isBlank(sourceIP)) {
+			log.debug("Pacakge from does not contains IP address. Droped.");
+			return;
+		}
+
 		Port outPort = null;
-		Package response = pack;
-		if (!pack.validTTL()) {
+		Package response = receivedPack.copy();
+		response.setDestinationMAC("");
+		response.setSourceMAC("");
+		if (!receivedPack.validTTL()) {
 			log.debug("Pack has not valid ttl!");
 			response = new Package(PackageType.DESTINATION_UNREACHABLE, "TTL<0");
 			response.setDestinationIP(sourceIP);
-			response.setDestinationMAC(pack.getDestinationMAC());
+			response.setDestinationMAC(receivedPack.getSourceMAC());
 			outPort = inPort;
-
+			addPortSendsEvent(outPort, response);
+			return;
 		}
-		if (pack.getType() == PackageType.DHCP) {
+
+		if (receivedPack.getType() == PackageType.DHCP) {
 			// request to this router to get IP, DHCP only local network
-			if (pack.getContent() == null) {
+			if (receivedPack.getContent() == null) {
 				log.debug("Request to router for IP");
 				sourceIP = generateIP(inPort);
 				response = new Package(PackageType.DHCP, sourceIP);
-				response.setDestinationMAC(pack.getDestinationMAC());
+				response.setDestinationMAC(receivedPack.getDestinationMAC());
 				outPort = inPort;
 			} else {
 				// response from wan router
@@ -151,58 +166,117 @@ public class Router extends Device implements WithControl {
 				return;
 			}
 
-		} else if (pack.getType() == PackageType.ECHO_REQUEST
+		} else if (receivedPack.getType() == PackageType.ECHO_REQUEST
 				&& this.isMyIP(destinationIP)) {
 			log.debug("Response for ECHO_REQUEST");
-			response = new Package(PackageType.ECHO_REPLY, pack.getContent());
-			response.setDestinationMAC(pack.getSourceMAC());
+			response = new Package(PackageType.ECHO_REPLY,
+					receivedPack.getContent());
+			response.setDestinationMAC(receivedPack.getSourceMAC());
 			response.setDestinationIP(sourceIP);
 			response.setSourceIP(destinationIP);
 			outPort = inPort;
+		} else if (receivedPack.getType() == PackageType.ARP_REQ) {
+			int portNumber = getPortNumber(inPort);
+			String ipStringOfPort = portIP.get(portNumber).getValue1()
+					.toString();
+			if (receivedPack.getHeader().equals(ipStringOfPort)) {
+				Package outPack = new Package(PackageType.ARP_REP,
+						inPort.getMAC());
+				outPack.setDestinationIP(receivedPack.getSourceIP());
+				outPack.setDestinationMAC(receivedPack.getSourceMAC());
+				outPack.setSourceIP(ipStringOfPort);
+				outPack.setSourceMAC(inPort.getMAC());
+				outPort = inPort;
+				addPortSendsEvent(outPort, outPack);
+				return;
+			}
+		} else if (receivedPack.getType() == PackageType.ARP_REP) {
+			String receivedIp = receivedPack.getSourceIP();
+			String receivedContent = receivedPack.getContent();
+			addToArpTable(receivedIp, receivedContent);
+			tryToSendPackagesFromQueue(inPort);
+			return;
 		}
-		if (!routingTable.containsKey(sourceIP)) {
-			log.debug("Adding source ip " + sourceIP + " to routingTable");
-			routingTable.put(sourceIP, inPort);
+		String sourceNetwork = new IPAddress(sourceIP).getNetwork();
+		if (!routingTable.containsKey(sourceNetwork)) {
+			log.debug("Adding source ip " + sourceNetwork + " to routingTable");
+			routingTable.put(sourceNetwork, inPort);
 		}
 
-		if (routingTable.containsKey(destinationIP)
+		String destinationNetwork = new IPAddress(destinationIP).getNetwork();
+		if (routingTable.containsKey(destinationNetwork)
 				&& !this.isMyIP(destinationIP)) {
 			// IP in table
 			log.debug("Know IP, send to LAN port");
 
-			outPort = routingTable.get(destinationIP);
-
-		} else if (outPort == null) {
-			// routing
-			boolean isInSubnet = false;
-			for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
-				if (trip.getValue1().isInRange(destinationIP)) {
-					outPort = trip.getValue0();
-					isInSubnet = true;
-					break;
-				}
-			}
-			if (!isInSubnet) {
-				for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
-
-					Port port = trip.getValue0();
-					if (port != inPort) {
-						port.sendPackage(pack);
-					}
-				}
-				return;
-			}
+			outPort = routingTable.get(destinationNetwork);
 
 		}
+		if (outPort != null) {
+			addPortSendsEvent(outPort, response);
+		}
 
-		outPort.sendPackage(response);
+	}
 
+	public void addToArpTable(String ip, String mac) {
+		arpTable.put(ip, mac);
+	}
+
+	private int getPortNumber(Port inPort) {
+		for (int i = 0; i < portIP.size(); i++) {
+			Triplet<Port, IPAddress, IPAddress> triplet = portIP.get(i);
+			if (triplet.getValue0().equals(inPort)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	private void addPortSendsEvent(Port port, Package pack) {
+		long time = Clock.getInstance().getCurrentTime() + getDelay();
+		pack.setSourceMAC(port.getMAC());
+		if (StringUtils.isNotBlank(pack.getDestinationMAC())) {
+			Clock.getInstance().addEvent(new PortSendsEvent(time, port, pack));
+		} else {
+			String mac;
+			if (itIsNetworkConnetedDirectlyToRouter(pack.getDestinationIP(),
+					port)) {
+				mac = this.arpTable.get(pack.getDestinationIP());
+			} else {
+				mac = Package.MAC_BROADCAST;
+			}
+
+			if (StringUtils.isNotBlank(mac)) {
+				pack.setDestinationMAC(mac);
+				Clock.getInstance().addEvent(
+						new PortSendsEvent(time, port, pack));
+			} else {
+				packageQueue.put(pack.getDestinationIP(), pack);
+				sendArpRqFor(port, pack.getDestinationIP());
+			}
+		}
+	}
+
+	private boolean itIsNetworkConnetedDirectlyToRouter(String destinationIP,
+			Port port) {
+		String destinationNetwork = new IPAddress(destinationIP).getNetwork();
+		String portNetwork = new IPAddress(getIP(port)).getNetwork();
+
+		return destinationNetwork.equals(portNetwork);
+	}
+
+	private void sendArpRqFor(Port port, String destinationIP) {
+		Package pack = new Package(PackageType.ARP_REQ, destinationIP);
+		pack.setSourceMAC(port.getMAC());
+		pack.setDestinationMAC(Package.MAC_BROADCAST);
+		pack.setDestinationIP(destinationIP);
+		pack.setSourceIP(getIP(port));
+		addPortSendsEvent(port, pack);
 	}
 
 	@Override
 	public int getDelay() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	public RouterControl getControl() {
@@ -214,11 +288,28 @@ public class Router extends Device implements WithControl {
 	}
 
 	public void setIpForPort(int portNumber, IPAddress ip) {
+		routingTable.remove(portIP.get(portNumber).getValue1().getNetwork());
+		routingTable.put(ip.getNetwork(), portIP.get(portNumber).getValue0());
+
 		Triplet<Port, IPAddress, IPAddress> newValue = portIP.get(portNumber)
 				.setAt1(ip);
 		newValue.setAt2(ip.copy());
 		portIP.remove(portNumber);
 		portIP.add(portNumber, newValue);
+
 	}
 
+	private void tryToSendPackagesFromQueue(Port port) {
+		for (String toSendIP : packageQueue.keySet()) {
+			if (arpTable.containsKey(toSendIP)) {
+				for (Iterator<Package> iterator = packageQueue.get(toSendIP)
+						.iterator(); iterator.hasNext();) {
+					Package toSend = iterator.next();
+					packageQueue.remove(toSendIP, toSend);
+					toSend.setDestinationMAC(arpTable.get(toSendIP));
+					addPortSendsEvent(port, toSend);
+				}
+			}
+		}
+	}
 }

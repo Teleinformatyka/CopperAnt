@@ -1,14 +1,14 @@
 package pl.edu.pk.iti.copperAnt.network;
 
 public class Package {
-	private String sourceMAC;
-	private String destinationMAC;
-	private String sourceIP;
-	private String destinationIP;
-	private int ttl = 10;
+	private String sourceMAC = "";
+	private String destinationMAC = "";
+	private String sourceIP = "";
+	private String destinationIP = "";
+	private int ttl = 255;
 	private String content = "";
 
-	private String header;
+	private String header = "";
 	private PackageType type = PackageType.ECHO_REQUEST;
 	public final static String MAC_BROADCAST = "00:00:00:00:00:00";
 
@@ -48,6 +48,10 @@ public class Package {
 
 	public Package() {
 
+	}
+
+	public Package(PackageType packageType) {
+		this(packageType, "");
 	}
 
 	public boolean validTTL() {

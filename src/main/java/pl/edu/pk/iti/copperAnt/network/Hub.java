@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import pl.edu.pk.iti.copperAnt.gui.HubControl;
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.simulation.Clock;
+import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Hub extends Device implements WithControl {
 
@@ -44,8 +46,10 @@ public class Hub extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package pack, Port inPort) {
+		long time = Clock.getInstance().getCurrentTime() + getDelay();
 		for (Port port : ports) {
-			port.sendPackage(pack.copy());
+			Clock.getInstance().addEvent(
+					new PortSendsEvent(time, port, pack.copy()));
 		}
 	}
 

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -41,13 +42,15 @@ public class RouterTest {
 		Package pack = new Package();
 		pack.setDestinationIP("192.158.2.55");
 		pack.setSourceMAC("96:66:d5:8d:3b:cb");
+		pack.setSourceIP("192.168.1.1");
 		// when
 		router.acceptPackage(pack, router.getPort(0));
+		Clock.getInstance().tick();
 		// then
 		verify(router.getPort(0), never()).sendPackage(any());
-		verify(router.getPort(1)).sendPackage(any());
-		verify(router.getPort(2)).sendPackage(any());
-		verify(router.getPort(3)).sendPackage(any());
+		verify(router.getPort(1), never()).sendPackage(any());
+		verify(router.getPort(2), never()).sendPackage(any());
+		verify(router.getPort(3), never()).sendPackage(any());
 
 	}
 
@@ -59,14 +62,16 @@ public class RouterTest {
 		for (int i = 0; i < numberOfPorts; ++i) {
 			router.getPort(i).conntectCalble(new Cable());
 			router.setPort(i, spy(router.getPort(i)));
+			router.setIpForPort(i, new IPAddress("192.168." + (i + 1) + ".254"));
 		}
-		router.addRouting("testowy", router.getPort(2));
+		router.addRouting("192.168.3.0", router.getPort(2));
 		Package pack = new Package();
-		pack.setDestinationIP("testowy");
+		pack.setDestinationIP("192.168.3.1");
+		pack.setSourceIP("192.168.1.1");
 
 		// when
 		router.acceptPackage(pack, router.getPort(0));
-
+		Clock.getInstance().tick();
 		// then
 		verify(router.getPort(0), never()).sendPackage(any());
 		verify(router.getPort(1), never()).sendPackage(any());
@@ -76,6 +81,7 @@ public class RouterTest {
 	}
 
 	@Test
+	@Ignore("Probably dhpc will be removed so this test will be deleted also")
 	public void testRequestForIp() {
 		Clock clock = mock(Clock.class);
 		Clock.setInstance(clock);
@@ -100,6 +106,7 @@ public class RouterTest {
 	}
 
 	@Test
+	@Ignore("Probably dhpc will be removed so this test will be deleted also")
 	public void testRequestForIp2() {
 		Clock clock = mock(Clock.class);
 		Clock.setInstance(clock);
@@ -126,6 +133,7 @@ public class RouterTest {
 
 	@Test
 	public void testTTl0() {
+		// given
 		Clock clock = mock(Clock.class);
 		Clock.setInstance(clock);
 		ArgumentCaptor<Event> eventCaptor = ArgumentCaptor
@@ -143,7 +151,8 @@ public class RouterTest {
 		Package pack = new Package(PackageType.ECHO_REQUEST, "wiadomosc");
 		pack.setSourceMAC("aaaaaa");
 		pack.setDestinationIP("192.168.222.222");
-		for (int i = 0; i < 101; ++i)
+		pack.setSourceIP("192.168.1.1");
+		for (int i = 0; i < 256; ++i)
 			pack.validTTL();
 		router.acceptPackage(pack, router.getPort(0));
 		List<Event> capturedEvent = eventCaptor.getAllValues();
@@ -164,13 +173,15 @@ public class RouterTest {
 		for (int i = 0; i < 4; ++i) {
 			router.getPort(i).conntectCalble(new Cable());
 			router.setPort(i, spy(router.getPort(i)));
+			router.setIpForPort(i, new IPAddress("192.168." + (i + 1) + ".254"));
 		}
 		Package pack = new Package(PackageType.ECHO_REQUEST, "wiadomosc");
 		pack.setSourceMAC("aaaaaa");
-		pack.setDestinationIP(new IPAddress(router.getIP(2)).increment());
+		pack.setDestinationIP("192.168.3.1");
+		pack.setSourceIP("192.168.1.1");
 		// when
 		router.acceptPackage(pack, router.getPort(0));
-
+		Clock.getInstance().tick();
 		// then
 		verify(router.getPort(0), never()).sendPackage(any());
 		verify(router.getPort(1), never()).sendPackage(any());
@@ -227,6 +238,7 @@ public class RouterTest {
 		router.setPort(0, spy(router.getPort(0)));
 		doNothing().when(router.getPort(0)).sendPackage(eventCaptor.capture());
 		router.setIpForPort(0, new IPAddress("192.158.2.55"));
+		router.addToArpTable("192.158.2.1", "so:me:th:in:gg");
 		Package pack = new Package();
 		pack.setSourceIP("192.158.2.1");
 		pack.setDestinationIP("192.158.2.55");
@@ -234,9 +246,10 @@ public class RouterTest {
 
 		// when
 		router.acceptPackage(pack, router.getPort(0));
-
+		Clock.getInstance().run();
 		// then
-		Package capturedPackage = eventCaptor.getValue();
+		List<Package> allValues = eventCaptor.getAllValues();
+		Package capturedPackage = allValues.get(allValues.size() - 1);
 		assertEquals(capturedPackage.getType(), PackageType.ECHO_REPLY);
 		assertEquals(capturedPackage.getSourceIP().toString(), "192.158.2.55");
 		assertEquals(capturedPackage.getDestinationIP().toString(),

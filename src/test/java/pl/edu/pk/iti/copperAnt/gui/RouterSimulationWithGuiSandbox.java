@@ -37,7 +37,7 @@ public class RouterSimulationWithGuiSandbox extends AbstractControlSandbox {
 		simulationCanvas.addControlOf(router, 100, 0);
 		simulationCanvas.addControlOf(computer2, 200, 200);
 
-		computer1.initTrafic();
+		computer1.initTrafic(new IPAddress("192.168.1.2"));
 		Task<Void> task = new Task<Void>() {
 
 			@Override

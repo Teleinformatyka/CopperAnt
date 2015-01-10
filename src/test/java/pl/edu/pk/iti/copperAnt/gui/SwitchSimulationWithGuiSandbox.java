@@ -49,7 +49,7 @@ public class SwitchSimulationWithGuiSandbox extends AbstractControlSandbox {
 		simulationCanvas.addControlOf(computer2, 100, 200);
 		simulationCanvas.addControlOf(computer3, 200, 200);
 
-		computer1.initTrafic();
+		computer1.initTrafic(new IPAddress("192.168.1.2"));
 
 		// dajcie sie poznac :)
 		computer2.init();

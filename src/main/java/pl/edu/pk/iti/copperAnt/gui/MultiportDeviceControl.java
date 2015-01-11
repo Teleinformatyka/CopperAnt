@@ -22,8 +22,8 @@ public abstract class MultiportDeviceControl extends DeviceControl {
 		setWidth(placeForIconHeight);
 		setHeight(placeForIconHeight);
 		drawIcon(placeForIconHeight);
-		drawPortsInBlock(portList, placeForPortsHeight);// drawPortsWithLines(portList,
-														// placeForIconHeight);
+		//drawPortsInBlock(portList, placeForPortsHeight);
+		drawPortsWithLines(portList, placeForIconHeight);
 
 	}
 

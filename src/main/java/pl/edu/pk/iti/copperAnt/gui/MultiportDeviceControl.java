@@ -11,8 +11,8 @@ import javafx.scene.shape.Rectangle;
 import jfxtras.labs.util.event.MouseControlUtil;
 
 public abstract class MultiportDeviceControl extends DeviceControl {
-	protected static final double placeForIconHeight = 210;
-	private static final double placeForPortsHeight = placeForIconHeight / 1.8;
+	protected static final double placeForIconHeight = 128;
+	private static final double placeForPortsHeight = placeForIconHeight * 1;
 
 	public MultiportDeviceControl(List<PortControl> portList) {
 		MouseControlUtil.makeDraggable(this);
@@ -23,7 +23,7 @@ public abstract class MultiportDeviceControl extends DeviceControl {
 		setHeight(placeForIconHeight);
 		drawIcon(placeForIconHeight);
 		//drawPortsInBlock(portList, placeForPortsHeight);
-		drawPortsWithLines(portList, placeForIconHeight);
+		drawPortsWithLines(portList, placeForPortsHeight);
 
 	}
 
@@ -46,7 +46,7 @@ public abstract class MultiportDeviceControl extends DeviceControl {
 			port.setLayoutX(portX);
 			port.setLayoutY(placeForIconHeight);
 			Line line = new Line(portX + port.getWidth() / 2,
-					placeForIconHeight, getWidth() / 2, placeForIconHeight / 2);
+					placeForIconHeight, getWidth() / 2, placeForIconHeight *2 / 3);
 			getChildren().add(line);
 			getChildren().add(port);
 		}

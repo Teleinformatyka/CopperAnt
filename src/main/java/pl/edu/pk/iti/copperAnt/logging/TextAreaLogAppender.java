@@ -18,10 +18,8 @@ public class TextAreaLogAppender extends AppenderSkeleton {
 	@Override
 	protected void append(LoggingEvent le) {
 	    String message = this.getLayout().format(le);
-	    //deviceTextAreaRef.appendText(message);
-	    
-	    
-	    Platform.runLater(new Runnable() {
+
+	    Platform.runLater(new Runnable() {		    //fixes Exception in thread "Thread-5" java.lang.IllegalStateException: Not on FX application thread
             @Override public void run() {
             	deviceTextAreaRef.appendText(message);
             }

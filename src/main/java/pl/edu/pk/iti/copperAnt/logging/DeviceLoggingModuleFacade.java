@@ -17,6 +17,7 @@ public class DeviceLoggingModuleFacade {
 	private static DeviceLoggingModuleFacade facadeInstance;
 	private InstancesTextAreaTabPane logTabPane;
 	private LoggingUtils loggingUtils;
+	private boolean javaFxPlatformInitialized;
 	
 	/**
 	 * The only supported way of facade retrieval 
@@ -29,6 +30,16 @@ public class DeviceLoggingModuleFacade {
 		}
 		return facadeInstance;
 	}
+	
+	public void initializeJavaFxPlatform() {
+		logTabPane = new InstancesTextAreaTabPane();
+		javaFxPlatformInitialized = true;
+	}
+	
+	private void initialize() {
+		javaFxPlatformInitialized = false;
+		loggingUtils = new LoggingUtils();
+	}
 
 	/**
 	 * GUI representation of module
@@ -37,30 +48,34 @@ public class DeviceLoggingModuleFacade {
 	public Node getLoggingGuiNode() {
 		return logTabPane;
 	}
-	
+
 	public Logger getDeviceLogger(Object deviceObj) {
 		String deviceId = loggingUtils.getDeviceId(deviceObj);
-		return getDeviceLogger(deviceObj, deviceId);
+		String deviceName = loggingUtils.getDeviceNameFromId(deviceId);
+		return getDeviceLogger(deviceObj, deviceName);
 	}
 	
 	public Logger getDeviceLogger(Object deviceObj, String deviceName) {
 		String deviceId = loggingUtils.getDeviceId(deviceObj);
-		if (!logTabPane.hasTab(deviceId)) {
-			logTabPane.createTab(deviceId, deviceName);
-		}
-		
-		TextArea logsTextArea = logTabPane.getTabTextArea(deviceId);
-		Appender textAreaAppender = new TextAreaLogAppender(logsTextArea, loggingUtils.getLoggingLayout());
-		
 		Logger logger = Logger.getLogger(deviceId);
-		logger.addAppender(textAreaAppender);
 
+		if (javaFxPlatformInitialized) {
+			if (!logTabPane.hasTab(deviceId)) {
+				logTabPane.createTab(deviceId, deviceName);
+			}
+			
+			TextArea logsTextArea = logTabPane.getTabTextArea(deviceId);
+			Appender textAreaAppender = new TextAreaLogAppender(logsTextArea, loggingUtils.getLoggingLayout());
+			logger.addAppender(textAreaAppender);
+		}
 		return logger;
 	}
 	
 	public void updateDeviceName(Object deviceObj, String deviceName) {
-		String deviceId = loggingUtils.getDeviceId(deviceObj);
-		logTabPane.renameTab(deviceId, deviceName);
+		if (javaFxPlatformInitialized) {
+			String deviceId = loggingUtils.getDeviceId(deviceObj);
+			logTabPane.renameTab(deviceId, deviceName);
+		}
 	}
 	
 	/**
@@ -69,11 +84,6 @@ public class DeviceLoggingModuleFacade {
 	 */
 	public void removeDeviceReference(Object deviceObj) {
 		//TODO
-	}
-	
-	private void initialize() {
-		logTabPane = new InstancesTextAreaTabPane();
-		loggingUtils = new LoggingUtils();
 	}
 	
 	private DeviceLoggingModuleFacade() {}

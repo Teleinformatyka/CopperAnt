@@ -15,6 +15,10 @@ public class LoggingUtils {
 		return deviceObj.toString();
 	}
 	
+	public String getDeviceNameFromId(String deviceId) {
+		return deviceId.substring(deviceId.lastIndexOf(".")+1, deviceId.length());
+	}
+	
 	public Layout getLoggingLayout() {
 		return loggingLayout;
 	}

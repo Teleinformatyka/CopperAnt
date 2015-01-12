@@ -5,6 +5,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import pl.edu.pk.iti.copperAnt.network.Cable;
 import pl.edu.pk.iti.copperAnt.network.Computer;
@@ -17,14 +18,15 @@ public class RouterSimulationWithGuiSandbox extends AbstractControlSandbox {
 
 	@Override
 	protected void addElements(Pane root) {
-		SimulationCanvas simulationCanvas = new SimulationCanvas(new ScrollPane());
+		VBox box = new VBox();
 		
-		SplitPane centralSplitPane = new SplitPane();
-        centralSplitPane.setOrientation(Orientation.VERTICAL);
-        centralSplitPane.getItems().addAll(simulationCanvas, DeviceLoggingModuleFacade.getInstance().getLoggingGuiNode());
-        centralSplitPane.setDividerPositions(0.9f);
 		
-		root.getChildren().add(centralSplitPane);
+		ScrollPane sc = new ScrollPane();
+		
+		SimulationCanvas simulationCanvas = new SimulationCanvas(sc);
+		//root.getChildren().addAll(simulationCanvas, );
+		box.getChildren().addAll(DeviceLoggingModuleFacade.getInstance().getLoggingGuiNode(), simulationCanvas);
+		root.getChildren().add(box);
 
 		Clock.getInstance().setFinishCondition(
 				new MaxTimeFinishCondition(10000));

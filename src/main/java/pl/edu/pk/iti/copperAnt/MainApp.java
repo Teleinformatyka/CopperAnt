@@ -50,10 +50,6 @@ public class MainApp extends Application {
         vb.getChildren().add(simulationCanvas);
         sp.setContent(vb);
 
-        pl.edu.pk.iti.copperAnt.network.Computer comp1 = new pl.edu.pk.iti.copperAnt.network.Computer();
-        pl.edu.pk.iti.copperAnt.network.Computer comp2 = new pl.edu.pk.iti.copperAnt.network.Computer();
-        pl.edu.pk.iti.copperAnt.network.Computer comp3 = new pl.edu.pk.iti.copperAnt.network.Computer();
-        
 		stage.show();
 	}
 }

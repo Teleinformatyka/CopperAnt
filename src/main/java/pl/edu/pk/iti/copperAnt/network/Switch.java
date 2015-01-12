@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.SwitchControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 
 public class Switch extends Device implements WithControl {
-	private static final Logger switch_log = LoggerFactory
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(this);
+	private static final Logger switch_log = Logger
 			.getLogger("switch_logs");
 
 	private final List<Port> ports;
 	private HashMap<String, Port> macTable; // <MAC, Port>
 	private SwitchControl control;
-	private static final Logger log = LoggerFactory.getLogger(Switch.class);
 
 	public Switch(int numberOfPorts) {
 		this(numberOfPorts, false);
@@ -64,19 +64,19 @@ public class Switch extends Device implements WithControl {
 		Package pack = receivedPack.copy();
 		String destinationMAC = pack.getDestinationMAC();
 		String sourceMAC = pack.getSourceMAC();
-		log.info("AcceptPackage from " + sourceMAC + " to " + destinationMAC);
+		deviceLog.info("AcceptPackage from " + sourceMAC + " to " + destinationMAC);
 		if (!macTable.containsKey(sourceMAC)) {
-			log.debug("Added new mac to macTable: " + sourceMAC + "port: "
+			deviceLog.info("Added new mac to macTable: " + sourceMAC + "port: "
 					+ inPort);
 			macTable.put(sourceMAC, inPort);
 		}
 		Port outPort = macTable.get(destinationMAC);
 
 		if (outPort != null) {
-			log.debug("Known MAC address. Send to port");
+			deviceLog.info("Known MAC address. Send to port");
 			outPort.sendPackage(pack);
 		} else {
-			log.debug("Unknown MAC " + destinationMAC
+			deviceLog.info("Unknown MAC " + destinationMAC
 					+ " address. Send to all ports");
 			for (Port port : ports) {
 				if (port != inPort) {

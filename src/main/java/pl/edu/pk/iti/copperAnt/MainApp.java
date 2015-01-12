@@ -13,13 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.MenuController;
 import pl.edu.pk.iti.copperAnt.gui.SimulationCanvas;
-import pl.edu.pk.iti.copperAnt.gui.TabbedLogPane;
-import pl.edu.pk.iti.copperAnt.logging.DeviceInstanceLoggerFactory;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 
 public class MainApp extends Application {
 	private ScrollPane sp;
 	private VBox vb;
-    
     private SimulationCanvas simulationCanvas;
     
 	private static final Logger dev_log = LoggerFactory.getLogger("dev_logs");
@@ -41,12 +39,9 @@ public class MainApp extends Application {
         //adding menu to box
 		new MenuController(stage, sp, box, simulationCanvas);
 
-		TabbedLogPane tabbedLogPane = new TabbedLogPane();
-		DeviceInstanceLoggerFactory.initializeInstanceOutputPane(tabbedLogPane);
-		
         SplitPane centralSplitPane = new SplitPane();
         centralSplitPane.setOrientation(Orientation.VERTICAL);
-        centralSplitPane.getItems().addAll(sp, tabbedLogPane);
+        centralSplitPane.getItems().addAll(sp, DeviceLoggingModuleFacade.getInstance().getLoggingGuiNode());
         centralSplitPane.setDividerPositions(0.9f);
         
         box.getChildren().add(centralSplitPane);
@@ -54,6 +49,10 @@ public class MainApp extends Application {
 
         vb.getChildren().add(simulationCanvas);
         sp.setContent(vb);
+
+        pl.edu.pk.iti.copperAnt.network.Computer comp1 = new pl.edu.pk.iti.copperAnt.network.Computer();
+        pl.edu.pk.iti.copperAnt.network.Computer comp2 = new pl.edu.pk.iti.copperAnt.network.Computer();
+        pl.edu.pk.iti.copperAnt.network.Computer comp3 = new pl.edu.pk.iti.copperAnt.network.Computer();
         
 		stage.show();
 	}

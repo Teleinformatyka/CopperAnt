@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
-import pl.edu.pk.iti.copperAnt.logging.DeviceInstanceLoggerFactory;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
 import pl.edu.pk.iti.copperAnt.simulation.DistributionTimeIntervalGenerator;
 import pl.edu.pk.iti.copperAnt.simulation.events.ARPEvent;
@@ -19,7 +19,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 public class Computer extends Device implements WithControl {
-	private final Logger computer_log = Logger.getLogger("computer_logs");	//todo package-pattern path with allows to user hierarchical loggers
+	private final Logger computer_log = Logger.getLogger("computer_logs");
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(this);
 
 	private Port port;
 	private IPAddress ip;
@@ -39,8 +40,7 @@ public class Computer extends Device implements WithControl {
 
 	public Computer(IPAddress ip) {
 		this(ip, false);
-		computer_log.info("New computer created without GUI");
-
+		deviceLog.info("New computer created");
 	}
 
 	public void addKnownHost(String ip, String mac) {
@@ -63,7 +63,6 @@ public class Computer extends Device implements WithControl {
 		if (withGui) {
 			this.control = new ComputerControl(port.getControl());
 		}
-		computer_log.info("New computer created with GUI");
 	}
 
 	public Port getPort() {
@@ -72,7 +71,7 @@ public class Computer extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package pack, Port inPort) {
-		computer_log.info("Computer received package " + pack);
+		deviceLog.info("Computer received package " + pack);
 		acceptPackegesWhichDoesNotRequireIP(pack);
 		if (this.ip == null || pack.getDestinationIP() != this.ip.toString()) {
 			return;

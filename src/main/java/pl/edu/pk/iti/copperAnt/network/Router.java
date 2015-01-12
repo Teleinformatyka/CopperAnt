@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.javatuples.Triplet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.RouterControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 
 public class Router extends Device implements WithControl {
-
-	private static final Logger router_log = LoggerFactory
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(this);
+	private static final Logger router_log = Logger
 			.getLogger("router_logs");
 
 	private List<Triplet<Port, IPAddress, IPAddress>> portIP; // Port ip dhcpip
@@ -25,7 +25,6 @@ public class Router extends Device implements WithControl {
 
 	private Properties config;
 	private RouterControl control;
-	private static final Logger log = LoggerFactory.getLogger(Router.class);
 
 	public Router(int numberOfPorts) {
 		this(numberOfPorts, false);
@@ -121,14 +120,14 @@ public class Router extends Device implements WithControl {
 	@Override
 	public void acceptPackage(Package receivedPack, Port inPort) {
 		Package pack = receivedPack.copy();
-		log.debug("Accept pacakge from " + pack.getSourceIP() + " to "
+		deviceLog.info("Accept pacakge from " + pack.getSourceIP() + " to "
 				+ pack.getSourceIP());
 		String destinationIP = pack.getDestinationIP();
 		String sourceIP = pack.getSourceIP();
 		Port outPort = null;
 		Package response = pack;
 		if (!pack.validTTL()) {
-			log.debug("Pack has not valid ttl!");
+			deviceLog.info("Pack has not valid ttl!");
 			response = new Package(PackageType.DESTINATION_UNREACHABLE, "TTL<0");
 			response.setDestinationIP(sourceIP);
 			response.setDestinationMAC(pack.getDestinationMAC());
@@ -138,7 +137,7 @@ public class Router extends Device implements WithControl {
 		if (pack.getType() == PackageType.DHCP) {
 			// request to this router to get IP, DHCP only local network
 			if (pack.getContent() == null) {
-				log.debug("Request to router for IP");
+				deviceLog.info("Request to router for IP");
 				sourceIP = generateIP(inPort);
 				response = new Package(PackageType.DHCP, sourceIP);
 				response.setDestinationMAC(pack.getDestinationMAC());
@@ -146,14 +145,14 @@ public class Router extends Device implements WithControl {
 			} else {
 				// response from wan router
 				// FIXME: what happen when we connect two routers in DHCP mode?
-				log.debug("Get WAN ip");
+				deviceLog.info("Get WAN ip");
 
 				return;
 			}
 
 		} else if (pack.getType() == PackageType.ECHO_REQUEST
 				&& this.isMyIP(destinationIP)) {
-			log.debug("Response for ECHO_REQUEST");
+			deviceLog.info("Response for ECHO_REQUEST");
 			response = new Package(PackageType.ECHO_REPLY, pack.getContent());
 			response.setDestinationMAC(pack.getSourceMAC());
 			response.setDestinationIP(sourceIP);
@@ -161,14 +160,14 @@ public class Router extends Device implements WithControl {
 			outPort = inPort;
 		}
 		if (!routingTable.containsKey(sourceIP)) {
-			log.debug("Adding source ip " + sourceIP + " to routingTable");
+			deviceLog.info("Adding source ip " + sourceIP + " to routingTable");
 			routingTable.put(sourceIP, inPort);
 		}
 
 		if (routingTable.containsKey(destinationIP)
 				&& !this.isMyIP(destinationIP)) {
 			// IP in table
-			log.debug("Know IP, send to LAN port");
+			deviceLog.info("Know IP, send to LAN port");
 
 			outPort = routingTable.get(destinationIP);
 

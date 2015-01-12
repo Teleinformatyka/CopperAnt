@@ -1,6 +1,8 @@
 package pl.edu.pk.iti.copperAnt.logging;
 
+import javafx.application.Platform;
 import javafx.scene.control.TextArea;
+
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
@@ -16,7 +18,14 @@ public class TextAreaLogAppender extends AppenderSkeleton {
 	@Override
 	protected void append(LoggingEvent le) {
 	    String message = this.getLayout().format(le);
-	    deviceTextAreaRef.appendText(message);
+	    //deviceTextAreaRef.appendText(message);
+	    
+	    
+	    Platform.runLater(new Runnable() {
+            @Override public void run() {
+            	deviceTextAreaRef.appendText(message);
+            }
+        });
 	}
 	
 	@Override

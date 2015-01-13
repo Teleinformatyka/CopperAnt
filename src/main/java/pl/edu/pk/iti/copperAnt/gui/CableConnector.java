@@ -1,7 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
 import javafx.scene.control.Control;
-import pl.edu.pk.iti.copperAnt.gui.CableControl.Side;
 import pl.edu.pk.iti.copperAnt.network.Cable;
 import pl.edu.pk.iti.copperAnt.network.Port;
 
@@ -26,14 +25,11 @@ public class CableConnector {
 		if (port1 == null) {
 			port1 = port;
 			port1.conntectCalble(cable);
-			CableControl control = (CableControl) cable.getControl();
-			control.bindWithPort(port1.getControl(), Side.START);
 			return null;
 		} else if (port != port1 && port2 == null) {
 			port2 = port;
 			port2.conntectCalble(cable);
 			CableControl control = (CableControl) cable.getControl();
-			control.bindWithPort(port2.getControl(), Side.END);
 
 			port1 = null;
 			port2 = null;

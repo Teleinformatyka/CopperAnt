@@ -93,11 +93,11 @@ public class SimulationCanvas extends Region {
 		this.contextMenu = contextMenu;
 	}
 
-	void addControl(Control control) {
+	void addControl(Node control) {
 		addControl(control, nextDeviceX, nextDeviceY);
 	}
 
-	public void addControl(Control control, double x, double y) {
+	public void addControl(Node control, double x, double y) {
 		getChildren().add(control);
 		control.setLayoutX(x);
 		control.setLayoutY(y);

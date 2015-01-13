@@ -1,13 +1,10 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import jfxtras.labs.util.event.MouseControlUtil;
 
 public abstract class MultiportDeviceControl extends DeviceControl {

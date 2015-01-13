@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 import pl.edu.pk.iti.copperAnt.network.Computer;
 import pl.edu.pk.iti.copperAnt.network.Router;
 import pl.edu.pk.iti.copperAnt.network.Switch;
+import pl.edu.pk.iti.copperAnt.simulation.Clock;
 
 public class MenuController {
 	Stage stage;
@@ -77,15 +78,15 @@ public class MenuController {
 
 		menuBar.getMenus().add(menuSimulation);
 		MenuItem simulationRun = new MenuItem("Start");
-		simulationRun.setOnAction(e -> startSimulation());
+		simulationRun.setOnAction(e -> Clock.getInstance().run());
 		menuSimulation.getItems().add(simulationRun);
 
-		MenuItem simulationPause = new MenuItem("Pauza");
-		simulationPause.setOnAction(e -> defaultAction());
+		MenuItem simulationPause = new MenuItem("Stop");
+		simulationPause.setOnAction(e -> Clock.getInstance().stop());
 		menuSimulation.getItems().add(simulationPause);
 
-		MenuItem simulationStop = new MenuItem("Stop");
-		simulationStop.setOnAction(e -> defaultAction());
+		MenuItem simulationStop = new MenuItem("Reset");
+		simulationStop.setOnAction(e -> Clock.resetInstance());
 		menuSimulation.getItems().add(simulationStop);
 
 		menuBar.getMenus().add(menuHelp);
@@ -98,11 +99,6 @@ public class MenuController {
 		menuHelp.getItems().add(helpAuthors);
 
 		vbox.getChildren().add(menuBar);
-	}
-
-	private Object startSimulation() {
-
-		return null;
 	}
 
 	private void fileLoad() {

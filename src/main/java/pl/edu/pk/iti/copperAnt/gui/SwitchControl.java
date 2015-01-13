@@ -1,18 +1,21 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import pl.edu.pk.iti.copperAnt.network.Port;
+import pl.edu.pk.iti.copperAnt.network.Router;
 import pl.edu.pk.iti.copperAnt.network.Switch;
 
 public class SwitchControl extends MultiportDeviceControl {
 
 	private Switch switch_;
 
-	public SwitchControl(List<PortControl> portList, Switch switch_) {
-		super(portList);
+	public SwitchControl(Switch switch_) {
+		super(extractPortControlList(switch_));
 		this.switch_ = switch_;
 		prepareContextMenu();
 	}
@@ -55,6 +58,15 @@ public class SwitchControl extends MultiportDeviceControl {
 
 	public void setSwitch_(Switch switch_) {
 		this.switch_ = switch_;
+	}
+
+	private static List<PortControl> extractPortControlList(Switch input) {
+		List<Port> portList = input.getPortList();
+		List<PortControl> result = new LinkedList<PortControl>();
+		for (Port port : portList) {
+			result.add(port.getControl());
+		}
+		return result;
 	}
 
 }

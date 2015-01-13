@@ -24,15 +24,6 @@ public class RouterControl extends MultiportDeviceControl {
 		prepareContextMenu();
 	}
 
-	private static List<PortControl> extractPortControlList(Router input) {
-		List<Port> portList = input.getPortList();
-		List<PortControl> result = new LinkedList<PortControl>();
-		for (Port port : portList) {
-			result.add(port.getControl());
-		}
-		return result;
-	}
-
 	@Override
 	protected Image getIconImage(double size) {
 		return new Image(PortControl.class.getResource("/images/router.png")
@@ -64,6 +55,15 @@ public class RouterControl extends MultiportDeviceControl {
 		windowContent.getChildren().add(new Label("label"));
 		windowContent.getChildren().add(new TextField("textfield"));
 		window.getContentPane().getChildren().add(windowContent);
+	}
+
+	private static List<PortControl> extractPortControlList(Router input) {
+		List<Port> portList = input.getPortList();
+		List<PortControl> result = new LinkedList<PortControl>();
+		for (Port port : portList) {
+			result.add(port.getControl());
+		}
+		return result;
 	}
 
 	public Router getRouter() {

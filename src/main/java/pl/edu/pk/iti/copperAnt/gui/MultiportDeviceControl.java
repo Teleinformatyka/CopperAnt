@@ -11,7 +11,7 @@ public abstract class MultiportDeviceControl extends DeviceControl {
 	protected static final double placeForIconHeight = 128;
 	private static final double placeForPortsHeight = placeForIconHeight * 1;
 
-	public MultiportDeviceControl(List<PortControl> portList) {
+	protected MultiportDeviceControl(List<PortControl> portList) {
 		MouseControlUtil.makeDraggable(this);
 		double portWith = portList.isEmpty() ? 0 : portList.get(0).getWidth();
 		double portHeight = portList.isEmpty() ? 0 : portList.get(0)

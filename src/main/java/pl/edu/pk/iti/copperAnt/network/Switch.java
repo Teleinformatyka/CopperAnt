@@ -34,11 +34,7 @@ public class Switch extends Device implements WithControl {
 		}
 		macTable = new HashMap<>();
 		if (withGui) {
-			List<PortControl> list = new ArrayList<PortControl>(numberOfPorts);
-			for (Port port : ports) {
-				list.add(port.getControl());
-			}
-			control = new SwitchControl(list, this);
+			control = new SwitchControl(this);
 		}
 		switch_log.info("New switch created with GUI");
 	}
@@ -105,5 +101,9 @@ public class Switch extends Device implements WithControl {
 	private void addPortSendsEvent(Port port, Package pack) {
 		long time = Clock.getInstance().getCurrentTime() + getDelay();
 		Clock.getInstance().addEvent(new PortSendsEvent(time, port, pack));
+	}
+
+	public List<Port> getPortList() {
+		return this.ports;
 	}
 }

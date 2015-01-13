@@ -3,6 +3,7 @@ package pl.edu.pk.iti.copperAnt.network;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -59,11 +60,7 @@ public class Router extends Device implements WithControl {
 		routingTable = new HashMap<String, Port>();
 
 		if (withGui) {
-			List<PortControl> list = new ArrayList<PortControl>(numberOfPorts);
-			for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
-				list.add(trip.getValue0().getControl());
-			}
-			control = new RouterControl(list);
+			control = new RouterControl(this);
 		}
 		router_log.info("New router created with GUI");
 	}
@@ -311,5 +308,13 @@ public class Router extends Device implements WithControl {
 				}
 			}
 		}
+	}
+
+	public List<Port> getPortList() {
+		List<Port> result = new LinkedList<Port>();
+		for (Triplet<Port, IPAddress, IPAddress> triplet : portIP) {
+			result.add(triplet.getValue0());
+		}
+		return result;
 	}
 }

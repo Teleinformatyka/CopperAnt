@@ -124,4 +124,8 @@ public class Clock {
 		instance = new Clock();
 
 	}
+
+	public void stop() {
+		setFinishCondition(c -> true);
+	}
 }

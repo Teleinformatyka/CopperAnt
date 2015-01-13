@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import pl.edu.pk.iti.copperAnt.network.Computer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
@@ -10,9 +11,11 @@ import jfxtras.labs.util.event.MouseControlUtil;
 public class ComputerControl extends Control {
 	private final static int defaultSize = 100;
 	private final PortControl portControl;
+	private Computer computer;
 
-	public ComputerControl(PortControl portControl) {
-		this.portControl = portControl;
+	public ComputerControl(Computer computer) {
+		this.computer = computer;
+		this.portControl = computer.getPort().getControl();
 		MouseControlUtil.makeDraggable(this);
 		setWidth(defaultSize);
 		setHeight(defaultSize);
@@ -41,8 +44,8 @@ public class ComputerControl extends Control {
 		return new Image(PortControl.class.getResource("/images/pc.png")
 				.toExternalForm(), size, size, true, true);
 	}
-	
-//	@Override
+
+	// @Override
 	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
 
@@ -51,11 +54,23 @@ public class ComputerControl extends Control {
 		contextMenu.getItems().add(addComputerItem);
 
 		MenuItem addRouterItem = new MenuItem("Akcja 2");
-		addRouterItem.setOnAction(e -> sampleAction());
+		addRouterItem.setOnAction(e -> {
+			this.computer.testMethod();
+		});
 		contextMenu.getItems().add(addRouterItem);
 
 		setContextMenu(contextMenu);
 	}
-	private void sampleAction(){}
+
+	private void sampleAction() {
+	}
+
+	public Computer getComputer() {
+		return computer;
+	}
+
+	public void setComputer(Computer computer) {
+		this.computer = computer;
+	}
 
 }

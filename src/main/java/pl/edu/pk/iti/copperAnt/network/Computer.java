@@ -19,6 +19,8 @@ import com.google.common.collect.Multimap;
 
 public class Computer extends Device implements WithControl {
 
+	public static final String DAFAULT_IP_ADDRESS = "192.168.0.1";
+
 	private static final Logger computer_log = LoggerFactory
 			.getLogger("computer_logs");
 
@@ -34,13 +36,27 @@ public class Computer extends Device implements WithControl {
 																			// send;
 
 	public Computer() {
-		this(null);
+		this(new IPAddress(DAFAULT_IP_ADDRESS));
 	}
 
 	public Computer(IPAddress ip) {
 		this(ip, false);
 		computer_log.info("New computer created without GUI");
 
+	}
+
+	public Computer(boolean withGui) {
+		this(new IPAddress(DAFAULT_IP_ADDRESS), withGui);
+	}
+
+	public Computer(IPAddress ip, boolean withGui) {
+		this.port = new Port(this, withGui);
+		port.setControlDestinationMacOfPackages(true);
+		this.ip = ip;
+		if (withGui) {
+			this.control = new ComputerControl(this);
+		}
+		computer_log.info("New computer created with GUI");
 	}
 
 	public void addKnownHost(String ip, String mac) {
@@ -66,16 +82,6 @@ public class Computer extends Device implements WithControl {
 			return arpTable.get(this.defaultGateway.toString());
 		}
 
-	}
-
-	public Computer(IPAddress ip, boolean withGui) {
-		this.port = new Port(this, withGui);
-		port.setControlDestinationMacOfPackages(true);
-		this.ip = ip;
-		if (withGui) {
-			this.control = new ComputerControl(port.getControl());
-		}
-		computer_log.info("New computer created with GUI");
 	}
 
 	public Port getPort() {

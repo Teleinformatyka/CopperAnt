@@ -1,5 +1,8 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import pl.edu.pk.iti.copperAnt.network.Computer;
+import pl.edu.pk.iti.copperAnt.network.Router;
+import pl.edu.pk.iti.copperAnt.network.Switch;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Side;
@@ -19,7 +22,7 @@ public class SimulationCanvas extends Region {
 	private double nextDeviceX;
 	private double nextDeviceY;
 	private ContextMenu contextMenu;
-	
+
 	private Rectangle rectangle;
 
 	public SimulationCanvas(ScrollPane sp) {
@@ -37,37 +40,51 @@ public class SimulationCanvas extends Region {
 		setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
 			@Override
 			public void handle(ContextMenuEvent event) {
-				nextDeviceX = event.getSceneX() + sp.hvalueProperty().getValue() * sp.getContent().getBoundsInLocal().getWidth() - sp.hvalueProperty().getValue() * (-1 * (int)sp.getViewportBounds().getMinX() + (int)sp.getViewportBounds().getMaxX());
-				nextDeviceY = event.getSceneY() + sp.vvalueProperty().getValue() * sp.getContent().getBoundsInLocal().getHeight() - sp.vvalueProperty().getValue() * (-1 * (int)sp.getViewportBounds().getMinY() + (int)sp.getViewportBounds().getMaxY());
-				contextMenu.show(rectangle, Side.TOP, nextDeviceX, nextDeviceY+70);
+				nextDeviceX = event.getSceneX()
+						+ sp.hvalueProperty().getValue()
+						* sp.getContent().getBoundsInLocal().getWidth()
+						- sp.hvalueProperty().getValue()
+						* (-1 * (int) sp.getViewportBounds().getMinX() + (int) sp
+								.getViewportBounds().getMaxX());
+				nextDeviceY = event.getSceneY()
+						+ sp.vvalueProperty().getValue()
+						* sp.getContent().getBoundsInLocal().getHeight()
+						- sp.vvalueProperty().getValue()
+						* (-1 * (int) sp.getViewportBounds().getMinY() + (int) sp
+								.getViewportBounds().getMaxY());
+				contextMenu.show(rectangle, Side.TOP, nextDeviceX,
+						nextDeviceY + 70);
 			}
 		});
-		
-		rectangle.setOnMouseClicked(new EventHandler<MouseEvent>(){
-		    @Override
-		    public void handle(MouseEvent t) {
-		    	if(t.getButton() == MouseButton.PRIMARY)
-		    		contextMenu.hide();
-		    }
+
+		rectangle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent t) {
+				if (t.getButton() == MouseButton.PRIMARY)
+					contextMenu.hide();
+			}
 		});
 	}
 
 	private void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
 
-		MenuItem addComputerItem = new MenuItem("add computer");
-		addComputerItem.setOnAction(e -> addControl(//
-				new ComputerControl(new PortControl())));
+		MenuItem addComputerItem = new MenuItem("Dodaj komputer");
+		addComputerItem.setOnAction(e -> {
+			addControl(new Computer(true).getControl());
+		});
 		contextMenu.getItems().add(addComputerItem);
 
-		MenuItem addRouterItem = new MenuItem("add router");
-		addRouterItem.setOnAction(e -> addControl(RouterControl
-				.prepareRouterWithPorts(4)));
+		MenuItem addRouterItem = new MenuItem("Dodaj router");
+		addRouterItem.setOnAction(e -> {
+			addControl(new Router(4, true).getControl());
+		});
 		contextMenu.getItems().add(addRouterItem);
 
-		MenuItem addSwitchItem = new MenuItem("add switch");
-		addSwitchItem.setOnAction(e -> addControl(SwitchControl
-				.prepareSwithcWithPorts(4)));
+		MenuItem addSwitchItem = new MenuItem("Dodaj switch");
+		addSwitchItem.setOnAction(e -> {
+			addControl(new Switch(4, true).getControl());
+		});
 		contextMenu.getItems().add(addSwitchItem);
 
 		this.contextMenu = contextMenu;
@@ -91,8 +108,8 @@ public class SimulationCanvas extends Region {
 	public ObservableList<Node> getControls() {
 		return getChildren();
 	}
-	
-	public void clearScreen(){
+
+	public void clearScreen() {
 		this.getControls().clear();
 		this.getChildren().add(rectangle);
 	}

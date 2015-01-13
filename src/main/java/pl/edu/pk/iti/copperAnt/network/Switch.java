@@ -38,9 +38,9 @@ public class Switch extends Device implements WithControl {
 			for (Port port : ports) {
 				list.add(port.getControl());
 			}
-			control = new SwitchControl(list);
+			control = new SwitchControl(list, this);
 		}
-		switch_log.info("New computer created with GUI");
+		switch_log.info("New switch created with GUI");
 	}
 
 	public Port getPort(int portNumber) {

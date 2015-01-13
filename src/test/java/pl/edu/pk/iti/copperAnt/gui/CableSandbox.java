@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import pl.edu.pk.iti.copperAnt.network.Computer;
 import javafx.scene.layout.Pane;
 
 public class CableSandbox extends AbstractControlSandbox {
@@ -8,12 +9,13 @@ public class CableSandbox extends AbstractControlSandbox {
 	protected void addElements(Pane root) {
 		CableControl cableControl = new CableControl();
 		root.getChildren().add(cableControl);
-		PortControl portControl = new PortControl();
-		ComputerControl computer = new ComputerControl(portControl);
-		PortControl portControl2 = new PortControl();
-		ComputerControl computer2 = new ComputerControl(portControl2);
-		cableControl.bindWithPort(portControl, CableControl.Side.START);
-		cableControl.bindWithPort(portControl2, CableControl.Side.END);
+		ComputerControl computer = new Computer(true).getControl();
+		ComputerControl computer2 = new Computer(true).getControl();
+		cableControl.bindWithPort(
+				computer.getComputer().getPort().getControl(),
+				CableControl.Side.START);
+		cableControl.bindWithPort(computer2.getComputer().getPort()
+				.getControl(), CableControl.Side.END);
 		root.getChildren().add(computer);
 		root.getChildren().add(computer2);
 

@@ -1,13 +1,10 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import jfxtras.labs.util.event.MouseControlUtil;
 
 public abstract class MultiportDeviceControl extends DeviceControl {
@@ -22,7 +19,7 @@ public abstract class MultiportDeviceControl extends DeviceControl {
 		setWidth(placeForIconHeight);
 		setHeight(placeForIconHeight);
 		drawIcon(placeForIconHeight);
-		//drawPortsInBlock(portList, placeForPortsHeight);
+		// drawPortsInBlock(portList, placeForPortsHeight);
 		drawPortsWithLines(portList, placeForPortsHeight);
 
 	}
@@ -46,7 +43,8 @@ public abstract class MultiportDeviceControl extends DeviceControl {
 			port.setLayoutX(portX);
 			port.setLayoutY(placeForIconHeight);
 			Line line = new Line(portX + port.getWidth() / 2,
-					placeForIconHeight, getWidth() / 2, placeForIconHeight *2 / 3);
+					placeForIconHeight, getWidth() / 2,
+					placeForIconHeight * 2 / 3);
 			getChildren().add(line);
 			getChildren().add(port);
 		}
@@ -82,11 +80,4 @@ public abstract class MultiportDeviceControl extends DeviceControl {
 
 	protected abstract Image getIconImage(double size);
 
-	public static RouterControl prepareRouterWithPorts(int numberOfPorts) {
-		List<PortControl> list = new ArrayList<PortControl>(numberOfPorts);
-		for (int i = 0; i < numberOfPorts; i++) {
-			list.add(new PortControl());
-		}
-		return new RouterControl(list);
-	}
 }

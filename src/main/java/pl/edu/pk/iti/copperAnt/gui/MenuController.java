@@ -28,6 +28,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import pl.edu.pk.iti.copperAnt.network.Router;
 import pl.edu.pk.iti.copperAnt.network.Switch;
 
 public class MenuController {
@@ -136,16 +137,16 @@ public class MenuController {
 
 					case "RouterControl":
 						simulationCanvas.addControl(
-								RouterControl.prepareRouterWithPorts(4),
+								new Router(4, true).getControl(),
 								Double.parseDouble(xpos),
 								Double.parseDouble(ypos));
 						break;
 
 					case "SwitchControl":
-						simulationCanvas.addControl(SwitchControl
-								.prepareSwitchWithPorts(4, new Switch(4)),
-								Double.parseDouble(xpos), Double
-										.parseDouble(ypos));
+						simulationCanvas.addControl(
+								new Switch(4, true).getControl(),
+								Double.parseDouble(xpos),
+								Double.parseDouble(ypos));
 						break;
 					default:
 						System.out.println("urządzenie nie rozpoznane");

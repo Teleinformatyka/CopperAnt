@@ -24,15 +24,6 @@ public class SwitchControl extends MultiportDeviceControl {
 				.toExternalForm(), size, size, true, false);
 	}
 
-	public static SwitchControl prepareSwitchWithPorts(int numberOfPorts,
-			Switch switch_) {
-		List<PortControl> list = new ArrayList<PortControl>(numberOfPorts);
-		for (int i = 0; i < numberOfPorts; i++) {
-			list.add(new PortControl());
-		}
-		return new SwitchControl(list, switch_);
-	}
-
 	@Override
 	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();

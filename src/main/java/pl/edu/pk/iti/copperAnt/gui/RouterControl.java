@@ -1,6 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javafx.scene.control.Button;
@@ -11,12 +11,26 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import jfxtras.scene.control.window.Window;
+import pl.edu.pk.iti.copperAnt.network.Port;
+import pl.edu.pk.iti.copperAnt.network.Router;
 
 public class RouterControl extends MultiportDeviceControl {
-	
-	public RouterControl(List<PortControl> portList) {
-		super(portList);
+
+	private Router router;
+
+	public RouterControl(Router router) {
+		super(extractPortControlList(router));
+		this.router = router;
 		prepareContextMenu();
+	}
+
+	private static List<PortControl> extractPortControlList(Router input) {
+		List<Port> portList = input.getPortList();
+		List<PortControl> result = new LinkedList<PortControl>();
+		for (Port port : portList) {
+			result.add(port.getControl());
+		}
+		return result;
 	}
 
 	@Override
@@ -25,14 +39,6 @@ public class RouterControl extends MultiportDeviceControl {
 				.toExternalForm(), size, size, true, false);
 	}
 
-	public static RouterControl prepareRouterWithPorts(int numberOfPorts) {
-		List<PortControl> list = new ArrayList<PortControl>(numberOfPorts);
-		for (int i = 0; i < numberOfPorts; i++) {
-			list.add(new PortControl());
-		}
-		return new RouterControl(list);
-	}
-	
 	@Override
 	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
@@ -42,15 +48,16 @@ public class RouterControl extends MultiportDeviceControl {
 		contextMenu.getItems().add(addComputerItem);
 
 		MenuItem addRouterItem = new MenuItem("Akcja 4");
-		addRouterItem.setOnAction(e -> sampleAction());
+		addRouterItem.setOnAction(e -> router.testMethod());
 		contextMenu.getItems().add(addRouterItem);
 
 		setContextMenu(contextMenu);
 	}
-	
+
 	private void sampleAction() {
-		Window window = createDefaultWindow("Router - Akcja 3", placeForIconHeight);
-		
+		Window window = createDefaultWindow("Router - Akcja 3",
+				placeForIconHeight);
+
 		VBox windowContent = new VBox();
 		windowContent.getChildren().add(new Button("button"));
 		windowContent.getChildren().add(new Button("button"));
@@ -58,5 +65,13 @@ public class RouterControl extends MultiportDeviceControl {
 		windowContent.getChildren().add(new TextField("textfield"));
 		window.getContentPane().getChildren().add(windowContent);
 	}
-	
+
+	public Router getRouter() {
+		return router;
+	}
+
+	public void setRouter(Router router) {
+		this.router = router;
+	}
+
 }

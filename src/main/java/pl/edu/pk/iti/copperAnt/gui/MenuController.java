@@ -227,6 +227,8 @@ public class MenuController {
 	}
 
 	private void helpAbout() {
-		popUp.showPopupMessage(stage, "O programie CopperAnt:\nsome text");
+		popUp.showPopupMessage(
+				stage,
+				"Projekt CopperAnt został zrealizowany w ramach przedmiotu symulacja komputerowa.\nPolitechnika Krakowska 2014/2015\nDodatkowe informacje: https://github.com/Teleinformatyka/CopperAnt/");
 	}
 }

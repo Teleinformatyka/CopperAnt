@@ -29,4 +29,10 @@ public class PortSendingStrategyWithCSMACD implements PortSendingStrategy {
 		}
 	}
 
+	@Override
+	public boolean isCollisionDetection() {
+		return true;
+
+	}
+
 }

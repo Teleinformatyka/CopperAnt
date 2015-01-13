@@ -1,14 +1,23 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import java.util.List;
+
 import pl.edu.pk.iti.copperAnt.network.Computer;
+import pl.edu.pk.iti.copperAnt.network.Port;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import jfxtras.labs.util.event.MouseControlUtil;
+import jfxtras.scene.control.window.Window;
 
-public class ComputerControl extends Control {
+public class ComputerControl extends DeviceControl {
 	private final static int defaultSize = 100;
 	private final PortControl portControl;
 	private Computer computer;
@@ -49,17 +58,39 @@ public class ComputerControl extends Control {
 	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
 
-		MenuItem addComputerItem = new MenuItem("Zmień IP");
-		addComputerItem.setOnAction(e -> sampleAction());
-		contextMenu.getItems().add(addComputerItem);
+		MenuItem changeIp = new MenuItem("Zmień IP");
+		changeIp.setOnAction(e -> sampleAction());
+		contextMenu.getItems().add(changeIp);
 
-		MenuItem addRouterItem = new MenuItem("Akcja 2");
-		addRouterItem.setOnAction(e -> {
-			this.computer.testMethod();
+		MenuItem showComputerState = new MenuItem("Pokaż stan komputera");
+		showComputerState.setOnAction(e -> {
+			showComputerStateWindow();
 		});
-		contextMenu.getItems().add(addRouterItem);
+		contextMenu.getItems().add(showComputerState);
 
 		setContextMenu(contextMenu);
+	}
+
+	private void showComputerStateWindow() {
+		Window window = createDefaultWindow("Komputer " + computer.getIP(),
+				getWidth());
+		VBox windowContent = new VBox();
+		Port port = computer.getPort();
+		Label label = new Label();
+		label.setFont(new Font(10));
+		label.setText("Port "
+				+ 0
+				+ ": "//
+				+ "\n\tip: "
+				+ computer.getIP()//
+				+ "\n\tmac: "
+				+ port.getMAC()//
+				+ "\n\tWykrywanie kolizji: "
+				+ (port.isColisionDetection() ? "tak" : "nie")
+				+ "\n\tPodpięty kabel: "
+				+ (port.getCable() == null ? "nie" : "tak"));
+		windowContent.getChildren().add(label);
+		window.getContentPane().getChildren().add(label);
 	}
 
 	private void sampleAction() {

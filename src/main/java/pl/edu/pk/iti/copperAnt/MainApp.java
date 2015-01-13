@@ -16,9 +16,9 @@ import pl.edu.pk.iti.copperAnt.gui.SimulationCanvas;
 public class MainApp extends Application {
 	private ScrollPane sp;
 	private VBox vb;
-    
-    private SimulationCanvas simulationCanvas;
-    
+
+	private SimulationCanvas simulationCanvas;
+
 	private static final Logger dev_log = LoggerFactory.getLogger("dev_logs");
 
 	public static void main(String[] args) throws Exception {
@@ -28,22 +28,22 @@ public class MainApp extends Application {
 	public void start(Stage stage) throws Exception {
 		sp = new ScrollPane();
 		vb = new VBox();
-		simulationCanvas = new SimulationCanvas(sp);
-		
+		simulationCanvas = new SimulationCanvas(sp, stage);
+
 		VBox box = new VBox();
-        Scene scene = new Scene(box, 500, 500);
-        stage.setScene(scene);
-        stage.setTitle("CopperAnt");
-        
-        //adding menu to box
+		Scene scene = new Scene(box, 500, 500);
+		stage.setScene(scene);
+		stage.setTitle("CopperAnt");
+
+		// adding menu to box
 		new MenuController(stage, sp, box, simulationCanvas);
-		
-        box.getChildren().add(sp);
-        VBox.setVgrow(sp, Priority.ALWAYS);
-        
-        vb.getChildren().add(simulationCanvas);
-        sp.setContent(vb);
-        
+
+		box.getChildren().add(sp);
+		VBox.setVgrow(sp, Priority.ALWAYS);
+
+		vb.getChildren().add(simulationCanvas);
+		sp.setContent(vb);
+
 		stage.show();
 	}
 }

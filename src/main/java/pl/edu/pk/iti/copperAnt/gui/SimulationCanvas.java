@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 public class SimulationCanvas extends Region {
 	private double nextDeviceX;
@@ -26,8 +27,10 @@ public class SimulationCanvas extends Region {
 	private Rectangle rectangle;
 
 	private static SimulationCanvas pseudoSingleton;
+	private Stage stage;
 
-	public SimulationCanvas(ScrollPane sp) {
+	public SimulationCanvas(ScrollPane sp, Stage stage) {
+		this.stage = stage;
 		pseudoSingleton = this;
 		setWidth(1900);
 		setHeight(1000);
@@ -119,5 +122,9 @@ public class SimulationCanvas extends Region {
 
 	public static SimulationCanvas getInstance() {
 		return pseudoSingleton;
+	}
+
+	public Stage getStage() {
+		return stage;
 	}
 }

@@ -7,9 +7,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import jfxtras.scene.control.window.Window;
 import pl.edu.pk.iti.copperAnt.network.Port;
 import pl.edu.pk.iti.copperAnt.network.Router;
@@ -36,13 +38,40 @@ public class RouterControl extends MultiportDeviceControl {
 
 		MenuItem addComputerItem = new MenuItem("Akcja 3");
 		addComputerItem.setOnAction(e -> sampleAction());
-		contextMenu.getItems().add(addComputerItem);
+		// contextMenu.getItems().add(addComputerItem);
 
-		MenuItem addRouterItem = new MenuItem("Akcja 4");
-		addRouterItem.setOnAction(e -> router.testMethod());
-		contextMenu.getItems().add(addRouterItem);
+		MenuItem showRouterState = new MenuItem("Pokaż stan routera");
+		showRouterState.setOnAction(e -> showRouterStatePopup());
+		contextMenu.getItems().add(showRouterState);
 
 		setContextMenu(contextMenu);
+	}
+
+	private void showRouterStatePopup() {
+		Window window = createDefaultWindow("Router", getWidth());
+		VBox windowContent = new VBox();
+		List<Port> portList = router.getPortList();
+		for (int i = 0; i < portList.size(); i++) {
+			Port port = portList.get(i);
+			Label label = new Label("Port " + i + ": ");
+			label.setFont(new Font(10));
+			label.setText("Port "
+					+ i
+					+ ": "//
+					+ "\n\tip: "
+					+ router.getIP(i)//
+					+ "\n\tmac: "
+					+ port.getMAC()//
+					+ "\n\tWykrywanie kolizji: "
+					+ (port.isColisionDetection() ? "tak" : "nie")
+					+ "\n\tPodpięty kabel: "
+					+ (port.getCable() == null ? "nie" : "tak"));
+			windowContent.getChildren().add(label);
+
+		}
+		window.getContentPane().getChildren().add(windowContent);
+		window.setMinHeight(200);
+		window.setMinWidth(200);
 	}
 
 	private void sampleAction() {

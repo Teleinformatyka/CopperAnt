@@ -2,6 +2,7 @@ package pl.edu.pk.iti.copperAnt.gui;
 
 import pl.edu.pk.iti.copperAnt.network.Port;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -87,10 +88,11 @@ public class PortControl extends DeviceControl {
 	}
 
 	private void connectCable() {
-
-	}
-
-	private void sampleAction() {
+		Control cableControl = CableConnector.getInstance().connectPort(
+				this.port);
+		if (cableControl != null) {
+			SimulationCanvas.getInstance().addControl(cableControl);
+		}
 	}
 
 	public Port getPort() {

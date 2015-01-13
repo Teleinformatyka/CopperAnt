@@ -37,7 +37,7 @@ public class CableControl extends Control {
 
 			@Override
 			protected double computeValue() {
-				return portControl.localToScene(0, 0).getX()
+				return portControl.getParent().localToScene(0, 0).getX()
 						+ portControl.getWidth() / 2;
 			}
 		});

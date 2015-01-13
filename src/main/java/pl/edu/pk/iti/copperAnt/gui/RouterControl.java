@@ -3,6 +3,7 @@ package pl.edu.pk.iti.copperAnt.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -17,6 +18,7 @@ public class RouterControl extends MultiportDeviceControl {
 	public RouterControl(List<PortControl> portList) {
 		super(portList);
 		prepareContextMenu();
+		DeviceLoggingModuleFacade.getInstance().assignLoggingTab(this);
 	}
 
 	@Override

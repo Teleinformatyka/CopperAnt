@@ -36,7 +36,7 @@ public class Switch extends Device implements WithControl {
 			for (Port port : ports) {
 				list.add(port.getControl());
 			}
-			control = new SwitchControl(list);
+			this.setControl(new SwitchControl(list));
 		}
 		switch_log.info("New computer created with GUI");
 	}
@@ -93,6 +93,7 @@ public class Switch extends Device implements WithControl {
 
 	public void setControl(SwitchControl control) {
 		this.control = control;
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(this);
 	}
 
 	public HashMap<String, Port> getMacTable() {

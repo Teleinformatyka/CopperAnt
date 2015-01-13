@@ -61,7 +61,7 @@ public class Computer extends Device implements WithControl {
 		port.setControlDestinationMacOfPackages(true);
 		this.ip = ip;
 		if (withGui) {
-			this.control = new ComputerControl(port.getControl());
+			this.setControl(new ComputerControl(port.getControl()));
 		}
 	}
 
@@ -198,6 +198,11 @@ public class Computer extends Device implements WithControl {
 	@Override
 	public ComputerControl getControl() {
 		return control;
+	}
+	
+	public void setControl(ComputerControl computerControl) {
+		this.control = computerControl;
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(this);
 	}
 
 	public String getIP() {

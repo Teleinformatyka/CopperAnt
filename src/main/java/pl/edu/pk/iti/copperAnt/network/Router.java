@@ -51,7 +51,7 @@ public class Router extends Device implements WithControl {
 			for (Triplet<Port, IPAddress, IPAddress> trip : portIP) {
 				list.add(trip.getValue0().getControl());
 			}
-			control = new RouterControl(list);
+			this.setControl(new RouterControl(list));
 		}
 		router_log.info("New router created with GUI");
 	}
@@ -210,6 +210,7 @@ public class Router extends Device implements WithControl {
 
 	public void setControl(RouterControl control) {
 		this.control = control;
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(this);
 	}
 
 	public void setIpForPort(int portNumber, IPAddress ip) {

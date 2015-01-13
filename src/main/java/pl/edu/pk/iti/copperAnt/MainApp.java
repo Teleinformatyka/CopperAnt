@@ -38,13 +38,10 @@ public class MainApp extends Application {
         
         //adding menu to box
 		new MenuController(stage, sp, box, simulationCanvas);
-
-		DeviceLoggingModuleFacade deviceLoggingModuleFacade = DeviceLoggingModuleFacade.getInstance();
-		deviceLoggingModuleFacade.initializeJavaFxPlatform();
 		
         SplitPane centralSplitPane = new SplitPane();
         centralSplitPane.setOrientation(Orientation.VERTICAL);
-        centralSplitPane.getItems().addAll(sp, deviceLoggingModuleFacade.getLoggingGuiNode());
+        centralSplitPane.getItems().addAll(sp, DeviceLoggingModuleFacade.getInstance().getLoggingGuiNode());
         centralSplitPane.setDividerPositions(0.9f);
         
         box.getChildren().add(centralSplitPane);

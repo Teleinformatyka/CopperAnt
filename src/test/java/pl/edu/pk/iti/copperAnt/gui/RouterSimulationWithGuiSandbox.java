@@ -23,12 +23,9 @@ public class RouterSimulationWithGuiSandbox extends AbstractControlSandbox {
 		SimulationCanvas simulationCanvas = new SimulationCanvas(sc);
 		sc.setContent(simulationCanvas);
 
-		DeviceLoggingModuleFacade deviceLoggingModuleFacade = DeviceLoggingModuleFacade.getInstance();
-		deviceLoggingModuleFacade.initializeJavaFxPlatform();
-		
 		SplitPane centralSplitPane = new SplitPane();
         centralSplitPane.setOrientation(Orientation.VERTICAL);
-        centralSplitPane.getItems().addAll(sc, deviceLoggingModuleFacade.getLoggingGuiNode());
+        centralSplitPane.getItems().addAll(sc, DeviceLoggingModuleFacade.getInstance().getLoggingGuiNode());
         centralSplitPane.setDividerPositions(0.5f);
 		
         root.getChildren().add(centralSplitPane);

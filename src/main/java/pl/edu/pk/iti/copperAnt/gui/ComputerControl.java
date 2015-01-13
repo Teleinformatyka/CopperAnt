@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
@@ -18,6 +19,7 @@ public class ComputerControl extends Control {
 		setHeight(defaultSize);
 		drawIcon();
 		drawPort();
+		DeviceLoggingModuleFacade.getInstance().assignLoggingTab(this);
 	}
 
 	private void drawPort() {

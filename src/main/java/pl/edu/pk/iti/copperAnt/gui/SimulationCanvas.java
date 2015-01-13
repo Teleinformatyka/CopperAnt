@@ -25,7 +25,10 @@ public class SimulationCanvas extends Region {
 
 	private Rectangle rectangle;
 
+	private static SimulationCanvas pseudoSingleton;
+
 	public SimulationCanvas(ScrollPane sp) {
+		pseudoSingleton = this;
 		setWidth(1900);
 		setHeight(1000);
 
@@ -90,11 +93,11 @@ public class SimulationCanvas extends Region {
 		this.contextMenu = contextMenu;
 	}
 
-	private void addControl(Control control) {
+	void addControl(Node control) {
 		addControl(control, nextDeviceX, nextDeviceY);
 	}
 
-	public void addControl(Control control, double x, double y) {
+	public void addControl(Node control, double x, double y) {
 		getChildren().add(control);
 		control.setLayoutX(x);
 		control.setLayoutY(y);
@@ -112,5 +115,9 @@ public class SimulationCanvas extends Region {
 	public void clearScreen() {
 		this.getControls().clear();
 		this.getChildren().add(rectangle);
+	}
+
+	public static SimulationCanvas getInstance() {
+		return pseudoSingleton;
 	}
 }

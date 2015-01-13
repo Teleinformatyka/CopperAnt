@@ -1,6 +1,8 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import pl.edu.pk.iti.copperAnt.network.Port;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,12 +15,14 @@ public class PortControl extends DeviceControl {
 	private DiodeControl redDiode;
 	private DiodeControl greenDiode;
 	private boolean isOn;
+	private Port port;
 
-	public PortControl() {
-		this(defaultIconWidth, defaultIconHeight);
+	public PortControl(Port port) {
+		this(defaultIconWidth, defaultIconHeight, port);
 	}
 
-	public PortControl(int width, int height) {
+	public PortControl(int width, int height, Port port) {
+		this.port = port;
 		Image image = new Image(PortControl.class.getResource(
 				"/images/portMini.png").toExternalForm(), width, height, false,
 				false);
@@ -72,17 +76,30 @@ public class PortControl extends DeviceControl {
 	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
 
-		MenuItem addComputerItem = new MenuItem("Akcja 1");
-		addComputerItem.setOnAction(e -> sampleAction());
+		MenuItem addComputerItem = new MenuItem("Podłącz kabel");
+		addComputerItem.setOnAction(e -> connectCable());
 		contextMenu.getItems().add(addComputerItem);
 
-		MenuItem addRouterItem = new MenuItem("Akcja 2");
-		addRouterItem.setOnAction(e -> sampleAction());
+		MenuItem addRouterItem = new MenuItem("Test method");
+		addRouterItem.setOnAction(e -> this.port.testMethod());
 		contextMenu.getItems().add(addRouterItem);
 
 		setContextMenu(contextMenu);
 	}
 
-	private void sampleAction() {
+	private void connectCable() {
+		Control cableControl = CableConnector.getInstance().connectPort(
+				this.port);
+		if (cableControl != null) {
+			SimulationCanvas.getInstance().addControl(cableControl);
+		}
+	}
+
+	public Port getPort() {
+		return port;
+	}
+
+	public void setPort(Port port) {
+		this.port = port;
 	}
 }

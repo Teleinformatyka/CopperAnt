@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import pl.edu.pk.iti.copperAnt.network.Port;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
@@ -17,19 +18,19 @@ public class PortControlSandbox extends AbstractControlSandbox {
 	}
 
 	private void addPort1(Pane root) {
-		PortControl port = new PortControl();
+		PortControl port = new PortControl(null);
 		root.getChildren().add(port);
 	}
 
 	private void addPort2(Pane root) {
-		PortControl port = new PortControl(200, 200);
+		PortControl port = new Port(null, true).getControl();
 		port.setLayoutX(100);
 		port.setLayoutY(100);
 		root.getChildren().add(port);
 	}
 
 	private void addPort3(Pane root) {
-		PortControl port = new PortControl(100, 100);
+		PortControl port = new PortControl(100, 100, null);
 		port.setLayoutX(300);
 		port.setLayoutY(300);
 		port.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -52,7 +53,7 @@ public class PortControlSandbox extends AbstractControlSandbox {
 	}
 
 	private void addPort4(Pane root) {
-		PortControl port = new PortControl(100, 100);
+		PortControl port = new PortControl(100, 100, null);
 		port.setLayoutX(400);
 		port.setLayoutY(400);
 		root.getChildren().add(port);

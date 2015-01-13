@@ -14,7 +14,7 @@ public class Port {
 	Cable cable;
 	final Device device;
 	final String MAC;
-	PortControl portControl;
+	PortControl control;
 	private boolean controlDestinationMacOfPackages = false;
 	Set<Package> buffor;
 	int bufforSize = 100;
@@ -34,7 +34,7 @@ public class Port {
 		this.device = device;
 		this.MAC = setMAC();
 		if (withGui) {
-			this.portControl = new PortControl();
+			this.control = new PortControl(this);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class Port {
 	}
 
 	public PortControl getControl() {
-		return portControl;
+		return control;
 	}
 
 	@Override
@@ -157,4 +157,9 @@ public class Port {
 		}
 	}
 
+	// TODO remove function below
+	public void testMethod() {
+		System.out.println(this.toString() + "is port of device:"
+				+ this.device.toString());
+	}
 }

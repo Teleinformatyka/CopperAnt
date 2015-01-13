@@ -15,8 +15,7 @@ public class CableControl extends Control {
 	public Line line;
 
 	public CableControl() {
-		line = new Line(100, 200, 300, 400);
-		getChildren().add(line);
+		line = new Line();
 	}
 
 	public void bindWithPort(PortControl portControl, Side side) {
@@ -28,8 +27,10 @@ public class CableControl extends Control {
 		} else {
 			xPropertyToBind = line.endXProperty();
 			yPropertyToBind = line.endYProperty();
+			SimulationCanvas.getInstance().addControl(line, 0, 0);
 
 		}
+
 		xPropertyToBind.bind(new DoubleBinding() {
 			{
 				super.bind(portControl.getParent().layoutXProperty());
@@ -37,8 +38,9 @@ public class CableControl extends Control {
 
 			@Override
 			protected double computeValue() {
-				return portControl.localToScene(0, 0).getX()
-						+ portControl.getWidth() / 2;
+				return portControl.getParent().getLayoutX()
+						+ portControl.getLayoutX() + portControl.getWidth() / 2;
+
 			}
 		});
 
@@ -49,8 +51,9 @@ public class CableControl extends Control {
 
 			@Override
 			protected double computeValue() {
-				return portControl.localToScene(0, 0).getY()
-						+ portControl.getHeight() / 2;
+				return portControl.getParent().getLayoutY()
+						+ portControl.getLayoutY() + portControl.getHeight()
+						/ 2;
 			}
 		});
 	}

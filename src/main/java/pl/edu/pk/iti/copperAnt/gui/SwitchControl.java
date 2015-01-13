@@ -1,12 +1,11 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import pl.edu.pk.iti.copperAnt.network.Switch;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import pl.edu.pk.iti.copperAnt.network.Switch;
 
 public class SwitchControl extends MultiportDeviceControl {
 
@@ -30,7 +29,7 @@ public class SwitchControl extends MultiportDeviceControl {
 
 		MenuItem addComputerItem = new MenuItem("Akcja switcha");
 		addComputerItem.setOnAction(e -> {
-			this.switch_.acceptPackage(null, null);
+			this.switch_.testMethod();
 			sampleAction();
 		});
 		contextMenu.getItems().add(addComputerItem);

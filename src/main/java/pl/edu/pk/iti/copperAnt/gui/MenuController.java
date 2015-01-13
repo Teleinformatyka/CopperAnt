@@ -28,6 +28,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import pl.edu.pk.iti.copperAnt.network.Computer;
 import pl.edu.pk.iti.copperAnt.network.Router;
 import pl.edu.pk.iti.copperAnt.network.Switch;
 
@@ -130,8 +131,9 @@ public class MenuController {
 							+ ypos);
 					switch (controlName) {
 					case "ComputerControl":
-						simulationCanvas.addControl(new ComputerControl(
-								new PortControl()), Double.parseDouble(xpos),
+						simulationCanvas.addControl(
+								new Computer(true).getControl(),
+								Double.parseDouble(xpos),
 								Double.parseDouble(ypos));
 						break;
 

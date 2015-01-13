@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import pl.edu.pk.iti.copperAnt.network.Computer;
 import pl.edu.pk.iti.copperAnt.network.Router;
 import pl.edu.pk.iti.copperAnt.network.Switch;
 import javafx.collections.ObservableList;
@@ -69,8 +70,9 @@ public class SimulationCanvas extends Region {
 		ContextMenu contextMenu = new ContextMenu();
 
 		MenuItem addComputerItem = new MenuItem("Dodaj komputer");
-		addComputerItem.setOnAction(e -> addControl(//
-				new ComputerControl(new PortControl())));
+		addComputerItem.setOnAction(e -> {
+			addControl(new Computer(true).getControl());
+		});
 		contextMenu.getItems().add(addComputerItem);
 
 		MenuItem addRouterItem = new MenuItem("Dodaj router");

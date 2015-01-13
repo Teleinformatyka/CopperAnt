@@ -3,6 +3,7 @@ package pl.edu.pk.iti.copperAnt.gui;
 import java.util.LinkedList;
 import java.util.List;
 
+import pl.edu.pk.iti.copperAnt.network.Switch;
 import javafx.scene.layout.Pane;
 
 public class SwitchControlSandbox extends AbstractControlSandbox {
@@ -15,7 +16,8 @@ public class SwitchControlSandbox extends AbstractControlSandbox {
 				PortControl port = new PortControl();
 				list.add(port);
 			}
-			SwitchControl switchControl = new SwitchControl(list);
+			SwitchControl switchControl = new SwitchControl(list, new Switch(
+					list.size()));
 			switchControl.setLayoutX(0);
 			switchControl.setLayoutY(j * 200);
 			root.getChildren().add(switchControl);

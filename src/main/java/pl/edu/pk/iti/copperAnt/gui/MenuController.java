@@ -28,6 +28,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import pl.edu.pk.iti.copperAnt.network.Switch;
+
 public class MenuController {
 	Stage stage;
 	ScrollPane scrollPane;
@@ -73,7 +75,7 @@ public class MenuController {
 
 		menuBar.getMenus().add(menuSimulation);
 		MenuItem simulationRun = new MenuItem("Start");
-		simulationRun.setOnAction(e -> defaultAction());
+		simulationRun.setOnAction(e -> startSimulation());
 		menuSimulation.getItems().add(simulationRun);
 
 		MenuItem simulationPause = new MenuItem("Pauza");
@@ -94,6 +96,11 @@ public class MenuController {
 		menuHelp.getItems().add(helpAuthors);
 
 		vbox.getChildren().add(menuBar);
+	}
+
+	private Object startSimulation() {
+
+		return null;
 	}
 
 	private void fileLoad() {
@@ -135,10 +142,10 @@ public class MenuController {
 						break;
 
 					case "SwitchControl":
-						simulationCanvas.addControl(
-								SwitchControl.prepareSwithcWithPorts(4),
-								Double.parseDouble(xpos),
-								Double.parseDouble(ypos));
+						simulationCanvas.addControl(SwitchControl
+								.prepareSwitchWithPorts(4, new Switch(4)),
+								Double.parseDouble(xpos), Double
+										.parseDouble(ypos));
 						break;
 					default:
 						System.out.println("urządzenie nie rozpoznane");

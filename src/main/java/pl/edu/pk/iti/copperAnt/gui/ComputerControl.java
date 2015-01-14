@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import jfxtras.labs.util.event.MouseControlUtil;
 import jfxtras.scene.control.window.Window;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import pl.edu.pk.iti.copperAnt.network.Computer;
 import pl.edu.pk.iti.copperAnt.network.IPAddress;
 import pl.edu.pk.iti.copperAnt.network.Package;
@@ -27,6 +28,8 @@ public class ComputerControl extends DeviceControl {
 		MouseControlUtil.makeDraggable(this);
 		setWidth(defaultSize);
 		setHeight(defaultSize);
+		DeviceLoggingModuleFacade.getInstance().assignLoggingTab(this);
+
 		drawIcon();
 		drawPort();
 	}

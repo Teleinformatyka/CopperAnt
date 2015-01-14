@@ -1,12 +1,13 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
-import pl.edu.pk.iti.copperAnt.network.Computer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import jfxtras.labs.util.event.MouseControlUtil;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
+import pl.edu.pk.iti.copperAnt.network.Computer;
 
 public class ComputerControl extends Control {
 	private final static int defaultSize = 100;
@@ -19,6 +20,8 @@ public class ComputerControl extends Control {
 		MouseControlUtil.makeDraggable(this);
 		setWidth(defaultSize);
 		setHeight(defaultSize);
+		DeviceLoggingModuleFacade.getInstance().assignLoggingTab(this);
+
 		drawIcon();
 		drawPort();
 	}

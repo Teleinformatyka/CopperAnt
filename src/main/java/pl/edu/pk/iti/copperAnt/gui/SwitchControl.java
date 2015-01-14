@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import pl.edu.pk.iti.copperAnt.network.Port;
 import pl.edu.pk.iti.copperAnt.network.Router;
 import pl.edu.pk.iti.copperAnt.network.Switch;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 
 public class SwitchControl extends MultiportDeviceControl {
 
@@ -18,6 +19,8 @@ public class SwitchControl extends MultiportDeviceControl {
 		super(extractPortControlList(switch_));
 		this.switch_ = switch_;
 		prepareContextMenu();
+		DeviceLoggingModuleFacade.getInstance().assignLoggingTab(this);
+		
 	}
 
 	@Override

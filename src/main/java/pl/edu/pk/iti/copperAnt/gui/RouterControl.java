@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import jfxtras.scene.control.window.Window;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import pl.edu.pk.iti.copperAnt.network.Port;
 import pl.edu.pk.iti.copperAnt.network.Router;
 
@@ -22,6 +23,7 @@ public class RouterControl extends MultiportDeviceControl {
 		super(extractPortControlList(router));
 		this.router = router;
 		prepareContextMenu();
+		DeviceLoggingModuleFacade.getInstance().assignLoggingTab(this);
 	}
 
 	@Override

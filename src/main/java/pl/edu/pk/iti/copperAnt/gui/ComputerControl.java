@@ -1,14 +1,7 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
-import java.util.List;
-
-import pl.edu.pk.iti.copperAnt.network.Computer;
-import pl.edu.pk.iti.copperAnt.network.IPAddress;
-import pl.edu.pk.iti.copperAnt.network.Package;
-import pl.edu.pk.iti.copperAnt.network.Port;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
@@ -19,6 +12,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import jfxtras.labs.util.event.MouseControlUtil;
 import jfxtras.scene.control.window.Window;
+import pl.edu.pk.iti.copperAnt.network.Computer;
+import pl.edu.pk.iti.copperAnt.network.IPAddress;
+import pl.edu.pk.iti.copperAnt.network.Package;
 
 public class ComputerControl extends DeviceControl {
 	private final static int defaultSize = 100;
@@ -60,10 +56,6 @@ public class ComputerControl extends DeviceControl {
 	// @Override
 	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
-
-		MenuItem changeIp = new MenuItem("Zmień IP");
-		changeIp.setOnAction(e -> sampleAction());
-		contextMenu.getItems().add(changeIp);
 
 		MenuItem showComputerState = new MenuItem("Pokaż stan komputera");
 		showComputerState.setOnAction(e -> {

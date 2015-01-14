@@ -7,12 +7,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import jfxtras.scene.control.window.Window;
+import pl.edu.pk.iti.copperAnt.network.IPAddress;
 import pl.edu.pk.iti.copperAnt.network.Port;
 import pl.edu.pk.iti.copperAnt.network.Router;
 
@@ -36,9 +37,9 @@ public class RouterControl extends MultiportDeviceControl {
 	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
 
-		MenuItem addComputerItem = new MenuItem("Akcja 3");
-		addComputerItem.setOnAction(e -> sampleAction());
-		// contextMenu.getItems().add(addComputerItem);
+		MenuItem addComputerItem = new MenuItem("Zmień ip");
+		addComputerItem.setOnAction(e -> changeIpPopup());
+		contextMenu.getItems().add(addComputerItem);
 
 		MenuItem showRouterState = new MenuItem("Pokaż stan routera");
 		showRouterState.setOnAction(e -> showRouterStatePopup());
@@ -74,15 +75,32 @@ public class RouterControl extends MultiportDeviceControl {
 		window.setMinWidth(200);
 	}
 
-	private void sampleAction() {
-		Window window = createDefaultWindow("Router - Akcja 3",
+	private void changeIpPopup() {
+		Window window = createDefaultWindow("Router - zmień IP",
 				placeForIconHeight);
 
+		Font font = new Font(10);
 		VBox windowContent = new VBox();
-		windowContent.getChildren().add(new Button("button"));
-		windowContent.getChildren().add(new Button("button"));
-		windowContent.getChildren().add(new Label("label"));
-		windowContent.getChildren().add(new TextField("textfield"));
+		Label portLabel = new Label("port:");
+		portLabel.setFont(font);
+		windowContent.getChildren().add(portLabel);
+		TextField portNumber = new TextField();
+		portNumber.setFont(font);
+		windowContent.getChildren().add(portNumber);
+		Label ipLabel = new Label("ip:");
+		ipLabel.setFont(font);
+		windowContent.getChildren().add(ipLabel);
+		TextField newIp = new TextField();
+		newIp.setFont(font);
+		windowContent.getChildren().add(newIp);
+		Button changeIpButton = new Button("zmień");
+		changeIpButton.setFont(font);
+		changeIpButton.setOnMouseClicked(e -> {
+			router.setIpForPort(Integer.parseInt(portNumber.getText()),
+					new IPAddress(newIp.getText()));
+			window.close();
+		});
+		windowContent.getChildren().add(changeIpButton);
 		window.getContentPane().getChildren().add(windowContent);
 	}
 

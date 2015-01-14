@@ -49,8 +49,6 @@ public class MainApp extends Application {
 
 		box.getChildren().add(centralSplitPane);
 		VBox.setVgrow(centralSplitPane, Priority.ALWAYS);
-		box.getChildren().add(sp);
-		VBox.setVgrow(sp, Priority.ALWAYS);
 
 		vb.getChildren().add(simulationCanvas);
 		sp.setContent(vb);

@@ -5,11 +5,11 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
 import pl.edu.pk.iti.copperAnt.simulation.events.ComputerInitializeTrafficEvent;
 import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
@@ -21,15 +21,16 @@ public class Computer extends Device implements WithControl {
 
 	public static final String DAFAULT_IP_ADDRESS = "192.168.0.1";
 
-	private static final Logger computer_log = LoggerFactory
-			.getLogger("computer_logs");
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(this);
+	
+	private static final Logger computer_log = Logger.getLogger("computer_logs");
 
 	private Port port;
 	private IPAddress ip;
 	private IPAddress defaultGateway;
 	private ComputerControl control;
 	private HashMap<String, String> arpTable = new HashMap<String, String>();
-	private static final Logger log = LoggerFactory.getLogger(Computer.class);
+	
 	private Multimap<String, Package> packageQueue = HashMultimap.create(); // Ip
 																			// package
 																			// to
@@ -54,7 +55,7 @@ public class Computer extends Device implements WithControl {
 		port.setControlDestinationMacOfPackages(true);
 		this.ip = ip;
 		if (withGui) {
-			this.control = new ComputerControl(this);
+			this.setControl(new ComputerControl(this));
 		}
 		computer_log.info("New computer created with GUI");
 	}
@@ -90,7 +91,7 @@ public class Computer extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package pack, Port inPort) {
-		log.info("Computer received package " + pack);
+		deviceLog.info("Computer received package " + pack);
 		acceptPackegesWhichDoesNotRequireIP(pack);
 		if (this.ip == null
 				|| !pack.getDestinationIP().equals(this.ip.toString())) {
@@ -195,6 +196,11 @@ public class Computer extends Device implements WithControl {
 	@Override
 	public ComputerControl getControl() {
 		return control;
+	}
+	
+	public void setControl(ComputerControl computerControl) {
+		this.control = computerControl;
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(this);
 	}
 
 	public String getIP() {

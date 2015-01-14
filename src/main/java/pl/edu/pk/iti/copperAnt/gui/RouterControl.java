@@ -1,5 +1,6 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import jfxtras.scene.control.window.Window;
@@ -41,11 +41,44 @@ public class RouterControl extends MultiportDeviceControl {
 		addComputerItem.setOnAction(e -> changeIpPopup());
 		contextMenu.getItems().add(addComputerItem);
 
+		MenuItem addRouting = new MenuItem("Dodaj routing");
+		addRouting.setOnAction(e -> addRoutingPopup());
+		contextMenu.getItems().add(addRouting);
+
 		MenuItem showRouterState = new MenuItem("Pokaż stan routera");
 		showRouterState.setOnAction(e -> showRouterStatePopup());
 		contextMenu.getItems().add(showRouterState);
 
 		setContextMenu(contextMenu);
+	}
+
+	private void addRoutingPopup() {
+		Window window = createDefaultWindow("Router - dodaj routing",
+				placeForIconHeight);
+
+		Font font = new Font(10);
+		VBox windowContent = new VBox();
+		Label networkAddress = new Label("adres sieci:");
+		networkAddress.setFont(font);
+		windowContent.getChildren().add(networkAddress);
+		TextField netowrkTextField = new TextField();
+		netowrkTextField.setFont(font);
+		windowContent.getChildren().add(netowrkTextField);
+		Label portNumberLabel = new Label("number portu:");
+		portNumberLabel.setFont(font);
+		windowContent.getChildren().add(portNumberLabel);
+		TextField portNumberTextField = new TextField();
+		portNumberTextField.setFont(font);
+		windowContent.getChildren().add(portNumberTextField);
+		Button changeIpButton = new Button("dodaj");
+		changeIpButton.setFont(font);
+		changeIpButton.setOnMouseClicked(e -> {
+			router.addRouting(netowrkTextField.getText(), router
+					.getPort(Integer.parseInt(portNumberTextField.getText())));
+			window.close();
+		});
+		windowContent.getChildren().add(changeIpButton);
+		window.getContentPane().getChildren().add(windowContent);
 	}
 
 	private void showRouterStatePopup() {
@@ -70,6 +103,16 @@ public class RouterControl extends MultiportDeviceControl {
 			windowContent.getChildren().add(label);
 
 		}
+		String routingTableString = "";
+		HashMap<String, Port> routingTable = router.getRoutingTable();
+		for (String ip : routingTable.keySet()) {
+			routingTableString += ip + " --> port "
+					+ router.getPortNumber(routingTable.get(ip)) + "\n";
+		}
+		Label routingLabel = new Label(routingTableString);
+		routingLabel.setFont(new Font(10));
+		windowContent.getChildren().add(routingLabel);
+
 		window.getContentPane().getChildren().add(windowContent);
 		window.setMinHeight(200);
 		window.setMinWidth(200);

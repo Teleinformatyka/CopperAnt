@@ -31,6 +31,10 @@ public class Router extends Device implements WithControl {
 
 	private HashMap<String, Port> routingTable; // <IP, Port>
 
+	public HashMap<String, Port> getRoutingTable() {
+		return routingTable;
+	}
+
 	private RouterControl control;
 	private static final Logger log = LoggerFactory.getLogger(Router.class);
 	private HashMap<String, String> arpTable = new HashMap<String, String>();
@@ -219,7 +223,7 @@ public class Router extends Device implements WithControl {
 		arpTable.put(ip, mac);
 	}
 
-	private int getPortNumber(Port inPort) {
+	public int getPortNumber(Port inPort) {
 		for (int i = 0; i < portIP.size(); i++) {
 			Triplet<Port, IPAddress, IPAddress> triplet = portIP.get(i);
 			if (triplet.getValue0().equals(inPort)) {

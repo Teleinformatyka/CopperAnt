@@ -5,11 +5,11 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
 import pl.edu.pk.iti.copperAnt.simulation.events.ComputerInitializeTrafficEvent;
 import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
@@ -21,15 +21,16 @@ public class Computer extends Device implements WithControl {
 
 	public static final String DAFAULT_IP_ADDRESS = "192.168.0.1";
 
-	private static final Logger computer_log = LoggerFactory
-			.getLogger("computer_logs");
+	Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(
+			this);
 
 	private Port port;
 	private IPAddress ip;
 	private IPAddress defaultGateway;
 	private ComputerControl control;
 	private HashMap<String, String> arpTable = new HashMap<String, String>();
-	private static final Logger log = LoggerFactory.getLogger(Computer.class);
+	// private static final Logger log =
+	// LoggerFactory.getLogger(Computer.class);
 	private Multimap<String, Package> packageQueue = HashMultimap.create(); // Ip
 																			// package
 																			// to
@@ -41,7 +42,7 @@ public class Computer extends Device implements WithControl {
 
 	public Computer(IPAddress ip) {
 		this(ip, false);
-		computer_log.info("New computer created without GUI");
+		deviceLog.info("New computer created without GUI");
 
 	}
 
@@ -55,8 +56,10 @@ public class Computer extends Device implements WithControl {
 		this.ip = ip;
 		if (withGui) {
 			this.control = new ComputerControl(this);
+			deviceLog = DeviceLoggingModuleFacade.getInstance()
+					.getDeviceLogger(this);
 		}
-		computer_log.info("New computer created with GUI");
+		deviceLog.info("New computer created with GUI");
 	}
 
 	public void addKnownHost(String ip, String mac) {
@@ -90,7 +93,7 @@ public class Computer extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package pack, Port inPort) {
-		log.info("Computer received package " + pack);
+		deviceLog.info("Computer received package " + pack);
 		acceptPackegesWhichDoesNotRequireIP(pack);
 		if (this.ip == null
 				|| !pack.getDestinationIP().equals(this.ip.toString())) {
@@ -158,6 +161,7 @@ public class Computer extends Device implements WithControl {
 	}
 
 	private void addPortSendsEvent(Package pack) {
+		deviceLog.info("Sending package: " + pack);
 		PortSendsEvent event = new PortSendsEvent(Clock.getInstance()
 				.getCurrentTime() + this.getDelay(), port, pack);
 		Clock.getInstance().addEvent(event);

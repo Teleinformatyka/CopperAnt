@@ -256,4 +256,12 @@ public class Computer extends Device implements WithControl {
 		this.defaultGateway = defaultGateway;
 	}
 
+	public IPAddress getIp() {
+		return ip;
+	}
+
+	public void setIp(IPAddress ip) {
+		this.ip = ip;
+	}
+
 }

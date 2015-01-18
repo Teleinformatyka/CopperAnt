@@ -18,10 +18,10 @@ public class Clock {
 
 	long currentTime;
 	long lastEventTime;
-	boolean realTime = false;
+	boolean realTime = true;
 
 	List<Event> events;
-	private long timeScale = 10;
+	private long timeScale = 20;
 
 	private static Clock instance = new Clock();
 
@@ -57,11 +57,6 @@ public class Clock {
 	public void run() {
 		while (!finishCondition.isSatisfied(this)) {
 			tick();
-			try {
-		        Thread.sleep(50);
-		    }  catch (Exception e)   {
-		        e.printStackTrace();
-		    }
 		}
 
 	}
@@ -80,11 +75,11 @@ public class Clock {
 				Event eventToRun = events.get(0);
 				events.remove(eventToRun);
 				eventToRun.run();
-				try   {
-			        Thread.sleep(50);
-			    }  catch (Exception e) {
-			        e.printStackTrace();
-			    }
+				try {
+					Thread.sleep(50);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 		}

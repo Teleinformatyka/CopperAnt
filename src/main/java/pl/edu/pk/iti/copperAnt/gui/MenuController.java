@@ -3,6 +3,9 @@ package pl.edu.pk.iti.copperAnt.gui;
 import java.io.File;
 import java.io.IOException;
 
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -78,7 +81,19 @@ public class MenuController {
 
 		menuBar.getMenus().add(menuSimulation);
 		MenuItem simulationRun = new MenuItem("Start");
-		simulationRun.setOnAction(e -> Clock.getInstance().run());
+		simulationRun.setOnAction(new EventHandler<ActionEvent>() {
+				    @Override public void handle(ActionEvent e) {
+				    	Task<Void> task = new Task<Void>() {
+
+							@Override
+							protected Void call() throws Exception {
+								Clock.getInstance().run();
+								return null;
+							}
+						};
+						new Thread(task).start();
+				    }
+				});
 		menuSimulation.getItems().add(simulationRun);
 
 		MenuItem simulationPause = new MenuItem("Stop");

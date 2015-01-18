@@ -115,15 +115,26 @@ public class ComputerControl extends DeviceControl {
 		buttonPing.setOnMouseClicked(e -> {
 			Package pack = new Package();
 			pack.setDestinationIP(textFieldPingIp.getText());
-			System.out.println("Ping: " + textFieldPingIp.getText());
 			computer.sendPackage(pack);
 		});
 		buttonPing.setFont(font);
 		ipHbox3.getChildren().add(buttonPing);
 
+		HBox ipHbox4 = new HBox(5);
+		TextField textFieldInitIp = new TextField();
+		textFieldInitIp.setFont(font);
+		ipHbox4.getChildren().add(textFieldInitIp);
+		Button buttonInit = new Button("Init");
+		buttonInit.setOnMouseClicked(e -> {
+			computer.initTrafic(new IPAddress(textFieldInitIp.getText()));
+		});
+		buttonInit.setFont(font);
+		ipHbox4.getChildren().add(buttonInit);
+
 		windowContent.getChildren().add(ipHbox1);
 		windowContent.getChildren().add(ipHbox2);
 		windowContent.getChildren().add(ipHbox3);
+		windowContent.getChildren().add(ipHbox4);
 		window.getContentPane().getChildren().add(windowContent);
 	}
 

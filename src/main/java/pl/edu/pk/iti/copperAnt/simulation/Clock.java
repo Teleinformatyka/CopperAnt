@@ -3,6 +3,9 @@ package pl.edu.pk.iti.copperAnt.simulation;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javafx.concurrent.Task;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +57,11 @@ public class Clock {
 	public void run() {
 		while (!finishCondition.isSatisfied(this)) {
 			tick();
+			try {
+		        Thread.sleep(50);
+		    }  catch (Exception e)   {
+		        e.printStackTrace();
+		    }
 		}
 
 	}
@@ -72,6 +80,11 @@ public class Clock {
 				Event eventToRun = events.get(0);
 				events.remove(eventToRun);
 				eventToRun.run();
+				try   {
+			        Thread.sleep(50);
+			    }  catch (Exception e) {
+			        e.printStackTrace();
+			    }
 			}
 
 		}

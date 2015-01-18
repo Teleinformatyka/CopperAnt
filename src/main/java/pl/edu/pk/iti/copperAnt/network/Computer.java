@@ -21,16 +21,17 @@ public class Computer extends Device implements WithControl {
 
 	public static final String DAFAULT_IP_ADDRESS = "192.168.0.1";
 
-	Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(
-			this);
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance()
+			.getDeviceLogger(this);
+
+	private static final Logger computer_log = Logger
+			.getLogger("computer_logs");
 
 	private Port port;
 	private IPAddress ip;
 	private IPAddress defaultGateway;
 	private ComputerControl control;
 	private HashMap<String, String> arpTable = new HashMap<String, String>();
-	// private static final Logger log =
-	// LoggerFactory.getLogger(Computer.class);
 	private Multimap<String, Package> packageQueue = HashMultimap.create(); // Ip
 																			// package
 																			// to
@@ -55,9 +56,7 @@ public class Computer extends Device implements WithControl {
 		port.setControlDestinationMacOfPackages(true);
 		this.ip = ip;
 		if (withGui) {
-			this.control = new ComputerControl(this);
-			deviceLog = DeviceLoggingModuleFacade.getInstance()
-					.getDeviceLogger(this);
+			this.setControl(new ComputerControl(this));
 		}
 		deviceLog.info("New computer created with GUI");
 	}
@@ -199,6 +198,12 @@ public class Computer extends Device implements WithControl {
 	@Override
 	public ComputerControl getControl() {
 		return control;
+	}
+
+	public void setControl(ComputerControl computerControl) {
+		this.control = computerControl;
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(
+				this);
 	}
 
 	public String getIP() {

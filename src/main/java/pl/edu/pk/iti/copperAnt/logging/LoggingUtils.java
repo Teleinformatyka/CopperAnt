@@ -1,7 +1,7 @@
 package pl.edu.pk.iti.copperAnt.logging;
 
 import org.apache.log4j.Layout;
-import org.apache.log4j.TTCCLayout;
+import org.apache.log4j.PatternLayout;
 
 import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
 import pl.edu.pk.iti.copperAnt.gui.RouterControl;
@@ -16,7 +16,7 @@ public class LoggingUtils {
 	private int switchCounter;
 	
 	public LoggingUtils() {
-		loggingLayout = new TTCCLayout();
+		loggingLayout = new PatternLayout("%m%n");
 		computerCounter = 0;
 		routerCounter = 0;
 		switchCounter = 0;

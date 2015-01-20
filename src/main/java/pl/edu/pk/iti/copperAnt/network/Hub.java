@@ -14,7 +14,7 @@ import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Hub extends Device implements WithControl {
 
-	private final Logger deviceLog;
+	private Logger deviceLog = null;
 
 	private final List<Port> ports;
 	private HubControl control;
@@ -72,6 +72,8 @@ public class Hub extends Device implements WithControl {
 
 	public void setControl(HubControl control) {
 		this.control = control;
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(
+				this);
 	}
 
 	@Override

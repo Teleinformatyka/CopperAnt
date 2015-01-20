@@ -17,7 +17,6 @@ public class HubControl extends MultiportDeviceControl {
 		super(extractPortControlList(hub));
 		this.hub = hub;
 		DeviceLoggingModuleFacade.getInstance().assignLoggingTab(this);
-
 	}
 
 	@Override

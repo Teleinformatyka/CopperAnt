@@ -10,29 +10,27 @@ import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 import org.javatuples.Triplet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.RouterControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
 import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Router extends Device implements WithControl {
 
-	private static final Logger router_log = LoggerFactory
-			.getLogger("router_logs");
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(this);
+	private static final Logger router_log = Logger.getLogger("router_logs");
 
 	private List<Triplet<Port, IPAddress, IPAddress>> portIP; // Port ip dhcpip
 
 	private HashMap<String, Port> routingTable; // <IP, Port>
 
 	private RouterControl control;
-	private static final Logger log = LoggerFactory.getLogger(Router.class);
 	private HashMap<String, String> arpTable = new HashMap<String, String>();
 	private Multimap<String, Package> packageQueue = HashMultimap.create(); // Ip
 																			// --->
@@ -60,7 +58,7 @@ public class Router extends Device implements WithControl {
 		routingTable = new HashMap<String, Port>();
 
 		if (withGui) {
-			control = new RouterControl(this);
+			this.setControl(new RouterControl(this));
 		}
 		router_log.info("New router created with GUI");
 	}
@@ -123,13 +121,13 @@ public class Router extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package receivedPack, Port inPort) {
-		log.debug("Accept pacakge from " + receivedPack.getSourceIP() + " to "
+		deviceLog.info("Accept pacakge from " + receivedPack.getSourceIP() + " to "
 				+ receivedPack.getSourceIP());
 		String destinationIP = receivedPack.getDestinationIP();
 		String sourceIP = receivedPack.getSourceIP();
 
 		if (StringUtils.isBlank(destinationIP) || StringUtils.isBlank(sourceIP)) {
-			log.debug("Pacakge from does not contains IP address. Droped.");
+			deviceLog.info("Pacakge from does not contains IP address. Droped.");
 			return;
 		}
 
@@ -138,7 +136,7 @@ public class Router extends Device implements WithControl {
 		response.setDestinationMAC("");
 		response.setSourceMAC("");
 		if (!receivedPack.validTTL()) {
-			log.debug("Pack has not valid ttl!");
+			deviceLog.info("Pack has not valid ttl!");
 			response = new Package(PackageType.DESTINATION_UNREACHABLE, "TTL<0");
 			response.setDestinationIP(sourceIP);
 			response.setDestinationMAC(receivedPack.getSourceMAC());
@@ -150,7 +148,7 @@ public class Router extends Device implements WithControl {
 		if (receivedPack.getType() == PackageType.DHCP) {
 			// request to this router to get IP, DHCP only local network
 			if (receivedPack.getContent() == null) {
-				log.debug("Request to router for IP");
+				deviceLog.info("Request to router for IP");
 				sourceIP = generateIP(inPort);
 				response = new Package(PackageType.DHCP, sourceIP);
 				response.setDestinationMAC(receivedPack.getDestinationMAC());
@@ -158,14 +156,14 @@ public class Router extends Device implements WithControl {
 			} else {
 				// response from wan router
 				// FIXME: what happen when we connect two routers in DHCP mode?
-				log.debug("Get WAN ip");
+				deviceLog.info("Get WAN ip");
 
 				return;
 			}
 
 		} else if (receivedPack.getType() == PackageType.ECHO_REQUEST
 				&& this.isMyIP(destinationIP)) {
-			log.debug("Response for ECHO_REQUEST");
+			deviceLog.info("Response for ECHO_REQUEST");
 			response = new Package(PackageType.ECHO_REPLY,
 					receivedPack.getContent());
 			response.setDestinationMAC(receivedPack.getSourceMAC());
@@ -196,7 +194,7 @@ public class Router extends Device implements WithControl {
 		}
 		String sourceNetwork = new IPAddress(sourceIP).getNetwork();
 		if (!routingTable.containsKey(sourceNetwork)) {
-			log.debug("Adding source ip " + sourceNetwork + " to routingTable");
+			deviceLog.info("Adding source ip " + sourceNetwork + " to routingTable");
 			routingTable.put(sourceNetwork, inPort);
 		}
 
@@ -204,7 +202,7 @@ public class Router extends Device implements WithControl {
 		if (routingTable.containsKey(destinationNetwork)
 				&& !this.isMyIP(destinationIP)) {
 			// IP in table
-			log.debug("Know IP, send to LAN port");
+			deviceLog.info("Know IP, send to LAN port");
 
 			outPort = routingTable.get(destinationNetwork);
 
@@ -282,6 +280,7 @@ public class Router extends Device implements WithControl {
 
 	public void setControl(RouterControl control) {
 		this.control = control;
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(this);
 	}
 
 	public void setIpForPort(int portNumber, IPAddress ip) {

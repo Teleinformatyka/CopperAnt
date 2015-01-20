@@ -70,7 +70,7 @@ public class ComputerControl extends DeviceControl {
 	}
 
 	private void showComputerStateWindow() {
-		Window window = createDefaultWindow("Komputer " + computer.getIP(),
+		Window window = createDefaultWindow("Komputer " + computer.getNumber(),
 				getWidth());
 		VBox windowContent = new VBox();
 		Label label = new Label();

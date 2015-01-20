@@ -13,7 +13,8 @@ import pl.edu.pk.iti.copperAnt.simulation.Clock;
 import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Switch extends Device implements WithControl {
-	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(this);
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance()
+			.getDeviceLogger(this);
 	private static final Logger switch_log = Logger.getLogger("switch_logs");
 
 	private final List<Port> ports;
@@ -60,7 +61,8 @@ public class Switch extends Device implements WithControl {
 		Package pack = receivedPack.copy();
 		String destinationMAC = pack.getDestinationMAC();
 		String sourceMAC = pack.getSourceMAC();
-		deviceLog.info("AcceptPackage from " + sourceMAC + " to " + destinationMAC);
+		deviceLog.info("AcceptPackage from " + sourceMAC + " to "
+				+ destinationMAC);
 		if (!macTable.containsKey(sourceMAC)) {
 			deviceLog.info("Added new mac to macTable: " + sourceMAC + "port: "
 					+ inPort);
@@ -90,7 +92,8 @@ public class Switch extends Device implements WithControl {
 
 	public void setControl(SwitchControl control) {
 		this.control = control;
-		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(this);
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(
+				this);
 	}
 
 	public HashMap<String, Port> getMacTable() {
@@ -104,5 +107,10 @@ public class Switch extends Device implements WithControl {
 
 	public List<Port> getPortList() {
 		return this.ports;
+	}
+
+	@Override
+	public Logger getLogger() {
+		return deviceLog;
 	}
 }

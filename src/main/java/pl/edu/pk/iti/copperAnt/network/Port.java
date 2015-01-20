@@ -104,8 +104,9 @@ public class Port {
 			String destinationMAC = pack.getDestinationMAC();
 			if (!destinationMAC.equals(this.MAC)
 					&& !destinationMAC.equals(Package.MAC_BROADCAST)) {
-				log.info("Dropping package! Wrong MAC! " + pack + " my MAC "
-						+ this.MAC);
+				this.device.getLogger().info(
+						"Dropping package! Wrong MAC! " + pack + " my MAC "
+								+ this.MAC);
 				return;
 			}
 		}

@@ -19,11 +19,13 @@ import com.google.common.collect.Multimap;
 
 public class Computer extends Device implements WithControl {
 
-	public static final String DAFAULT_IP_ADDRESS = "192.168.0.1";
+	public static final IPAddress DEFAULT_IP_ADDRESS = new IPAddress(
+			"192.168.0.1");
 
 	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance()
 			.getDeviceLogger(this);
-
+	public static int COMPUTER_COUNT = 0;
+	private int number;
 	private Port port;
 	private IPAddress ip;
 	private IPAddress defaultGateway;
@@ -35,7 +37,8 @@ public class Computer extends Device implements WithControl {
 																			// send;
 
 	public Computer() {
-		this(new IPAddress(DAFAULT_IP_ADDRESS));
+		this(new IPAddress(DEFAULT_IP_ADDRESS));
+
 	}
 
 	public Computer(IPAddress ip) {
@@ -45,7 +48,7 @@ public class Computer extends Device implements WithControl {
 	}
 
 	public Computer(boolean withGui) {
-		this(new IPAddress(DAFAULT_IP_ADDRESS), withGui);
+		this(new IPAddress(DEFAULT_IP_ADDRESS), withGui);
 	}
 
 	public Computer(IPAddress ip, boolean withGui) {
@@ -56,6 +59,14 @@ public class Computer extends Device implements WithControl {
 			this.setControl(new ComputerControl(this));
 		}
 		deviceLog.info("New computer created with GUI");
+		DEFAULT_IP_ADDRESS.increment();
+		number = COMPUTER_COUNT++;
+
+	}
+
+	public int getNumber() {
+
+		return number;
 	}
 
 	public void addKnownHost(String ip, String mac) {

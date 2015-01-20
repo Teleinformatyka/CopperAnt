@@ -155,9 +155,6 @@ public class MenuController {
 							.getChildNodes().item(0).getNodeValue();
 					String ypos = elem.getElementsByTagName("yPos").item(0)
 							.getChildNodes().item(0).getNodeValue();
-
-					System.out.println(controlName + "  X: " + xpos + " Y: "
-							+ ypos);
 					switch (controlName) {
 					case "ComputerControl":
 						simulationCanvas.addControl(
@@ -180,7 +177,6 @@ public class MenuController {
 								Double.parseDouble(ypos));
 						break;
 					default:
-						System.out.println("urządzenie nie rozpoznane");
 						break;
 
 					}

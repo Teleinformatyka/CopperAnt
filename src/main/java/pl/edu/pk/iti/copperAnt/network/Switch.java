@@ -15,7 +15,6 @@ import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 public class Switch extends Device implements WithControl {
 	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance()
 			.getDeviceLogger(this);
-	private static final Logger switch_log = Logger.getLogger("switch_logs");
 
 	private final List<Port> ports;
 	private HashMap<String, Port> macTable; // <MAC, Port>
@@ -23,7 +22,7 @@ public class Switch extends Device implements WithControl {
 
 	public Switch(int numberOfPorts) {
 		this(numberOfPorts, false);
-		switch_log.info("New switch created without GUI");
+		deviceLog.info("New switch created without GUI");
 	}
 
 	public Switch(int numberOfPorts, boolean withGui) {
@@ -35,7 +34,7 @@ public class Switch extends Device implements WithControl {
 		if (withGui) {
 			this.setControl(new SwitchControl(this));
 		}
-		switch_log.info("New switch created with GUI");
+		deviceLog.info("New switch created with GUI");
 	}
 
 	public Port getPort(int portNumber) {

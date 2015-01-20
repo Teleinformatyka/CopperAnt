@@ -81,7 +81,8 @@ public class PortControl extends DeviceControl {
 		contextMenu.getItems().add(addComputerItem);
 
 		MenuItem addRouterItem = new MenuItem("Test method");
-		addRouterItem.setOnAction(e -> this.port.testMethod());
+		addRouterItem.setOnAction(e -> {
+		});
 		contextMenu.getItems().add(addRouterItem);
 
 		setContextMenu(contextMenu);

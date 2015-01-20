@@ -14,8 +14,7 @@ import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Hub extends Device implements WithControl {
 
-	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance()
-			.getDeviceLogger(this);
+	private final Logger deviceLog;
 
 	private final List<Port> ports;
 	private HubControl control;
@@ -36,9 +35,11 @@ public class Hub extends Device implements WithControl {
 			for (Port port : ports) {
 				list.add(port.getControl());
 			}
-			control = new HubControl(list);
+			control = new HubControl(this);
 		}
-		deviceLog.info("New computer created with GUI");
+		deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(
+				this);
+		deviceLog.info("New hub created with GUI");
 	}
 
 	public Port getPort(int portNumber) {
@@ -47,8 +48,12 @@ public class Hub extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package pack, Port inPort) {
+		deviceLog.info("Hub accepted package " + pack + "from port"
+				+ this.ports.indexOf(inPort));
 		long time = Clock.getInstance().getCurrentTime() + getDelay();
 		for (Port port : ports) {
+			deviceLog.info("Hub sends package " + pack + "to port"
+					+ this.ports.indexOf(port));
 			Clock.getInstance().addEvent(
 					new PortSendsEvent(time, port, pack.copy()));
 		}
@@ -72,6 +77,10 @@ public class Hub extends Device implements WithControl {
 	@Override
 	public Logger getLogger() {
 		return deviceLog;
+	}
+
+	public List<Port> getPortList() {
+		return this.ports;
 	}
 
 }

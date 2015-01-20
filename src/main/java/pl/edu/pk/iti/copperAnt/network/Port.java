@@ -162,9 +162,4 @@ public class Port {
 		return this.portSendingStrategy.isCollisionDetection();
 	}
 
-	// TODO remove function below
-	public void testMethod() {
-		System.out.println(this.toString() + "is port of device:"
-				+ this.device.toString());
-	}
 }

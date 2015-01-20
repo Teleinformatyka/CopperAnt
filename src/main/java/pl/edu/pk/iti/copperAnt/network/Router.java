@@ -23,7 +23,8 @@ import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Router extends Device implements WithControl {
 
-	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(this);
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance()
+			.getDeviceLogger(this);
 	private static final Logger router_log = Logger.getLogger("router_logs");
 
 	private List<Triplet<Port, IPAddress, IPAddress>> portIP; // Port ip dhcpip
@@ -125,13 +126,14 @@ public class Router extends Device implements WithControl {
 
 	@Override
 	public void acceptPackage(Package receivedPack, Port inPort) {
-		deviceLog.info("Accept pacakge from " + receivedPack.getSourceIP() + " to "
-				+ receivedPack.getSourceIP());
+		deviceLog.info("Accept pacakge from " + receivedPack.getSourceIP()
+				+ " to " + receivedPack.getSourceIP());
 		String destinationIP = receivedPack.getDestinationIP();
 		String sourceIP = receivedPack.getSourceIP();
 
 		if (StringUtils.isBlank(destinationIP) || StringUtils.isBlank(sourceIP)) {
-			deviceLog.info("Pacakge from does not contains IP address. Droped.");
+			deviceLog
+					.info("Pacakge from does not contains IP address. Droped.");
 			return;
 		}
 
@@ -198,7 +200,8 @@ public class Router extends Device implements WithControl {
 		}
 		String sourceNetwork = new IPAddress(sourceIP).getNetwork();
 		if (!routingTable.containsKey(sourceNetwork)) {
-			deviceLog.info("Adding source ip " + sourceNetwork + " to routingTable");
+			deviceLog.info("Adding source ip " + sourceNetwork
+					+ " to routingTable");
 			routingTable.put(sourceNetwork, inPort);
 		}
 
@@ -284,7 +287,8 @@ public class Router extends Device implements WithControl {
 
 	public void setControl(RouterControl control) {
 		this.control = control;
-		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(this);
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(
+				this);
 	}
 
 	public void setIpForPort(int portNumber, IPAddress ip) {
@@ -319,5 +323,10 @@ public class Router extends Device implements WithControl {
 			result.add(triplet.getValue0());
 		}
 		return result;
+	}
+
+	@Override
+	public Logger getLogger() {
+		return deviceLog;
 	}
 }

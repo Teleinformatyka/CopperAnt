@@ -25,10 +25,6 @@ public class Computer extends Device implements WithControl {
 	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance()
 			.getDeviceLogger(this);
 	public static int COMPUTER_COUNT = 0;
-
-	private static final Logger computer_log = Logger
-			.getLogger("computer_logs");
-
 	private int number;
 	private Port port;
 	private IPAddress ip;
@@ -283,6 +279,11 @@ public class Computer extends Device implements WithControl {
 
 	public void setIp(IPAddress ip) {
 		this.ip = ip;
+	}
+
+	@Override
+	public Logger getLogger() {
+		return this.deviceLog;
 	}
 
 }

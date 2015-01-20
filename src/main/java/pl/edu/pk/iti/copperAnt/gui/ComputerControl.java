@@ -83,6 +83,7 @@ public class ComputerControl extends DeviceControl {
 
 		TextField textFieldIp = new TextField();
 		textFieldIp.setFont(font);
+		textFieldIp.setText(this.computer.getIP());
 		ipHbox1.getChildren().add(textFieldIp);
 		Button buttonIp = new Button("Zmień IP");
 		buttonIp.setOnMouseClicked(e -> {

@@ -3,25 +3,26 @@ package pl.edu.pk.iti.copperAnt.network;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import pl.edu.pk.iti.copperAnt.gui.HubControl;
 import pl.edu.pk.iti.copperAnt.gui.PortControl;
 import pl.edu.pk.iti.copperAnt.gui.WithControl;
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import pl.edu.pk.iti.copperAnt.simulation.Clock;
 import pl.edu.pk.iti.copperAnt.simulation.events.PortSendsEvent;
 
 public class Hub extends Device implements WithControl {
 
-	private static final Logger hub_log = LoggerFactory.getLogger("hub_logs");
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance()
+			.getDeviceLogger(this);
 
 	private final List<Port> ports;
 	private HubControl control;
 
 	public Hub(int numberOfPorts) {
 		this(numberOfPorts, false);
-		hub_log.info("New hub created without GUI");
+		deviceLog.info("New hub created without GUI");
 
 	}
 
@@ -37,7 +38,7 @@ public class Hub extends Device implements WithControl {
 			}
 			control = new HubControl(list);
 		}
-		hub_log.info("New computer created with GUI");
+		deviceLog.info("New computer created with GUI");
 	}
 
 	public Port getPort(int portNumber) {
@@ -66,6 +67,11 @@ public class Hub extends Device implements WithControl {
 
 	public void setControl(HubControl control) {
 		this.control = control;
+	}
+
+	@Override
+	public Logger getLogger() {
+		return deviceLog;
 	}
 
 }

@@ -82,23 +82,41 @@ public class MenuController {
 		menuBar.getMenus().add(menuSimulation);
 		MenuItem simulationRun = new MenuItem("Start");
 		simulationRun.setOnAction(new EventHandler<ActionEvent>() {
-				    @Override public void handle(ActionEvent e) {
-				    	Task<Void> task = new Task<Void>() {
+			@Override
+			public void handle(ActionEvent e) {
+				Task<Void> task = new Task<Void>() {
 
-							@Override
-							protected Void call() throws Exception {
-								Clock.getInstance().run();
-								return null;
-							}
-						};
-						new Thread(task).start();
-				    }
-				});
+					@Override
+					protected Void call() throws Exception {
+						Clock.getInstance().run();
+						return null;
+					}
+				};
+				new Thread(task).start();
+			}
+		});
 		menuSimulation.getItems().add(simulationRun);
 
 		MenuItem simulationPause = new MenuItem("Stop");
 		simulationPause.setOnAction(e -> Clock.getInstance().stop());
 		menuSimulation.getItems().add(simulationPause);
+
+		MenuItem simulationTick = new MenuItem("Krok");
+		simulationTick.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				Task<Void> task = new Task<Void>() {
+
+					@Override
+					protected Void call() throws Exception {
+						Clock.getInstance().tick();
+						return null;
+					}
+				};
+				new Thread(task).start();
+			}
+		});
+		menuSimulation.getItems().add(simulationTick);
 
 		MenuItem simulationStop = new MenuItem("Reset");
 		simulationStop.setOnAction(e -> Clock.resetInstance());

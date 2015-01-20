@@ -2,6 +2,7 @@ package pl.edu.pk.iti.copperAnt.gui;
 
 import java.util.List;
 
+import pl.edu.pk.iti.copperAnt.logging.DeviceLoggingModuleFacade;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -9,6 +10,7 @@ import javafx.scene.image.Image;
 public class HubControl extends MultiportDeviceControl {
 	public HubControl(List<PortControl> portList) {
 		super(portList);
+		DeviceLoggingModuleFacade.getInstance().assignLoggingTab(this);
 	}
 
 	@Override

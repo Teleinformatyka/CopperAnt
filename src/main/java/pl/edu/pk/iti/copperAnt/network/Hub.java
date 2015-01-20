@@ -36,9 +36,9 @@ public class Hub extends Device implements WithControl {
 			for (Port port : ports) {
 				list.add(port.getControl());
 			}
-			control = new HubControl(list);
+			this.setControl(new HubControl(list));
 		}
-		deviceLog.info("New computer created with GUI");
+		deviceLog.info("New hub created with GUI");
 	}
 
 	public Port getPort(int portNumber) {
@@ -67,6 +67,7 @@ public class Hub extends Device implements WithControl {
 
 	public void setControl(HubControl control) {
 		this.control = control;
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(this);
 	}
 
 	@Override

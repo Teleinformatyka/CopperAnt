@@ -4,6 +4,7 @@ import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
 
 import pl.edu.pk.iti.copperAnt.gui.ComputerControl;
+import pl.edu.pk.iti.copperAnt.gui.HubControl;
 import pl.edu.pk.iti.copperAnt.gui.RouterControl;
 import pl.edu.pk.iti.copperAnt.gui.SwitchControl;
 
@@ -14,12 +15,14 @@ public class LoggingUtils {
 	private int computerCounter;
 	private int routerCounter;
 	private int switchCounter;
+	private int hubCounter;
 	
 	public LoggingUtils() {
 		loggingLayout = new PatternLayout("%m%n");
 		computerCounter = 0;
 		routerCounter = 0;
 		switchCounter = 0;
+		hubCounter = 0;
 	}
 	
 	//package + @hash...
@@ -45,6 +48,8 @@ public class LoggingUtils {
 			name = "Switch " + this.switchCounter++;
 		} else if (controlObj instanceof RouterControl) {
 			name = "Router " + this.routerCounter++;
+		}else if (controlObj instanceof HubControl) {
+			name = "Hub " + this.hubCounter++;
 		}
 		return name;
 	}

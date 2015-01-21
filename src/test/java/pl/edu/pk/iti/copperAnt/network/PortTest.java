@@ -6,11 +6,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static pl.edu.pk.iti.copperAnt.network.TestHelper.portIsConnectedToOneOfCableEnds;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -76,6 +78,7 @@ public class PortTest {
 	@Test
 	public void canRejectFramesWithWrongDestMac() {
 		final Device mockDevice = mock(Device.class);
+		when(mockDevice.getLogger()).thenReturn(Logger.getRootLogger());
 		Port port = new Port(mockDevice);
 		port.setControlDestinationMacOfPackages(true);
 		Package pack = new Package();

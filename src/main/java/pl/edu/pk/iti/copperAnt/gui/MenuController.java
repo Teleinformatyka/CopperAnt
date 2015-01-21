@@ -3,6 +3,9 @@ package pl.edu.pk.iti.copperAnt.gui;
 import java.io.File;
 import java.io.IOException;
 
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -78,12 +81,42 @@ public class MenuController {
 
 		menuBar.getMenus().add(menuSimulation);
 		MenuItem simulationRun = new MenuItem("Start");
-		simulationRun.setOnAction(e -> Clock.getInstance().run());
+		simulationRun.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				Task<Void> task = new Task<Void>() {
+
+					@Override
+					protected Void call() throws Exception {
+						Clock.getInstance().run();
+						return null;
+					}
+				};
+				new Thread(task).start();
+			}
+		});
 		menuSimulation.getItems().add(simulationRun);
 
 		MenuItem simulationPause = new MenuItem("Stop");
 		simulationPause.setOnAction(e -> Clock.getInstance().stop());
 		menuSimulation.getItems().add(simulationPause);
+
+		MenuItem simulationTick = new MenuItem("Krok");
+		simulationTick.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				Task<Void> task = new Task<Void>() {
+
+					@Override
+					protected Void call() throws Exception {
+						Clock.getInstance().tick();
+						return null;
+					}
+				};
+				new Thread(task).start();
+			}
+		});
+		menuSimulation.getItems().add(simulationTick);
 
 		MenuItem simulationStop = new MenuItem("Reset");
 		simulationStop.setOnAction(e -> Clock.resetInstance());
@@ -122,9 +155,6 @@ public class MenuController {
 							.getChildNodes().item(0).getNodeValue();
 					String ypos = elem.getElementsByTagName("yPos").item(0)
 							.getChildNodes().item(0).getNodeValue();
-
-					System.out.println(controlName + "  X: " + xpos + " Y: "
-							+ ypos);
 					switch (controlName) {
 					case "ComputerControl":
 						simulationCanvas.addControl(
@@ -147,7 +177,6 @@ public class MenuController {
 								Double.parseDouble(ypos));
 						break;
 					default:
-						System.out.println("urządzenie nie rozpoznane");
 						break;
 
 					}

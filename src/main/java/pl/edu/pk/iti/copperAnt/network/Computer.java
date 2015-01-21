@@ -19,45 +19,54 @@ import com.google.common.collect.Multimap;
 
 public class Computer extends Device implements WithControl {
 
-	public static final String DAFAULT_IP_ADDRESS = "192.168.0.1";
+	public static final IPAddress DEFAULT_IP_ADDRESS = new IPAddress(
+			"192.168.0.1");
 
-	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance().getDeviceLogger(this);
-	
-	private static final Logger computer_log = Logger.getLogger("computer_logs");
-
+	private final Logger deviceLog = DeviceLoggingModuleFacade.getInstance()
+			.getDeviceLogger(this);
+	public static int COMPUTER_COUNT = 0;
+	private int number;
 	private Port port;
 	private IPAddress ip;
 	private IPAddress defaultGateway;
 	private ComputerControl control;
 	private HashMap<String, String> arpTable = new HashMap<String, String>();
-	
 	private Multimap<String, Package> packageQueue = HashMultimap.create(); // Ip
 																			// package
 																			// to
 																			// send;
 
 	public Computer() {
-		this(new IPAddress(DAFAULT_IP_ADDRESS));
+		this(new IPAddress(DEFAULT_IP_ADDRESS));
+
 	}
 
 	public Computer(IPAddress ip) {
 		this(ip, false);
-		computer_log.info("New computer created without GUI");
+		deviceLog.info("New computer created without GUI");
 
 	}
 
 	public Computer(boolean withGui) {
-		this(new IPAddress(DAFAULT_IP_ADDRESS), withGui);
+		this(new IPAddress(DEFAULT_IP_ADDRESS), withGui);
 	}
 
 	public Computer(IPAddress ip, boolean withGui) {
 		this.port = new Port(this, withGui);
 		port.setControlDestinationMacOfPackages(true);
-		this.ip = ip;
+		setIp(ip);
 		if (withGui) {
 			this.setControl(new ComputerControl(this));
 		}
-		computer_log.info("New computer created with GUI");
+		deviceLog.info("New computer created with GUI");
+		DEFAULT_IP_ADDRESS.increment();
+		number = COMPUTER_COUNT++;
+
+	}
+
+	public int getNumber() {
+
+		return number;
 	}
 
 	public void addKnownHost(String ip, String mac) {
@@ -159,6 +168,7 @@ public class Computer extends Device implements WithControl {
 	}
 
 	private void addPortSendsEvent(Package pack) {
+		deviceLog.info("Sending package: " + pack);
 		PortSendsEvent event = new PortSendsEvent(Clock.getInstance()
 				.getCurrentTime() + this.getDelay(), port, pack);
 		Clock.getInstance().addEvent(event);
@@ -197,10 +207,11 @@ public class Computer extends Device implements WithControl {
 	public ComputerControl getControl() {
 		return control;
 	}
-	
+
 	public void setControl(ComputerControl computerControl) {
 		this.control = computerControl;
-		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(this);
+		DeviceLoggingModuleFacade.getInstance().updateDeviceLoggerWithControl(
+				this);
 	}
 
 	public String getIP() {
@@ -260,6 +271,22 @@ public class Computer extends Device implements WithControl {
 
 	public void setDefaultGateway(IPAddress defaultGateway) {
 		this.defaultGateway = defaultGateway;
+	}
+
+	public IPAddress getIp() {
+		return ip;
+	}
+
+	public void setIp(IPAddress ip) {
+		IPAddress defaultGatewayTmp = new IPAddress(ip);
+		defaultGatewayTmp.set(4, 254);
+		this.defaultGateway = defaultGatewayTmp;
+		this.ip = ip;
+	}
+
+	@Override
+	public Logger getLogger() {
+		return this.deviceLog;
 	}
 
 }

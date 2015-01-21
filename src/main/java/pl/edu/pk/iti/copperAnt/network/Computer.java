@@ -54,7 +54,7 @@ public class Computer extends Device implements WithControl {
 	public Computer(IPAddress ip, boolean withGui) {
 		this.port = new Port(this, withGui);
 		port.setControlDestinationMacOfPackages(true);
-		this.ip = ip;
+		setIp(ip);
 		if (withGui) {
 			this.setControl(new ComputerControl(this));
 		}
@@ -278,6 +278,9 @@ public class Computer extends Device implements WithControl {
 	}
 
 	public void setIp(IPAddress ip) {
+		IPAddress defaultGatewayTmp = new IPAddress(ip);
+		defaultGatewayTmp.set(4, 254);
+		this.defaultGateway = defaultGatewayTmp;
 		this.ip = ip;
 	}
 

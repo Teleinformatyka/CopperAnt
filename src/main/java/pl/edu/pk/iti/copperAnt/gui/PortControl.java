@@ -51,12 +51,12 @@ public class PortControl extends DeviceControl {
 
 	private void prepareDiods() {
 		redDiode = new DiodeControl((int) getWidth() / 2,
-				(int) getHeight() / 10, Color.RED);
+				(int) getHeight() / 4, Color.RED);
 		redDiode.setLayoutX((int) getWidth() / 2);
 		redDiode.turnOn();
 
 		greenDiode = new DiodeControl((int) getWidth() / 2,
-				(int) getHeight() / 10, Color.GREENYELLOW);
+				(int) getHeight() / 4, Color.GREENYELLOW);
 
 		getChildren().add(redDiode);
 		getChildren().add(greenDiode);
@@ -79,11 +79,6 @@ public class PortControl extends DeviceControl {
 		MenuItem addComputerItem = new MenuItem("Podłącz kabel");
 		addComputerItem.setOnAction(e -> connectCable());
 		contextMenu.getItems().add(addComputerItem);
-
-		MenuItem addRouterItem = new MenuItem("Test method");
-		addRouterItem.setOnAction(e -> {
-		});
-		contextMenu.getItems().add(addRouterItem);
 
 		setContextMenu(contextMenu);
 	}

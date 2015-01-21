@@ -127,7 +127,7 @@ public class Router extends Device implements WithControl {
 	@Override
 	public void acceptPackage(Package receivedPack, Port inPort) {
 		deviceLog.info("Accept pacakge from " + receivedPack.getSourceIP()
-				+ " to " + receivedPack.getSourceIP());
+				+ " to " + receivedPack.getDestinationIP());
 		String destinationIP = receivedPack.getDestinationIP();
 		String sourceIP = receivedPack.getSourceIP();
 

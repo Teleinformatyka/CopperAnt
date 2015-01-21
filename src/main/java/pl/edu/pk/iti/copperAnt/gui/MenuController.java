@@ -42,6 +42,7 @@ public class MenuController {
 	VBox vbox;
 	final PopUp popUp = new PopUp();
 	SimulationCanvas simulationCanvas;
+	Thread simulation;
 
 	private static final Logger log = LoggerFactory
 			.getLogger(MenuController.class);
@@ -92,13 +93,26 @@ public class MenuController {
 						return null;
 					}
 				};
-				new Thread(task).start();
+				simulation = new Thread(task);
+				simulation.start();
 			}
 		});
 		menuSimulation.getItems().add(simulationRun);
 
 		MenuItem simulationPause = new MenuItem("Stop");
-		simulationPause.setOnAction(e -> Clock.getInstance().stop());
+		simulationPause.setOnAction(e -> {
+			Clock.getInstance().stop();
+			try {
+
+				if (simulation != null) {
+					simulation.join();
+
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+
+		});
 		menuSimulation.getItems().add(simulationPause);
 
 		MenuItem simulationTick = new MenuItem("Krok");
@@ -243,7 +257,17 @@ public class MenuController {
 	}
 
 	private void defaultAction() {
-		popUp.showPopupMessage(stage, "default action");
+		simulationCanvas.clearScreen();
+		Clock.getInstance().resetInstance();
+		try {
+			if (simulation != null) {
+				simulation.join();
+
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void helpAuthors() {

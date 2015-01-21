@@ -39,12 +39,12 @@ public class DeviceLoggingModuleFacade {
 			facadeInstance = new DeviceLoggingModuleFacade();
 			facadeInstance.initializeWithoutGui();
 		}
+
 		return facadeInstance;
 	}
 
 	public void assignLoggingTab(Object object) {
 		initializeJavaFxPlatformWhenRequired();
-
 		String instanceId = loggingUtils.getDeviceId(object);
 		String tabName = loggingUtils.getTabNamePrimitiveRule(object);
 		logTabPane.createTab(instanceId, tabName);

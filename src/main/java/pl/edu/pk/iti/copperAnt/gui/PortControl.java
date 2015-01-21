@@ -34,7 +34,7 @@ public class PortControl extends DeviceControl {
 		setHeight(height);
 
 		prepareDiods();
-		turnOn();
+		turnOff();
 		prepareContextMenu();
 	}
 
@@ -86,6 +86,7 @@ public class PortControl extends DeviceControl {
 	private void connectCable() {
 		Control cableControl = CableConnector.getInstance().connectPort(
 				this.port);
+		turnOn();
 		if (cableControl != null) {
 			SimulationCanvas.getInstance().addControl(cableControl);
 		}

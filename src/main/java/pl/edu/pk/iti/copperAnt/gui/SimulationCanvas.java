@@ -1,6 +1,7 @@
 package pl.edu.pk.iti.copperAnt.gui;
 
 import pl.edu.pk.iti.copperAnt.network.Computer;
+import pl.edu.pk.iti.copperAnt.network.Hub;
 import pl.edu.pk.iti.copperAnt.network.Router;
 import pl.edu.pk.iti.copperAnt.network.Switch;
 import javafx.collections.ObservableList;
@@ -17,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 public class SimulationCanvas extends Region {
 	private double nextDeviceX;
@@ -26,8 +28,10 @@ public class SimulationCanvas extends Region {
 	private Rectangle rectangle;
 
 	private static SimulationCanvas pseudoSingleton;
+	private Stage stage;
 
-	public SimulationCanvas(ScrollPane sp) {
+	public SimulationCanvas(ScrollPane sp, Stage stage) {
+		this.stage = stage;
 		pseudoSingleton = this;
 		setWidth(1900);
 		setHeight(1000);
@@ -78,17 +82,23 @@ public class SimulationCanvas extends Region {
 		});
 		contextMenu.getItems().add(addComputerItem);
 
-		MenuItem addRouterItem = new MenuItem("Dodaj router");
-		addRouterItem.setOnAction(e -> {
-			addControl(new Router(4, true).getControl());
+		MenuItem addHubItem = new MenuItem("Dodaj hub");
+		addHubItem.setOnAction(e -> {
+			addControl(new Hub(4, true).getControl());
 		});
-		contextMenu.getItems().add(addRouterItem);
+		contextMenu.getItems().add(addHubItem);
 
 		MenuItem addSwitchItem = new MenuItem("Dodaj switch");
 		addSwitchItem.setOnAction(e -> {
 			addControl(new Switch(4, true).getControl());
 		});
 		contextMenu.getItems().add(addSwitchItem);
+
+		MenuItem addRouterItem = new MenuItem("Dodaj router");
+		addRouterItem.setOnAction(e -> {
+			addControl(new Router(4, true).getControl());
+		});
+		contextMenu.getItems().add(addRouterItem);
 
 		this.contextMenu = contextMenu;
 	}
@@ -119,5 +129,9 @@ public class SimulationCanvas extends Region {
 
 	public static SimulationCanvas getInstance() {
 		return pseudoSingleton;
+	}
+
+	public Stage getStage() {
+		return stage;
 	}
 }

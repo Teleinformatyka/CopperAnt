@@ -4,8 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import jfxtras.scene.control.window.Window;
 import pl.edu.pk.iti.copperAnt.network.Port;
 import pl.edu.pk.iti.copperAnt.network.Router;
 import pl.edu.pk.iti.copperAnt.network.Switch;
@@ -33,16 +37,9 @@ public class SwitchControl extends MultiportDeviceControl {
 	protected void prepareContextMenu() {
 		ContextMenu contextMenu = new ContextMenu();
 
-		MenuItem addComputerItem = new MenuItem("Akcja switcha");
-		addComputerItem.setOnAction(e -> {
-			this.switch_.testMethod();
-			sampleAction();
-		});
-		contextMenu.getItems().add(addComputerItem);
-
-		MenuItem addRouterItem = new MenuItem("Akcja switcha 2");
-		addRouterItem.setOnAction(e -> sampleAction());
-		contextMenu.getItems().add(addRouterItem);
+		MenuItem switchState = new MenuItem("Pokaż stan switcha");
+		switchState.setOnAction(e -> showSwtichState());
+		contextMenu.getItems().add(switchState);
 
 		// TODO
 		// MenuItem addHubItem = new MenuItem("add hub");
@@ -52,7 +49,30 @@ public class SwitchControl extends MultiportDeviceControl {
 		setContextMenu(contextMenu);
 	}
 
-	private void sampleAction() {
+	private void showSwtichState() {
+		Window window = createDefaultWindow("Switch", getWidth());
+		VBox windowContent = new VBox();
+		List<Port> portList = switch_.getPortList();
+		for (int i = 0; i < portList.size(); i++) {
+			Port port = portList.get(i);
+			Label label = new Label("Port " + i + ": ");
+			label.setFont(new Font(10));
+			label.setText("Port "
+					+ i
+					+ ": "//
+					+ "\n\tmac: "
+					+ port.getMAC()//
+					+ "\n\tWykrywanie kolizji: "
+					+ (port.isColisionDetection() ? "tak" : "nie")
+					+ "\n\tPodpięty kabel: "
+					+ (port.getCable() == null ? "nie" : "tak"));
+			windowContent.getChildren().add(label);
+
+		}
+		window.getContentPane().getChildren().add(windowContent);
+		window.setPrefHeight(200);
+		window.setPrefWidth(200);
+
 	}
 
 	public Switch getSwitch_() {

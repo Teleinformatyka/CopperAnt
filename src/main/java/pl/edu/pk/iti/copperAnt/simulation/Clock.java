@@ -3,6 +3,9 @@ package pl.edu.pk.iti.copperAnt.simulation;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javafx.concurrent.Task;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +18,10 @@ public class Clock {
 
 	long currentTime;
 	long lastEventTime;
-	boolean realTime = false;
+	boolean realTime = true;
 
 	List<Event> events;
-	private long timeScale = 10;
+	private long timeScale = 20;
 
 	private static Clock instance = new Clock();
 
@@ -72,6 +75,11 @@ public class Clock {
 				Event eventToRun = events.get(0);
 				events.remove(eventToRun);
 				eventToRun.run();
+				try {
+					Thread.sleep(50);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 		}

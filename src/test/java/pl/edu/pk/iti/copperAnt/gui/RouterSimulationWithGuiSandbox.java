@@ -18,15 +18,15 @@ public class RouterSimulationWithGuiSandbox extends AbstractControlSandbox {
 	@Override
 	protected void addElements(Pane root) {
 		ScrollPane sc = new ScrollPane();
-		SimulationCanvas simulationCanvas = new SimulationCanvas(sc);
+		SimulationCanvas simulationCanvas = new SimulationCanvas(sc, null);
 		sc.setContent(simulationCanvas);
-
 		SplitPane centralSplitPane = new SplitPane();
-        centralSplitPane.setOrientation(Orientation.VERTICAL);
-        centralSplitPane.getItems().addAll(sc, DeviceLoggingModuleFacade.getInstance().getLoggingGuiNode());
-        centralSplitPane.setDividerPositions(0.1f);
-		
-        root.getChildren().add(centralSplitPane);
+		centralSplitPane.setOrientation(Orientation.VERTICAL);
+		centralSplitPane.getItems().addAll(sc,
+				DeviceLoggingModuleFacade.getInstance().getLoggingGuiNode());
+		centralSplitPane.setDividerPositions(0.1f);
+
+		root.getChildren().add(centralSplitPane);
 
 		Clock.getInstance().setFinishCondition(
 				new MaxTimeFinishCondition(10000));

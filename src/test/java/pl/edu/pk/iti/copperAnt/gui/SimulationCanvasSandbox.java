@@ -7,7 +7,7 @@ public class SimulationCanvasSandbox extends AbstractControlSandbox {
 
 	@Override
 	protected void addElements(Pane root) {
-		root.getChildren().add(new SimulationCanvas(new ScrollPane()));
+		root.getChildren().add(new SimulationCanvas(new ScrollPane(), null));
 
 	}
 

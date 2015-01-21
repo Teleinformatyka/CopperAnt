@@ -14,7 +14,8 @@ public class HubSimulationWithGuiSandbox extends AbstractControlSandbox {
 
 	@Override
 	protected void addElements(Pane root) {
-		SimulationCanvas simulationCanvas = new SimulationCanvas(new ScrollPane());
+		SimulationCanvas simulationCanvas = new SimulationCanvas(
+				new ScrollPane(), null);
 		root.getChildren().add(simulationCanvas);
 
 		Clock.getInstance().setFinishCondition(new MaxTimeFinishCondition(100));

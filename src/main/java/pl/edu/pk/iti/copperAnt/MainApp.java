@@ -31,7 +31,7 @@ public class MainApp extends Application {
 	public void start(Stage stage) throws Exception {
 		sp = new ScrollPane();
 		vb = new VBox();
-		simulationCanvas = new SimulationCanvas(sp);
+		simulationCanvas = new SimulationCanvas(sp, stage);
 
 		VBox box = new VBox();
 		Scene scene = new Scene(box, 500, 500);
